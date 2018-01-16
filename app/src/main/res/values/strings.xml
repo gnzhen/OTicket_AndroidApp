@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">OTicket</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="log_out">Log Out</string>
+    <string name="history">History</string>
+    <string name="my_ticket">My Ticket</string>
+    <string name="take_a_ticket">Take a Ticket</string>
+    <string name="choose_a_branch">Choose a branch</string>
+    <string name="search">Search</string>
+</resources>

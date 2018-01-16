@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_view"
+    android:layout_weight="5"
+    android:layout_width="match_parent"
+    android:background="@drawable/round_edge"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:minWidth="300dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/issue_ticket_dialog_layout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:scrollbars="vertical"
+            android:scrollbarAlwaysDrawVerticalTrack="true">
+
+            <TextView
+                android:id="@+id/issue_ticket_dialog_label_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_margin="5dp"
+                android:textColor="@color/colorPrimary"
+                android:text="Service:"/>
+
+            <TextView
+                android:id="@+id/issue_ticket_dialog_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:layout_margin="5dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:gravity="center_horizontal"
+                android:text="Service"/>
+
+            <TextView
+                android:id="@+id/issue_ticket_dialog_label_waitTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_margin="5dp"
+                android:textColor="@color/colorPrimary"
+                android:text="Estimated wait time:"/>
+
+            <TextView
+                android:id="@+id/issue_ticket_dialog_waitTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:text="Waiting Time"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="30sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            android:layout_alignBottom="@+id/scroll_view">
+
+            <Button
+                android:id="@+id/issue_ticket_dialog_issue_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:text="Issue Ticket"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/issue_ticket_dialog_cancel_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:backgroundTint="@color/colorAccent"
+                android:text="Cancel" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
