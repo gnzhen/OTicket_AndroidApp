@@ -22,10 +22,12 @@ import java.util.List;
 
 public class BranchRecyclerAdapter extends RecyclerView.Adapter<BranchRecyclerAdapter.ViewHolder> {
 
-    private List<Branch> branchAL = new ArrayList<>();
+    private ArrayList<Branch> branchAL = new ArrayList<>();
+    private ArrayList<BranchService> branchServices = new ArrayList<>();
     private Context context;
+    private MainActivity mainActivity;
 
-    public BranchRecyclerAdapter(List<Branch> branchAL, Context context){
+    public BranchRecyclerAdapter(ArrayList<Branch> branchAL, Context context){
         this.branchAL = branchAL;
         this.context = context;
     }
@@ -39,6 +41,7 @@ public class BranchRecyclerAdapter extends RecyclerView.Adapter<BranchRecyclerAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        mainActivity = (MainActivity)context;
         final Branch branch = branchAL.get(position);
 
         holder.headTV.setText(branch.getName());
@@ -50,11 +53,13 @@ public class BranchRecyclerAdapter extends RecyclerView.Adapter<BranchRecyclerAd
 
                 Fragment serviceFrag = new ServiceFrag();
 
+                branchServices = mainActivity.getBranchServicesByBranchId(branch.getId());
+
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("branch", (Serializable) branch);
+                bundle.putSerializable("branchServices", branchServices);
                 serviceFrag.setArguments(bundle);
 
-                ((MainActivity)context).DisplayFragment(serviceFrag);
+                ((MainActivity)context).DisplayFragment(serviceFrag, null);
             }
         });
     }

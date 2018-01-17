@@ -23,7 +23,7 @@ public class TicketFrag extends Fragment {
     private MainActivity mainActivity;
     private TicketRecyclerAdapter adapter;
     private RecyclerView recyclerView;
-    private List<Ticket> tickets;
+    private ArrayList<Ticket> tickets;
     private SearchView searchView;
     private Ticket ticket;
     private Toolbar toolbar;
@@ -44,13 +44,12 @@ public class TicketFrag extends Fragment {
         //Initialize variables
         getView().setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mainActivity = (MainActivity)this.getActivity();
-        recyclerView = getView().findViewById(R.id.ticket_recycler_view);
-        toolbar = ((MainActivity)this.getActivity()).getToolbar();
+        recyclerView = view.findViewById(R.id.ticket_recycler_view);
+        toolbar = mainActivity.getToolbar();
         searchView = toolbar.findViewById(R.id.search_view);
 
         //set up fragment
         mainActivity.setNavActiveItem(R.id.nav_my_ticket);
-        mainActivity.setSearchLabelText("Your Ticket");
         mainActivity.displayFab(true);
         mainActivity.showSearchBar(false);
 
@@ -58,20 +57,10 @@ public class TicketFrag extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
-        //hardcode branch data
         tickets = new ArrayList<>();
-        ticket = null;
 
-        for(int i = 0; i < 2; i++){
-            String queueNo = "000" + Integer.toString(i);
-            Branch branch = new Branch("branch1", "Kepong");
-            Service service = new Service("service1", "Pick Up", 60);
-            int waitTime = 3665;
-
-            ticket = new Ticket(queueNo, branch, service, waitTime);
-            tickets.add(ticket);
-        }
+        Bundle bundle = getArguments();
+        tickets = (ArrayList<Ticket>) bundle.getSerializable("tickets");
 
         adapter = new TicketRecyclerAdapter(tickets, getContext());
         recyclerView.setAdapter(adapter);

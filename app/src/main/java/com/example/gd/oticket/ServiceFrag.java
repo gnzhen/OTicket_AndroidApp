@@ -16,7 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -33,12 +32,10 @@ public class ServiceFrag extends Fragment {
     private MainActivity mainActivity;
     private FloatingActionButton fab;
     private Dialog issueTicketDialog;
-    private List<Service> services;
     private SearchView searchView;
     private TextView branchName;
     private Toolbar toolbar;
-    private Service service;
-    private Branch branch;
+    private ArrayList<BranchService> branchServices;
 
     @Override
     public void onAttach(Context context) {
@@ -61,8 +58,8 @@ public class ServiceFrag extends Fragment {
         //Initialize variables
         mainActivity = (MainActivity)this.getActivity();
         issueTicketDialog = new Dialog(getContext());
-        branchName = getView().findViewById(R.id.frag_service_branch);
-        recyclerView = getView().findViewById(R.id.service_recycler_view);
+        branchName = view.findViewById(R.id.frag_service_branch);
+        recyclerView = view.findViewById(R.id.service_recycler_view);
         toolbar = mainActivity.getToolbar();
         searchView = toolbar.findViewById(R.id.search_view);
 
@@ -71,31 +68,19 @@ public class ServiceFrag extends Fragment {
         mainActivity.displayFab(false);
         mainActivity.showSearchBar(true);
 
-        //get bundle
-        Bundle bundle = getArguments();
-        branch = (Branch) bundle.getSerializable("branch");
-        branchName.setText(branch.getName());
 
         //set up branch list
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        services = new ArrayList<>();
+        branchServices = new ArrayList<>();
 
-        //hardcode service data
-        service = null;
-        for(int i = 0; i < 10; i++){
-            String id = "service " + Integer.toString(i+1);
-            String[] name = {"Customer Service", "Order", "Cashier", "Pick Up", "Other Services", "Customer Service", "Order", "Cashier", "Pick Up", "Other Services"};
-            int waitTime = 3665;
+        //get bundle
+        Bundle bundle = getArguments();
+        branchServices = (ArrayList<BranchService>) bundle.getSerializable("branchServices");
 
-            service = new Service(id, name[i], waitTime);
-            services.add(service);
-        }
-
-        adapter = new ServiceRecyclerAdapter(services, getContext());
+        adapter = new ServiceRecyclerAdapter(branchServices, getContext());
         recyclerView.setAdapter(adapter);
-
 
         mainActivity.setSearchLabelText("Choose a service");
 
@@ -109,12 +94,12 @@ public class ServiceFrag extends Fragment {
             @Override
             public boolean onQueryTextChange(String searchText) {
 
-                ArrayList<Service> filteredList = new ArrayList<>();
+                ArrayList<BranchService> filteredList = new ArrayList<>();
 
-                for(Service service: services){
-                    String name = service.getName().toUpperCase();
+                for(BranchService bs : branchServices){
+                    String name = mainActivity.getServiceByBranchServiceId(bs.getId()).getName().toUpperCase();
                     if(name.contains(searchText.toUpperCase())){
-                        filteredList.add(service);
+                        filteredList.add(bs);
                     }
                 }
 

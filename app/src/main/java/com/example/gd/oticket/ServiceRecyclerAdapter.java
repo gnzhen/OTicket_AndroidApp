@@ -1,20 +1,12 @@
 package com.example.gd.oticket;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +17,13 @@ import java.util.List;
 
 public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecyclerAdapter.ViewHolder> {
 
-    private List<Service> serviceAL = new ArrayList<>();
+    private ArrayList<BranchService> branchServiceAL = new ArrayList<>();
     private Context context;
     private Branch branch;
+    private MainActivity mainActivity;
 
-    public ServiceRecyclerAdapter(List<Service> serviceAL, Context context){
-        this.serviceAL = serviceAL;
+    public ServiceRecyclerAdapter(ArrayList<BranchService> branchServiceAL, Context context){
+        this.branchServiceAL = branchServiceAL;
         this.context = context;
     }
 
@@ -43,15 +36,20 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Service service = serviceAL.get(position);
+        mainActivity = (MainActivity)context;
+        final BranchService branchService = branchServiceAL.get(position);
 
-        holder.headTV.setText(service.getName());
-        holder.bodyTV.setText("EWT: " + service.getWaitTimeString());
+        String serviceName = mainActivity.getServiceByBranchServiceId(branchService.getServiceId()).getName();
+        Queue queue = mainActivity.getShortestQueuesByBranchServiceId(branchService.getId());
+        int waitTime = queue.getWaitTime();
+
+        holder.headTV.setText(serviceName);
+        holder.bodyTV.setText("EWT: " + mainActivity.getWaitTimeString(waitTime));
         holder.rowLL.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).showIssueTicketDialog(service);
+                ((MainActivity) context).showIssueTicketDialog(branchService);
             }
         });
     }
@@ -73,12 +71,12 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
 
     @Override
     public int getItemCount() {
-        return serviceAL.size();
+        return branchServiceAL.size();
     }
 
-    public void setFilter(ArrayList<Service> newList){
-        serviceAL = new ArrayList<>();
-        serviceAL.addAll(newList);
+    public void setFilter(ArrayList<BranchService> newList){
+        branchServiceAL = new ArrayList<>();
+        branchServiceAL.addAll(newList);
         notifyDataSetChanged();
     }
 }

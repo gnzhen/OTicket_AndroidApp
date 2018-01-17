@@ -45,7 +45,7 @@
                 android:text="Service"/>
 
             <TextView
-                android:id="@+id/issue_ticket_dialog_label_waitTime"
+                android:id="@+id/issue_ticket_dialog_label_wait_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
@@ -54,7 +54,7 @@
                 android:text="Estimated wait time:"/>
 
             <TextView
-                android:id="@+id/issue_ticket_dialog_waitTime"
+                android:id="@+id/issue_ticket_dialog_wait_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"

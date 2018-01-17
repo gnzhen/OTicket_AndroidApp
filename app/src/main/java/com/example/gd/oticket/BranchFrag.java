@@ -2,7 +2,6 @@ package com.example.gd.oticket;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -29,7 +27,8 @@ public class BranchFrag extends Fragment {
     private BranchRecyclerAdapter adapter;
     private RecyclerView recyclerView;
     private MainActivity mainActivity;
-    private List<Branch> branches;
+    private ArrayList<Branch> branches;
+    private Branch branch;
     private SearchView searchView;
     private Toolbar toolbar;
 
@@ -49,8 +48,8 @@ public class BranchFrag extends Fragment {
 
         //Initialize variables
         mainActivity = (MainActivity)this.getActivity();
-        recyclerView = getView().findViewById(R.id.branch_recycler_view);
-        toolbar = ((MainActivity)this.getActivity()).getToolbar();
+        recyclerView = view.findViewById(R.id.branch_recycler_view);
+        toolbar = mainActivity.getToolbar();
         searchView = toolbar.findViewById(R.id.search_view);
 
         //set up fragment
@@ -65,24 +64,8 @@ public class BranchFrag extends Fragment {
 
         branches = new ArrayList<>();
 
-        //hardcode branch data
-        for(int i = 0; i < 5; i++){
-            ArrayList<Service> services = new ArrayList<>();
-
-            for(int j = 0; j < 5; j++) {
-                String serviceId = "service " + Integer.toString(j+1);
-                String[] serviceName = {"Customer Service", "Order", "Cashier", "Pick Up", "Other Services"};
-                int waitTime = 3600;
-                Service service = new Service(serviceId, serviceName[j], waitTime);
-                services.add(service);
-            }
-
-            String id = "branch " + Integer.toString(i+1);
-            String[] name = {"Kepong", "KL", "PJ", "Rawang", "Cheras"};
-
-            Branch branch = new Branch(id, name[i], services);
-            branches.add(branch);
-        }
+        Bundle bundle = getArguments();
+        branches = (ArrayList<Branch>) bundle.getSerializable("branches");
 
         adapter = new BranchRecyclerAdapter(branches, getContext());
         recyclerView.setAdapter(adapter);

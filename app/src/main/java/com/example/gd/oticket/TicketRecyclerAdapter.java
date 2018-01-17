@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +19,11 @@ import java.util.List;
 
 public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAdapter.ViewHolder> {
 
-    private List<Ticket> ticketAL = new ArrayList<>();
+    private ArrayList<Ticket> ticketAL = new ArrayList<>();
     private Context context;
+    private MainActivity mainActivity;
 
-    public TicketRecyclerAdapter(List<Ticket> ticketAL, Context context){
+    public TicketRecyclerAdapter(ArrayList<Ticket> ticketAL, Context context){
         this.ticketAL = ticketAL;
         this.context = context;
     }
@@ -37,12 +37,18 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        mainActivity = (MainActivity)context;
         final Ticket ticket = ticketAL.get(position);
 
-        holder.queueNoTV.setText(ticket.getQueueNo());
-        holder.waitTimeTV.setText(ticket.getWaitTimeString());
-        holder.branchTV.setText(ticket.getBranch().getName());
-        holder.serviceTV.setText(ticket.getService().getName());
+        Queue ticketQueue = mainActivity.getQueueById(ticket.getQueueId());
+        BranchService ticketBranchService = mainActivity.getBranchServiceById(ticketQueue.getBranchServiceId());
+        Branch ticketBranch = mainActivity.getBranchById(ticketBranchService.getBranchId());
+        Service ticketService = mainActivity.getServiceById(ticketBranchService.getServiceId());
+
+        holder.queueNoTV.setText(ticket.getTicketNo());
+        holder.waitTimeTV.setText(mainActivity.getWaitTimeString(ticket.getWaitTime()));
+        holder.branchTV.setText(ticketBranch.getName());
+        holder.serviceTV.setText(ticketService.getName());
         holder.rowLL.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -54,7 +60,7 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
                 bundle.putSerializable("ticket", ticket);
                 ticketFrag.setArguments(bundle);
 
-                ((MainActivity)context).DisplayFragment(ticketFrag);
+                mainActivity.DisplayFragment(ticketFrag, null);
             }
         });
     }
@@ -72,7 +78,7 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
         public ViewHolder(View itemView) {
             super(itemView);
 
-            queueNoTV = itemView.findViewById(R.id.ticket_card_view_queue_number);
+            queueNoTV = itemView.findViewById(R.id.ticket_card_view_ticket_number);
             waitTimeTV = itemView.findViewById(R.id.ticket_card_view_wait_time);
             branchTV = itemView.findViewById(R.id.ticket_card_view_branch);
             serviceTV = itemView.findViewById(R.id.ticket_card_view_service);

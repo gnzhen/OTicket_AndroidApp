@@ -44,11 +44,11 @@
                     android:gravity="center">
 
                     <TextView
-                        android:id="@+id/ticket_card_view_queue_number"
+                        android:id="@+id/ticket_card_view_ticket_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="queue number"
+                        android:text="ticket number"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="55sp" />
 
@@ -59,7 +59,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="10dp"
-                        android:layout_toRightOf="@+id/ticket_card_view_queue_number"
+                        android:layout_toRightOf="@+id/ticket_card_view_ticket_number"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:text="wait time"

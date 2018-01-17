@@ -1,7 +1,6 @@
 package com.example.gd.oticket;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -11,20 +10,23 @@ import java.util.ArrayList;
 public class Branch implements Serializable{
     private String id;
     private String name;
+    private String desc;
     private ArrayList<Service> services;
 
     public Branch(){
 
     }
 
-    public Branch(String id, String name){
+    public Branch(String id, String name, String desc){
         this.setId(id);
         this.setName(name);
+        this.setDesc(desc);
     }
 
-    public Branch(String id, String name, ArrayList<Service> services){
+    public Branch(String id, String name, String desc, ArrayList<Service> services){
         this.setId(id);
         this.setName(name);
+        this.setDesc(desc);
         this.setServices(services);
     }
 
@@ -34,6 +36,10 @@ public class Branch implements Serializable{
 
     public String getName(){
         return this.name;
+    }
+
+    public String getDesc(){
+        return this.desc;
     }
 
     public ArrayList<Service> getServices(){
@@ -50,5 +56,9 @@ public class Branch implements Serializable{
 
     public void setServices(ArrayList<Service> services){
         this.services = services;
+    }
+
+    public void setDesc(String desc){
+        this.desc = desc;
     }
 }
