@@ -35,13 +35,14 @@ public class TicketDetailsFrag extends Fragment {
         toolbar = mainActivity.getToolbar();
         ticketNumber = view.findViewById(R.id.ticket_details_ticket_number);
         pplAhead = view.findViewById(R.id.ticket_details_ppl_ahead);
+        branch = view.findViewById(R.id.ticket_details_branch);
+        service = view.findViewById(R.id.ticket_details_service);
         waitTime = view.findViewById(R.id.ticket_details_wait_time);
 
         //set up fragment
         mainActivity.setNavActiveItem(R.id.nav_my_ticket);
         mainActivity.displayFab(false);
         mainActivity.showSearchBar(false);
-
 
         //get bundle
         Bundle bundle = getArguments();

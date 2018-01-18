@@ -62,7 +62,9 @@ public class TicketFrag extends Fragment {
         Bundle bundle = getArguments();
         tickets = (ArrayList<Ticket>) bundle.getSerializable("tickets");
 
-        adapter = new TicketRecyclerAdapter(tickets, getContext());
-        recyclerView.setAdapter(adapter);
+        if(tickets != null){
+            adapter = new TicketRecyclerAdapter(tickets, getContext());
+            recyclerView.setAdapter(adapter);
+        }
     }
 }

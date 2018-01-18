@@ -40,7 +40,7 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
         mainActivity = (MainActivity)context;
         final Ticket ticket = ticketAL.get(position);
 
-        Queue ticketQueue = mainActivity.getQueueById(ticket.getQueueId());
+        Queue ticketQueue = mainActivity.getQueueByTicketId(ticket.getId());
         BranchService ticketBranchService = mainActivity.getBranchServiceById(ticketQueue.getBranchServiceId());
         Branch ticketBranch = mainActivity.getBranchById(ticketBranchService.getBranchId());
         Service ticketService = mainActivity.getServiceById(ticketBranchService.getServiceId());

@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     BranchService branchService;
     Queue queue;
     Ticket ticket;
+    Dialog confirmDialog, issueTicketDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity
         branches = new ArrayList<>();
         services = new ArrayList<>();
         branchServices = new ArrayList<>();
+        queues = new ArrayList<>();
         tickets = new ArrayList<>();
 
         fab = findViewById(R.id.fab);
@@ -86,14 +89,16 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        setData();
+
         //Set default fragment display
+        Fragment defaultFragment = new TicketFrag();
+        setBundle(defaultFragment, "tickets");
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_layout, new TicketFrag());
+        ft.replace(R.id.fragment_layout, defaultFragment);
         ft.commit();
         drawer.closeDrawer(GravityCompat.START);
         setNavActiveItem(R.id.nav_my_ticket);
-
-        setData();
     }
 
     @Override
@@ -221,20 +226,27 @@ public class MainActivity extends AppCompatActivity
         return toolbar;
     }
 
-    public void showIssueTicketDialog(BranchService branchService){
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_issue_ticket);
-        dialog.setCancelable(false);
+    public void showIssueTicketDialog(Queue shortestQueue){
+        issueTicketDialog = new Dialog(this);
+        issueTicketDialog.setContentView(R.layout.dialog_issue_ticket);
+        issueTicketDialog.setCancelable(false);
 
-        Button cancelBtn = dialog.findViewById(R.id.issue_ticket_dialog_cancel_btn);
+        TextView serviceTV = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_service);
+        TextView waitTimeTV = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_wait_time);
+        String branchServiceId = shortestQueue.getBranchServiceId();
+        Service queueService = getServiceByBranchServiceId(branchServiceId);
+        serviceTV.setText(queueService.getName());
+        waitTimeTV.setText(getWaitTimeString(getWaitTimeByQueue(shortestQueue)));
+
+        Button cancelBtn = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_cancel_btn);
         cancelBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                dialog.dismiss();
+                issueTicketDialog.dismiss();
             }
         });
 
-        Button issueBtn = dialog.findViewById(R.id.issue_ticket_dialog_issue_btn);
+        Button issueBtn = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_issue_btn);
         issueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,7 +254,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        dialog.show();
+        issueTicketDialog.show();
     }
 
     public void showConfirmDialog(){
@@ -253,6 +265,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int arg1) {
                 dialog.dismiss();
+                if(issueTicketDialog != null)
+                    issueTicketDialog.dismiss();
             }
         });
 
@@ -260,6 +274,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                if(issueTicketDialog != null)
+                    issueTicketDialog.dismiss();
             }
         });
 
@@ -313,7 +329,7 @@ public class MainActivity extends AppCompatActivity
         //hardcode branchservice data
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < 5; j++){
-                String id = branches.get(i).getId() + services.get(j).getId();
+                String id = branches.get(i).getId() + "_" + services.get(j).getId();
                 String branchId = branches.get(i).getId();
                 String serviceId = services.get(j).getId();
                 int avgWaitTime = 700;
@@ -326,22 +342,27 @@ public class MainActivity extends AppCompatActivity
         int a = 0;
         //hardcode queue data
         for(BranchService bs: branchServices){
-            String id = "queue_" + a;
-            int latestTicketNo = 8;
+            int id = a;
+            ArrayList<Integer> ticketIds = new ArrayList<>();
             int ticketServingNow = 3;
-            queue = new Queue(id, bs.getId(), latestTicketNo, ticketServingNow);
+            String counterId = "counter" + a;
+
+            queue = new Queue(id, bs.getId(), counterId, ticketServingNow);
+            queues.add(queue);
             a++;
+            queue.addTicketIdToQueue(0);
         }
 
         //hardcode ticket data
         for(int i = 0; i < 2; i++){
-            String id = "TIX_" + i;
-            int ticketNo = i + 1;
-            String queueId = "Kepong_Order";
+            int id = i;
+            String ticketNo = String.format("%04d", id);
+            int queueId = i;
             int waitTime = 3665;
             int pplAhead = 5;
+            int userId = i;
 
-            ticket = new Ticket(id, ticketNo, queueId, waitTime, pplAhead);
+            ticket = new Ticket(id, ticketNo, queueId, waitTime, pplAhead, userId);
             tickets.add(ticket);
         }
     }
@@ -397,7 +418,7 @@ public class MainActivity extends AppCompatActivity
         branch = null;
 
         for(Branch b: branches){
-            if(b.getId() == id)
+            if(b.getId().equals(id))
                 branch = b;
         }
         return branch;
@@ -407,7 +428,7 @@ public class MainActivity extends AppCompatActivity
         service = null;
 
         for(Service s: services){
-            if(s.getId() == id)
+            if(s.getId().equals(id))
                 service = s;
         }
         return service;
@@ -417,13 +438,13 @@ public class MainActivity extends AppCompatActivity
         branchService = null;
 
         for(BranchService bs: branchServices){
-            if(bs.getId() == id)
+            if(bs.getId().equals(id))
                 branchService = bs;
         }
         return branchService;
     }
 
-    public Queue getQueueById(String id){
+    public Queue getQueueById(int id){
         queue = null;
 
         for(Queue q: queues){
@@ -433,7 +454,7 @@ public class MainActivity extends AppCompatActivity
         return queue;
     }
 
-    public Ticket getTicketById(String id){
+    public Ticket getTicketById(int id){
         ticket = null;
 
         for(Ticket t: tickets){
@@ -451,7 +472,7 @@ public class MainActivity extends AppCompatActivity
         ArrayList<BranchService> serviceOfBranch = new ArrayList<BranchService>();
 
         for(BranchService branchService: branchServices){
-            if(branchService.getBranchId() == id)
+            if(branchService.getBranchId().equals(id))
                 serviceOfBranch.add(branchService);
         }
         return serviceOfBranch;
@@ -460,11 +481,8 @@ public class MainActivity extends AppCompatActivity
     public Service getServiceByBranchServiceId(String id){
         Service service = null;
 
-        for(BranchService bs: branchServices){
-            if(bs.getServiceId() == id){
-                service = getServiceById(bs.getServiceId());
-            }
-        }
+        service = getServiceById(branchService.getServiceId());
+
         return service;
     }
 
@@ -472,7 +490,7 @@ public class MainActivity extends AppCompatActivity
         ArrayList<Queue> queuesOfService = new ArrayList<Queue>();
 
         for(Queue q: queues){
-            if(q.getBranchServiceId() == id){
+            if(q.getBranchServiceId().equals(id)){
                 queuesOfService.add(q);
             }
         }
@@ -485,56 +503,55 @@ public class MainActivity extends AppCompatActivity
         Queue shortestQueue = queuesOfService.get(0);
 
         for(Queue q: queues){
-            if(q.getWaitTime() < shortestQueue.getWaitTime())
+            if(getWaitTimeByQueue(q) < getWaitTimeByQueue(shortestQueue))
                 shortestQueue = q;
         }
 
         return shortestQueue;
     }
 
-    public Queue getQueueByTicketId(String id){
+    public Queue getQueueByTicketId(int id){
         return getQueueById(getTicketById(id).getQueueId());
     }
 
-    public Branch getBranchByQueueId(String id){
-        Branch branchOfQueue = null;
-        Queue queue = getQueueById(id);
-        BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
-        String branchId = branchService.getBranchId();
-
-        for(Branch b: branches){
-            if(b.getId() == branchId)
-                branchOfQueue = b;
-        }
-
-        return branchOfQueue;
-    }
-
-    public Branch getBranchByTicketId(String id){
+    public Branch getBranchByTicketId(int id){
         Branch branchOfQueue = null;
         Queue queue = getQueueByTicketId(id);
         BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
         String branchId = branchService.getBranchId();
 
         for(Branch b: branches){
-            if(b.getId() == branchId)
+            if(b.getId().equals(branchId))
                 branchOfQueue = b;
         }
 
         return branchOfQueue;
     }
 
-    public Service getServiceByTicketId(String id){
+    public Service getServiceByTicketId(int id){
         Service serviceOfQueue = null;
         Queue queue = getQueueByTicketId(id);
         BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
         String serviceId = branchService.getServiceId();
 
         for(Service s: services){
-            if(s.getId() == serviceId)
+            if(s.getId().equals(serviceId))
                 serviceOfQueue = s;
         }
 
         return serviceOfQueue;
+    }
+
+    public int getLatestTicketIdByQueueId(int id){
+        return getQueueById(id).getLatestTicketId();
+    }
+
+    public int getWaitTimeByQueue(Queue queue){
+        BranchService queueBranchService = getBranchServiceById(queue.getBranchServiceId());
+        int avgWaitTime = queueBranchService.getAvgWaitTime();
+        int numberOfTicketInQueue = queue.getNumberOfTicket();
+        int waitTime = numberOfTicketInQueue * avgWaitTime;
+
+        return waitTime;
     }
 }

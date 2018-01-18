@@ -37,11 +37,11 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         mainActivity = (MainActivity)context;
-        final BranchService branchService = branchServiceAL.get(position);
+        BranchService branchService = branchServiceAL.get(position);
 
-        String serviceName = mainActivity.getServiceByBranchServiceId(branchService.getServiceId()).getName();
-        Queue queue = mainActivity.getShortestQueuesByBranchServiceId(branchService.getId());
-        int waitTime = queue.getWaitTime();
+        String serviceName = mainActivity.getServiceByBranchServiceId(branchService.getId()).getName();
+        final Queue queue = mainActivity.getShortestQueuesByBranchServiceId(branchService.getId());
+        int waitTime = mainActivity.getWaitTimeByQueue(queue);
 
         holder.headTV.setText(serviceName);
         holder.bodyTV.setText("EWT: " + mainActivity.getWaitTimeString(waitTime));
@@ -49,7 +49,7 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
 
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).showIssueTicketDialog(branchService);
+                ((MainActivity) context).showIssueTicketDialog(queue);
             }
         });
     }

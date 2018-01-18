@@ -1,43 +1,38 @@
 package com.example.gd.oticket;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * Created by GD on 1/13/2018.
  */
 
 public class Queue implements Serializable{
-    private String id;
+    private int id;
     private String branchServiceId;
-    private int latestTicketNo;
+    private ArrayList<Integer> ticketIds;
     private int ticketServingNow;
-    private int waitTime;
+    private String counterId;
 
-    public Queue(String id, String branchServiceId){
+    public Queue(int id, String branchServiceId, String counterId){
         this.setId(id);
         this.setBranchServiceId(branchServiceId);
-        this.setLatestTicketNo(0);
+        this.setCounterId(counterId);
         this.setTicketServingNow(0);
-        this.setWaitTime(0);
+        this.ticketIds = new ArrayList<>();
     }
 
-    public Queue(String id, String branchServiceId, int latestTicketNo, int ticketServingNow){
+    public Queue(int id, String branchServiceId, String counterId, int ticketServingNow){
         this.setId(id);
         this.setBranchServiceId(branchServiceId);
-        this.setLatestTicketNo(latestTicketNo);
+        this.setCounterId(counterId);
         this.setTicketServingNow(ticketServingNow);
-        this.setWaitTime(0);
+        this.ticketIds = new ArrayList<>();
+        this.counterId = counterId;
     }
 
-    public Queue(String id, String branchServiceId, int latestTicketNo, int ticketServingNow, int waitTime){
-        this.setId(id);
-        this.setBranchServiceId(branchServiceId);
-        this.setLatestTicketNo(latestTicketNo);
-        this.setTicketServingNow(ticketServingNow);
-        this.setWaitTime(waitTime);
-    }
-
-    public String getId(){
+    public int getId(){
         return this.id;
     }
 
@@ -45,23 +40,27 @@ public class Queue implements Serializable{
         return this.branchServiceId;
     }
 
-    public int getLatestTicketNo() {
-        return this.latestTicketNo;
-    }
-
     public int getTicketServingNow() {
         return this.ticketServingNow;
     }
 
-    public int getNoOfTicketToBeServed(){
-        return (this.latestTicketNo - this.ticketServingNow) + 1;
+    public String getCounterId(){
+        return this.counterId;
     }
 
-    public int getWaitTime() {
-        return this.waitTime;
+    public ArrayList<Integer> getTicketIds(){
+        return this.ticketIds;
     }
 
-    public void setId(String id){
+    public int getNumberOfTicket(){
+        return this.ticketIds.size();
+    }
+
+    public int getLatestTicketId (){
+        return this.ticketIds.get(ticketIds.size() - 1);
+    }
+
+    public void setId(int id){
         this.id = id;
     }
 
@@ -69,16 +68,15 @@ public class Queue implements Serializable{
         this.branchServiceId = branchServiceId;
     }
 
-    public void setLatestTicketNo(int latestTicketNo){
-        this.latestTicketNo = latestTicketNo;
+    public void setCounterId(String counterId){
+        this.counterId = counterId;
     }
 
     public void setTicketServingNow(int ticketServingNow){
         this.ticketServingNow = ticketServingNow;
     }
 
-    public void setWaitTime(int waitTime){
-        this.waitTime = waitTime;
+    public void addTicketIdToQueue(int id){
+        ticketIds.add(id);
     }
-
 }

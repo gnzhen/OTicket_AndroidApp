@@ -78,6 +78,8 @@ public class ServiceFrag extends Fragment {
         //get bundle
         Bundle bundle = getArguments();
         branchServices = (ArrayList<BranchService>) bundle.getSerializable("branchServices");
+        Branch selectedBranch = mainActivity.getBranchById(branchServices.get(0).getBranchId());
+        branchName.setText(selectedBranch.getName());
 
         adapter = new ServiceRecyclerAdapter(branchServices, getContext());
         recyclerView.setAdapter(adapter);

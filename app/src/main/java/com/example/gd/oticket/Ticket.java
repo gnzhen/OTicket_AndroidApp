@@ -1,19 +1,22 @@
 package com.example.gd.oticket;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by GD on 1/13/2018.
  */
 
 public class Ticket implements Serializable{
-    private String id;
-    private int ticketNo;
-    private String queueId;
+    private int id;
+    private String ticketNo;
+    private SimpleDateFormat issueTime;
+    private int queueId;
     private int waitTime;
     private int pplAhead;
+    private int userId;
 
-    public Ticket(String id, int ticketNo, String queueId, int waitTime, int pplAhead){
+    public Ticket(int id, String ticketNo, int queueId, int waitTime, int pplAhead){
         this.setId(id);
         this.setTicketNo(ticketNo);
         this.setQueueId(queueId);
@@ -21,15 +24,28 @@ public class Ticket implements Serializable{
         this.setPplAhead(pplAhead);
     }
 
-    public String getId(){
+    public Ticket(int id, String ticketNo, int queueId, int waitTime, int pplAhead, int userId){
+        this.setId(id);
+        this.setTicketNo(ticketNo);
+        this.setQueueId(queueId);
+        this.setWaitTime(waitTime);
+        this.setPplAhead(pplAhead);
+        this.setUserId(userId);
+    }
+
+    public int getId(){
         return this.id;
     }
 
-    public int getTicketNo(){
+    public String getTicketNo(){
         return this.ticketNo;
     }
 
-    public String getQueueId(){
+    public int getUserId(){
+        return this.userId;
+    }
+
+    public int getQueueId(){
         return this.queueId;
     }
 
@@ -41,19 +57,15 @@ public class Ticket implements Serializable{
         return this.pplAhead;
     }
 
-    public String getTicketNoString(){
-        return String.format("%05d", this.ticketNo);
-    }
-
-    public void setId(String id){
+    public void setId(int id){
         this.id = id;
     }
 
-    public void setTicketNo(int ticketNo){
+    public void setTicketNo(String ticketNo){
         this.ticketNo = ticketNo;
     }
 
-    public void setQueueId(String queueId){
+    public void setQueueId(int queueId){
         this.queueId = queueId;
     }
 
@@ -63,5 +75,9 @@ public class Ticket implements Serializable{
 
     public void setPplAhead(int pplAhead){
         this.pplAhead = pplAhead;
+    }
+
+    public void setUserId(int userId){
+        this.userId = userId;
     }
 }
