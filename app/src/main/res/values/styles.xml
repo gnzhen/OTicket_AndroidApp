@@ -27,6 +27,12 @@
         <item name="android:textColorSecondary">@color/colorPrimaryDark</item>
     </style>
 
-    <style name="BlueGreyTheme" parent="AppTheme" />
+    <style name="BlueGreyTheme" parent="AppTheme" >
+        <item name="android:textViewStyle">@style/sansSerif</item>
+    </style>
+
+    <style name="sansSerif" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
 
 </resources>

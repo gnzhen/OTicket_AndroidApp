@@ -24,8 +24,12 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -310,7 +314,7 @@ public class MainActivity extends AppCompatActivity
     public void setData(){
         //hardcode service data
         for(int j = 0; j < 5; j++) {
-            String serviceId = "service " + Integer.toString(j+1);
+            String serviceId = "service " + Integer.toString(j);
             String[] serviceName = {"Customer Service", "Order", "Cashier", "Pick Up", "Other Services"};
             Service service = new Service(serviceId, serviceName[j]);
             services.add(service);
@@ -343,11 +347,12 @@ public class MainActivity extends AppCompatActivity
         //hardcode queue data
         for(BranchService bs: branchServices){
             int id = a;
-            ArrayList<Integer> ticketIds = new ArrayList<>();
-            int ticketServingNow = 3;
+            ArrayList<String> counterIds = new ArrayList<>();
+            int ticketServingNow = 1;
             String counterId = "counter" + a;
+            counterIds.add(counterId);
 
-            queue = new Queue(id, bs.getId(), counterId, ticketServingNow);
+            queue = new Queue(id, bs.getId(), counterIds, ticketServingNow);
             queues.add(queue);
             a++;
             queue.addTicketIdToQueue(0);
@@ -454,7 +459,7 @@ public class MainActivity extends AppCompatActivity
         return queue;
     }
 
-    public Ticket getTicketById(int id){
+    public Ticket getTicketById(long id){
         ticket = null;
 
         for(Ticket t: tickets){
@@ -486,35 +491,34 @@ public class MainActivity extends AppCompatActivity
         return service;
     }
 
-    public ArrayList<Queue> getQueuesByBranchServiceId(String id){
-        ArrayList<Queue> queuesOfService = new ArrayList<Queue>();
+    public Queue getQueueByBranchServiceId(String id){
 
         for(Queue q: queues){
             if(q.getBranchServiceId().equals(id)){
-                queuesOfService.add(q);
+                queue = q;
             }
         }
 
-        return queuesOfService;
+        return queue;
     }
 
-    public Queue getShortestQueuesByBranchServiceId(String id){
-        ArrayList<Queue> queuesOfService = getQueuesByBranchServiceId(id);
-        Queue shortestQueue = queuesOfService.get(0);
+//    public Queue getShortestQueuesByBranchServiceId(String id){
+//        ArrayList<Queue> queuesOfService = getQueuesByBranchServiceId(id);
+//        Queue shortestQueue = queuesOfService.get(0);
+//
+//        for(Queue q: queues){
+//            if(getWaitTimeByQueue(q) < getWaitTimeByQueue(shortestQueue))
+//                shortestQueue = q;
+//        }
+//
+//        return shortestQueue;
+//    }
 
-        for(Queue q: queues){
-            if(getWaitTimeByQueue(q) < getWaitTimeByQueue(shortestQueue))
-                shortestQueue = q;
-        }
-
-        return shortestQueue;
-    }
-
-    public Queue getQueueByTicketId(int id){
+    public Queue getQueueByTicketId(long id){
         return getQueueById(getTicketById(id).getQueueId());
     }
 
-    public Branch getBranchByTicketId(int id){
+    public Branch getBranchByTicketId(long id){
         Branch branchOfQueue = null;
         Queue queue = getQueueByTicketId(id);
         BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
@@ -528,7 +532,7 @@ public class MainActivity extends AppCompatActivity
         return branchOfQueue;
     }
 
-    public Service getServiceByTicketId(int id){
+    public Service getServiceByTicketId(long id){
         Service serviceOfQueue = null;
         Queue queue = getQueueByTicketId(id);
         BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
@@ -553,5 +557,23 @@ public class MainActivity extends AppCompatActivity
         int waitTime = numberOfTicketInQueue * avgWaitTime;
 
         return waitTime;
+    }
+
+    public String getServeTimeStringByTicketId(long id){
+        int waitTime = getTicketById(id).getWaitTime();
+
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.SECOND,waitTime);
+
+        DateFormat dateFormat = new SimpleDateFormat("h:mm a");
+
+        return dateFormat.format(now.getTime());
+    }
+
+    public String getTicketNoServingNowByTicket(Ticket ticket){
+        queue = getQueueById(ticket.getQueueId());
+        Ticket ticketServingNow = getTicketById(queue.getTicketIdServingNow());
+
+        return ticketServingNow.getTicketNo();
     }
 }

@@ -11,25 +11,24 @@ import java.util.ArrayList;
 public class Queue implements Serializable{
     private int id;
     private String branchServiceId;
-    private ArrayList<Integer> ticketIds;
-    private int ticketServingNow;
-    private String counterId;
+    private ArrayList<Integer> ticketIds = new ArrayList<>();
+    private long ticketIdServingNow;
+    private ArrayList<String> counterIds = new ArrayList<>();
 
-    public Queue(int id, String branchServiceId, String counterId){
+    public Queue(int id, String branchServiceId, ArrayList<String> counterIds){
         this.setId(id);
         this.setBranchServiceId(branchServiceId);
-        this.setCounterId(counterId);
-        this.setTicketServingNow(0);
-        this.ticketIds = new ArrayList<>();
+        this.setCounterIds(counterIds);
+        this.setTicketIdServingNow(0);
+        this.setCounterIds(counterIds);
     }
 
-    public Queue(int id, String branchServiceId, String counterId, int ticketServingNow){
+    public Queue(int id, String branchServiceId, ArrayList<String> counterIds, long ticketIdServingNow){
         this.setId(id);
         this.setBranchServiceId(branchServiceId);
-        this.setCounterId(counterId);
-        this.setTicketServingNow(ticketServingNow);
-        this.ticketIds = new ArrayList<>();
-        this.counterId = counterId;
+        this.setTicketIdServingNow(ticketIdServingNow);
+        counterIds = new ArrayList<>();
+        this.setCounterIds(counterIds);
     }
 
     public int getId(){
@@ -40,12 +39,12 @@ public class Queue implements Serializable{
         return this.branchServiceId;
     }
 
-    public int getTicketServingNow() {
-        return this.ticketServingNow;
+    public long getTicketIdServingNow() {
+        return this.ticketIdServingNow;
     }
 
-    public String getCounterId(){
-        return this.counterId;
+    public ArrayList<String> getCounterIds(){
+        return this.counterIds;
     }
 
     public ArrayList<Integer> getTicketIds(){
@@ -68,12 +67,12 @@ public class Queue implements Serializable{
         this.branchServiceId = branchServiceId;
     }
 
-    public void setCounterId(String counterId){
-        this.counterId = counterId;
+    public void setCounterIds(ArrayList<String> counterIds){
+        this.counterIds = counterIds;
     }
 
-    public void setTicketServingNow(int ticketServingNow){
-        this.ticketServingNow = ticketServingNow;
+    public void setTicketIdServingNow(long ticketIdServingNow){
+        this.ticketIdServingNow = ticketIdServingNow;
     }
 
     public void addTicketIdToQueue(int id){

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Counter implements Serializable{
     private String id;
     private String name;
+    private String branchServiceId;
     private String staffId;
 
     public Counter(){
@@ -21,7 +22,7 @@ public class Counter implements Serializable{
         this.setName(name);
     }
 
-    public Counter(String id, String name, String staffId){
+    public Counter(String id, String name, String branchServiceId, String staffId){
         this.setId(id);
         this.setName(name);
         this.setStaffId(staffId);
@@ -35,6 +36,10 @@ public class Counter implements Serializable{
         return this.name;
     }
 
+    public String getBranchServiceId(){
+        return this.branchServiceId;
+    }
+
     public String getStaffId(){
         return this.staffId;
     }
@@ -45,6 +50,10 @@ public class Counter implements Serializable{
 
     public void setName(String name){
         this.name = name;
+    }
+
+    public void setBranchServiceId(String branchServiceId){
+        this.branchServiceId = branchServiceId;
     }
 
     public void setStaffId(String staffId){

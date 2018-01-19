@@ -15,6 +15,7 @@ public class Ticket implements Serializable{
     private int waitTime;
     private int pplAhead;
     private int userId;
+    private int postponed;
 
     public Ticket(int id, String ticketNo, int queueId, int waitTime, int pplAhead){
         this.setId(id);
@@ -22,6 +23,7 @@ public class Ticket implements Serializable{
         this.setQueueId(queueId);
         this.setWaitTime(waitTime);
         this.setPplAhead(pplAhead);
+        this.setPostponed(0);
     }
 
     public Ticket(int id, String ticketNo, int queueId, int waitTime, int pplAhead, int userId){
@@ -31,6 +33,7 @@ public class Ticket implements Serializable{
         this.setWaitTime(waitTime);
         this.setPplAhead(pplAhead);
         this.setUserId(userId);
+        this.setPostponed(0);
     }
 
     public int getId(){
@@ -41,8 +44,8 @@ public class Ticket implements Serializable{
         return this.ticketNo;
     }
 
-    public int getUserId(){
-        return this.userId;
+    public SimpleDateFormat getIssueTime() {
+        return this.issueTime;
     }
 
     public int getQueueId(){
@@ -57,12 +60,24 @@ public class Ticket implements Serializable{
         return this.pplAhead;
     }
 
+    public int getUserId(){
+        return this.userId;
+    }
+
+    public int getPostponed(){
+        return this.postponed;
+    }
+
     public void setId(int id){
         this.id = id;
     }
 
     public void setTicketNo(String ticketNo){
         this.ticketNo = ticketNo;
+    }
+
+    public void setIssueTime(SimpleDateFormat issueTime) {
+        this.issueTime = issueTime;
     }
 
     public void setQueueId(int queueId){
@@ -79,5 +94,9 @@ public class Ticket implements Serializable{
 
     public void setUserId(int userId){
         this.userId = userId;
+    }
+
+    public void setPostponed(int postponed){
+        this.postponed = postponed;
     }
 }

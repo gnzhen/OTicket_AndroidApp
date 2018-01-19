@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -78,6 +79,7 @@ public class ServiceFrag extends Fragment {
         //get bundle
         Bundle bundle = getArguments();
         branchServices = (ArrayList<BranchService>) bundle.getSerializable("branchServices");
+
         Branch selectedBranch = mainActivity.getBranchById(branchServices.get(0).getBranchId());
         branchName.setText(selectedBranch.getName());
 
@@ -99,7 +101,9 @@ public class ServiceFrag extends Fragment {
                 ArrayList<BranchService> filteredList = new ArrayList<>();
 
                 for(BranchService bs : branchServices){
-                    String name = mainActivity.getServiceByBranchServiceId(bs.getId()).getName().toUpperCase();
+                    Service service = mainActivity.getServiceById(bs.getServiceId());
+                    String name = service.getName().toUpperCase();
+
                     if(name.contains(searchText.toUpperCase())){
                         filteredList.add(bs);
                     }
@@ -123,18 +127,4 @@ public class ServiceFrag extends Fragment {
         return super.onOptionsItemSelected(item);
 
     }
-
-//    public void showIssueDialog(){
-//        issueTicketDialog.setContentView(R.layout.dialog_issue_ticket);
-//        Button cancelBtn = getView().findViewById(R.id.issue_ticket_dialog_cancel_btn);
-//        cancelBtn.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-//                issueTicketDialog.dismiss();
-//            }
-//        });
-//
-//        issueTicketDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        issueTicketDialog.show();
-//    }
 }

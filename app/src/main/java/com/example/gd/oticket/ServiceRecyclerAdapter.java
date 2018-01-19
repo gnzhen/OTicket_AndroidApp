@@ -2,6 +2,7 @@ package com.example.gd.oticket;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +40,8 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
         mainActivity = (MainActivity)context;
         BranchService branchService = branchServiceAL.get(position);
 
-        String serviceName = mainActivity.getServiceByBranchServiceId(branchService.getId()).getName();
-        final Queue queue = mainActivity.getShortestQueuesByBranchServiceId(branchService.getId());
+        String serviceName = mainActivity.getServiceById(branchService.getServiceId()).getName();
+        final Queue queue = mainActivity.getQueueByBranchServiceId(branchService.getId());
         int waitTime = mainActivity.getWaitTimeByQueue(queue);
 
         holder.headTV.setText(serviceName);
@@ -49,7 +50,7 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
 
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).showIssueTicketDialog(queue);
+                mainActivity.showIssueTicketDialog(queue);
             }
         });
     }

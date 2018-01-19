@@ -42,7 +42,7 @@ public class TicketFrag extends Fragment {
         setHasOptionsMenu(true);
 
         //Initialize variables
-        getView().setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mainActivity = (MainActivity)this.getActivity();
         recyclerView = view.findViewById(R.id.ticket_recycler_view);
         toolbar = mainActivity.getToolbar();

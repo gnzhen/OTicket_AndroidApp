@@ -31,6 +31,7 @@ public class TicketDetailsFrag extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //Initialize variables
+        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mainActivity = (MainActivity)this.getActivity();
         toolbar = mainActivity.getToolbar();
         ticketNumber = view.findViewById(R.id.ticket_details_ticket_number);
@@ -38,6 +39,8 @@ public class TicketDetailsFrag extends Fragment {
         branch = view.findViewById(R.id.ticket_details_branch);
         service = view.findViewById(R.id.ticket_details_service);
         waitTime = view.findViewById(R.id.ticket_details_wait_time);
+        serveTime = view.findViewById(R.id.ticket_details_serve_time);
+        servingNow = view.findViewById(R.id.ticket_details_serving_now);
 
         //set up fragment
         mainActivity.setNavActiveItem(R.id.nav_my_ticket);
@@ -50,6 +53,8 @@ public class TicketDetailsFrag extends Fragment {
         ticketNumber.setText(ticket.getTicketNo());
         pplAhead.setText(Integer.toString(ticket.getPplAhead()));
         waitTime.setText(mainActivity.getWaitTimeString(ticket.getWaitTime()));
+        serveTime.setText(mainActivity.getServeTimeStringByTicketId(ticket.getId()));
+        servingNow.setText(mainActivity.getTicketNoServingNowByTicket(ticket));
         branch.setText(mainActivity.getBranchByTicketId(ticket.getId()).getName());
         service.setText(mainActivity.getServiceByTicketId(ticket.getId()).getName());
     }

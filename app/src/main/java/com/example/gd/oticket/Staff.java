@@ -9,10 +9,12 @@ import java.io.Serializable;
 public class Staff implements Serializable{
     private String id;
     private String name;
+    private String branchId;
 
-    public Staff(String id, String name){
+    public Staff(String id, String name, String branchId){
         this.setId(id);
         this.setName(name);
+        this.setBranchId(branchId);
     }
 
     public String getId(){
@@ -23,11 +25,19 @@ public class Staff implements Serializable{
         return this.name;
     }
 
+    public String getBranchId(){
+        return this.branchId;
+    }
+
     public void setId(String id){
         this.id = id;
     }
 
     public void setName(String name){
         this.name = name;
+    }
+
+    public void setBranchId(String branchId) {
+        this.branchId = branchId;
     }
 }
