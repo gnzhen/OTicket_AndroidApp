@@ -34,7 +34,7 @@ public class ServiceFrag extends Fragment {
     private FloatingActionButton fab;
     private Dialog issueTicketDialog;
     private SearchView searchView;
-    private TextView branchName;
+    private TextView branchName, ewtLabel;
     private Toolbar toolbar;
     private ArrayList<BranchService> branchServices;
 
@@ -63,11 +63,13 @@ public class ServiceFrag extends Fragment {
         recyclerView = view.findViewById(R.id.service_recycler_view);
         toolbar = mainActivity.getToolbar();
         searchView = toolbar.findViewById(R.id.search_view);
+        ewtLabel = view.findViewById(R.id.service_estimated_wait_time_label);
 
         //set up fragment
         mainActivity.setNavActiveItem(R.id.nav_take_a_ticket);
         mainActivity.displayFab(false);
         mainActivity.showSearchBar(true);
+        mainActivity.showBackButton(true);
 
         //set up branch list
         recyclerView.setHasFixedSize(true);
@@ -79,11 +81,17 @@ public class ServiceFrag extends Fragment {
         Bundle bundle = getArguments();
         branchServices = (ArrayList<BranchService>) bundle.getSerializable("branchServices");
 
-        Branch selectedBranch = mainActivity.getBranchById(branchServices.get(0).getBranchId());
-        branchName.setText(selectedBranch.getName());
+        if(branchServices != null) {
+            Branch selectedBranch = mainActivity.getBranchById(branchServices.get(0).getBranchId());
+            branchName.setText(selectedBranch.getName());
+            ewtLabel.setText("EWT - Estimated Wait Time");
 
-        adapter = new ServiceRecyclerAdapter(branchServices, getContext());
-        recyclerView.setAdapter(adapter);
+            adapter = new ServiceRecyclerAdapter(branchServices, getContext());
+            recyclerView.setAdapter(adapter);
+        }
+        else{
+            mainActivity.setContentText("-  No service to display  -");
+        }
 
         mainActivity.setSearchLabelText("Choose a service");
 
@@ -99,17 +107,18 @@ public class ServiceFrag extends Fragment {
 
                 ArrayList<BranchService> filteredList = new ArrayList<>();
 
-                for(BranchService bs : branchServices){
-                    Service service = mainActivity.getServiceById(bs.getServiceId());
-                    String name = service.getName().toUpperCase();
+                if(branchServices != null) {
+                    for (BranchService bs : branchServices) {
+                        Service service = mainActivity.getServiceById(bs.getServiceId());
+                        String name = service.getName().toUpperCase();
 
-                    if(name.contains(searchText.toUpperCase())){
-                        filteredList.add(bs);
+                        if (name.contains(searchText.toUpperCase())) {
+                            filteredList.add(bs);
+                        }
                     }
+
+                    adapter.setFilter(filteredList);
                 }
-
-                adapter.setFilter(filteredList);
-
                 return false;
             }
         });

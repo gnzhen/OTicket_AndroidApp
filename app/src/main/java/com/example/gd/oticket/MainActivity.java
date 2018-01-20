@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     Queue queue;
     Ticket ticket;
     Dialog confirmDialog, issueTicketDialog, postponeDialog, cancelTicketDialog;
+    ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,10 +93,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        showBackButton(true);
 
         setData();
 
@@ -182,6 +185,30 @@ public class MainActivity extends AppCompatActivity
         clearSearchView();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    public void showBackButton(boolean show){
+        if(show){
+            // Remove hamburger
+            toggle.setDrawerIndicatorEnabled(false);
+            // Show back button
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+            toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
+        else{
+            // Remove back button
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            // Show hamburger
+            toggle.setDrawerIndicatorEnabled(true);
+            // Remove the/any drawer toggle listener
+            toggle.setToolbarNavigationClickListener(null);
+        }
     }
 
     public void clearSearchView(){
@@ -321,11 +348,11 @@ public class MainActivity extends AppCompatActivity
         Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
 
         // Change the alert dialog buttons layout
-        positiveButton.setTextColor(getResources().getColor(R.color.colorAccent));
+        positiveButton.setTextColor(getResources().getColor(R.color.colorAccentLight));
         positiveButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
         negativeButton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        negativeButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        negativeButton.setBackgroundColor(getResources().getColor(R.color.colorAccentLight));
 
         setMargins(positiveButton, 30, 0, 30, 0);
     }
@@ -369,6 +396,11 @@ public class MainActivity extends AppCompatActivity
         });
 
         postponeDialog.show();
+    }
+
+    public void setContentText(String text){
+        TextView content = findViewById(R.id.content_text_view);
+        content.setText(text);
     }
 
 

@@ -57,6 +57,7 @@ public class BranchFrag extends Fragment {
         mainActivity.setSearchLabelText("Choose a branch");
         mainActivity.displayFab(false);
         mainActivity.showSearchBar(true);
+        mainActivity.showBackButton(false);
 
         //set up branch list
         recyclerView.setHasFixedSize(true);
@@ -67,8 +68,13 @@ public class BranchFrag extends Fragment {
         Bundle bundle = getArguments();
         branches = (ArrayList<Branch>) bundle.getSerializable("branches");
 
-        adapter = new BranchRecyclerAdapter(branches, getContext());
-        recyclerView.setAdapter(adapter);
+        if(branches != null) {
+            adapter = new BranchRecyclerAdapter(branches, getContext());
+            recyclerView.setAdapter(adapter);
+        }
+        else{
+            mainActivity.setContentText("-  No branch to display  -");
+        }
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
 
@@ -82,15 +88,16 @@ public class BranchFrag extends Fragment {
 
                 ArrayList<Branch> filteredList = new ArrayList<>();
 
-                for(Branch branch: branches){
-                    String name = branch.getName().toUpperCase();
-                    if(name.contains(searchText.toUpperCase())){
-                        filteredList.add(branch);
+                if(branches != null) {
+                    for (Branch branch : branches) {
+                        String name = branch.getName().toUpperCase();
+                        if (name.contains(searchText.toUpperCase())) {
+                            filteredList.add(branch);
+                        }
                     }
+
+                    adapter.setFilter(filteredList);
                 }
-
-                adapter.setFilter(filteredList);
-
                 return false;
             }
         });

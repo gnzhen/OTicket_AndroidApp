@@ -16,8 +16,8 @@
             android:id="@+id/content_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:gravity="center_horizontal"/>
+            android:paddingVertical="60dp"
+            android:gravity="center_horizontal" />
     </RelativeLayout>
 
     <FrameLayout

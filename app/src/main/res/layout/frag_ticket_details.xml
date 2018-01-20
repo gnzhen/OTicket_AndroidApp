@@ -244,7 +244,7 @@
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
                 android:text="Postpone"
-                android:textColor="@color/colorAccent" />
+                android:textColor="@color/colorAccentLight" />
 
             <Button
                 android:id="@+id/ticket_details_cancel_btn"
@@ -254,7 +254,7 @@
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryDark"
                 android:text="Cancel Ticket"
-                android:textColor="@color/colorAccent" />
+                android:textColor="@color/colorAccentLight" />
 
         </LinearLayout>
     </LinearLayout>

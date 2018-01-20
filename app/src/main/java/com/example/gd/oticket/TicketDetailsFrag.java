@@ -50,6 +50,7 @@ public class TicketDetailsFrag extends Fragment {
         mainActivity.setNavActiveItem(R.id.nav_my_ticket);
         mainActivity.displayFab(false);
         mainActivity.showSearchBar(false);
+        mainActivity.showBackButton(true);
 
         //get bundle
         Bundle bundle = getArguments();

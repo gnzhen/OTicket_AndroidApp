@@ -53,6 +53,7 @@ public class TicketFrag extends Fragment {
         mainActivity.setNavActiveItem(R.id.nav_my_ticket);
         mainActivity.displayFab(true);
         mainActivity.showSearchBar(false);
+        mainActivity.showBackButton(false);
 
         //set up ticket list
         recyclerView.setHasFixedSize(true);
@@ -68,5 +69,9 @@ public class TicketFrag extends Fragment {
             adapter = new TicketRecyclerAdapter(tickets, getContext());
             recyclerView.setAdapter(adapter);
         }
+        else{
+            mainActivity.setContentText("-  No ticket to display  -");
+        }
+
     }
 }

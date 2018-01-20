@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:textColor="@color/colorPrimaryDark"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="@color/colorAccentLight"
                 android:text="Cancel" />
         </LinearLayout>
     </LinearLayout>

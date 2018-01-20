@@ -31,5 +31,6 @@ public class HistoryFrag extends Fragment {
         //set up fragment
         mainActivity.setNavActiveItem(R.id.nav_history);
         mainActivity.showSearchBar(false);
+        mainActivity.showBackButton(false);
     }
 }

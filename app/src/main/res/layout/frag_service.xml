@@ -33,13 +33,12 @@
         android:layout_marginVertical="3dp">
 
         <TextView
-            android:id="@+id/estimated_wait_time"
+            android:id="@+id/service_estimated_wait_time_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:textColor="@color/colorPrimary"
-            android:text="EWT - Estimated Wait Time" />
+            android:textColor="@color/colorPrimary" />
     </RelativeLayout>
 
 </LinearLayout>

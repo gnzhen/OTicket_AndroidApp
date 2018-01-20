@@ -69,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/colorAccentLight"
             android:text="Cancel"
             android:textColor="@color/colorPrimaryDark" />
 
