@@ -11,7 +11,7 @@ public class Branch implements Serializable{
     private String id;
     private String name;
     private String desc;
-    private ArrayList<Service> services;
+    private ArrayList<Service> services = new ArrayList<>();
 
     public Branch(){
 

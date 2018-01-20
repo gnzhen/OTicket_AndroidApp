@@ -60,7 +60,7 @@ public class BranchRecyclerAdapter extends RecyclerView.Adapter<BranchRecyclerAd
                 bundle.putSerializable("branchServices", branchServices);
                 serviceFrag.setArguments(bundle);
 
-                ((MainActivity)context).DisplayFragment(serviceFrag, null);
+                mainActivity.DisplayFragment(serviceFrag, null);
             }
         });
     }

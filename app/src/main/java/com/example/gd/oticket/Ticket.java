@@ -1,5 +1,7 @@
 package com.example.gd.oticket;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
@@ -7,7 +9,7 @@ import java.text.SimpleDateFormat;
  * Created by GD on 1/13/2018.
  */
 
-public class Ticket implements Serializable{
+public class Ticket implements Serializable, Comparable<Ticket>{
     private int id;
     private String ticketNo;
     private SimpleDateFormat issueTime;
@@ -98,5 +100,10 @@ public class Ticket implements Serializable{
 
     public void setPostponed(int postponed){
         this.postponed = postponed;
+    }
+
+    @Override
+    public int compareTo(@NonNull Ticket ticket) {
+        return this.getWaitTime() - ticket.getWaitTime();
     }
 }

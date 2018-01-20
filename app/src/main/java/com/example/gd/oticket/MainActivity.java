@@ -20,8 +20,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.sql.Timestamp;
@@ -30,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,7 +55,7 @@ public class MainActivity extends AppCompatActivity
     BranchService branchService;
     Queue queue;
     Ticket ticket;
-    Dialog confirmDialog, issueTicketDialog;
+    Dialog confirmDialog, issueTicketDialog, postponeDialog, cancelTicketDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +114,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            clearSearchView();
             super.onBackPressed();
         }
     }
@@ -174,8 +179,16 @@ public class MainActivity extends AppCompatActivity
             ft.commit();
         }
 
+        clearSearchView();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    public void clearSearchView(){
+        if(searchView != null){
+            searchView.setQuery("", false);
+            searchView.setIconified(true);
+        }
     }
 
     public void setNavActiveItem(int item){
@@ -240,7 +253,7 @@ public class MainActivity extends AppCompatActivity
         String branchServiceId = shortestQueue.getBranchServiceId();
         Service queueService = getServiceByBranchServiceId(branchServiceId);
         serviceTV.setText(queueService.getName());
-        waitTimeTV.setText(getWaitTimeString(getWaitTimeByQueue(shortestQueue)));
+        waitTimeTV.setText(intTimeToString(getWaitTimeByQueue(shortestQueue)));
 
         Button cancelBtn = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_cancel_btn);
         cancelBtn.setOnClickListener(new View.OnClickListener(){
@@ -254,16 +267,31 @@ public class MainActivity extends AppCompatActivity
         issueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showConfirmDialog();
+                showConfirmationDialog("issueTicket");
             }
         });
 
         issueTicketDialog.show();
     }
 
-    public void showConfirmDialog(){
+    public void showConfirmationDialog(String action){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("Confirm issue ticket?").setCancelable(false);
+
+        String message = "Are you sure?";
+
+        switch (action){
+            case "issueTicket":
+                message = "Confirm issue ticket?";
+                break;
+            case "postponeTicket":
+                message = "Confirm postpone ticket?";
+                break;
+            case "cancelTicket":
+                message = "Confirm cancel ticket?";
+                break;
+        }
+
+        alertDialogBuilder.setMessage(message).setCancelable(false);
 
         alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
@@ -271,6 +299,8 @@ public class MainActivity extends AppCompatActivity
                 dialog.dismiss();
                 if(issueTicketDialog != null)
                     issueTicketDialog.dismiss();
+                if(postponeDialog != null)
+                    postponeDialog.dismiss();
             }
         });
 
@@ -298,6 +328,47 @@ public class MainActivity extends AppCompatActivity
         negativeButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
 
         setMargins(positiveButton, 30, 0, 30, 0);
+    }
+
+    public void showPostponeDialog(Ticket ticket){
+        postponeDialog = new Dialog(this);
+        postponeDialog.setContentView(R.layout.dialog_postpone);
+        postponeDialog.setCancelable(false);
+
+
+        List<String> postponeTime = new ArrayList<>();
+
+        int noOfTicketBehind = getNumberOfTicketBehindByTicket(ticket);
+        int avgWaitTime = getAvgWaitTimeByTicket(ticket);
+
+        for(int i = 1; i <= noOfTicketBehind; i++){
+            int postponeTimeInt = i * avgWaitTime;
+            postponeTime.add(intTimeToString(postponeTimeInt));
+        }
+
+        Spinner postponeSpinner = postponeDialog.findViewById(R.id.postpone_dialog_postpone_time_spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, postponeTime);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        postponeSpinner.setAdapter(adapter);
+
+        Button cancelBtn = postponeDialog.findViewById(R.id.postpone_dialog_cancel_btn);
+        cancelBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                postponeDialog.dismiss();
+            }
+        });
+
+        Button postponeBtn = postponeDialog.findViewById(R.id.postpone_dialog_postpone_btn);
+        postponeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showConfirmationDialog("postponeTicket");
+            }
+        });
+
+        postponeDialog.show();
     }
 
 
@@ -343,8 +414,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        int a = 0;
         //hardcode queue data
+        int a = 0;
         for(BranchService bs: branchServices){
             int id = a;
             ArrayList<String> counterIds = new ArrayList<>();
@@ -356,14 +427,18 @@ public class MainActivity extends AppCompatActivity
             queues.add(queue);
             a++;
             queue.addTicketIdToQueue(0);
+            queue.addTicketIdToQueue(1);
+            queue.addTicketIdToQueue(2);
+            queue.addTicketIdToQueue(3);
+            queue.addTicketIdToQueue(4);
         }
 
         //hardcode ticket data
-        for(int i = 0; i < 2; i++){
+        for(int i = 0; i < 5; i++){
             int id = i;
             String ticketNo = String.format("%04d", id);
             int queueId = i;
-            int waitTime = 3665;
+            int waitTime = (i + 1) * 2000;
             int pplAhead = 5;
             int userId = i;
 
@@ -393,7 +468,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public String getWaitTimeString(int waitTime){
+    public String intTimeToString(int waitTime){
         String waitTimeString;
 
         if(waitTime < 60){
@@ -402,16 +477,19 @@ public class MainActivity extends AppCompatActivity
         else if (waitTime < 3600) {
             int m = waitTime / 60;
             int s = waitTime % 60;
-            waitTimeString = Integer.toString(m) + "min "
-                    + Integer.toString(s) + "sec";
+
+            waitTimeString = Integer.toString(m) + "min";
+            if (s > 0)
+                waitTimeString += " " + Integer.toString(s) + "sec";
         }
         else {
             int h = waitTime / 3600;
             int mTemp = waitTime % 3600;
             int m = mTemp / 60;
 
-            waitTimeString = Integer.toString(h) + "hr "
-                    + Integer.toString(m) + "min";
+            waitTimeString = Integer.toString(h) + "hr";
+            if (m > 0)
+                waitTimeString += " " + Integer.toString(m) + "min";
         }
         return waitTimeString;
     }
@@ -469,10 +547,6 @@ public class MainActivity extends AppCompatActivity
         return ticket;
     }
 
-    public ArrayList<Service> getServicesByBranchId(String id){
-        return getBranchById(id).getServices();
-    }
-
     public ArrayList<BranchService> getBranchServicesByBranchId(String id){
         ArrayList<BranchService> serviceOfBranch = new ArrayList<BranchService>();
 
@@ -501,18 +575,6 @@ public class MainActivity extends AppCompatActivity
 
         return queue;
     }
-
-//    public Queue getShortestQueuesByBranchServiceId(String id){
-//        ArrayList<Queue> queuesOfService = getQueuesByBranchServiceId(id);
-//        Queue shortestQueue = queuesOfService.get(0);
-//
-//        for(Queue q: queues){
-//            if(getWaitTimeByQueue(q) < getWaitTimeByQueue(shortestQueue))
-//                shortestQueue = q;
-//        }
-//
-//        return shortestQueue;
-//    }
 
     public Queue getQueueByTicketId(long id){
         return getQueueById(getTicketById(id).getQueueId());
@@ -546,10 +608,6 @@ public class MainActivity extends AppCompatActivity
         return serviceOfQueue;
     }
 
-    public int getLatestTicketIdByQueueId(int id){
-        return getQueueById(id).getLatestTicketId();
-    }
-
     public int getWaitTimeByQueue(Queue queue){
         BranchService queueBranchService = getBranchServiceById(queue.getBranchServiceId());
         int avgWaitTime = queueBranchService.getAvgWaitTime();
@@ -575,5 +633,32 @@ public class MainActivity extends AppCompatActivity
         Ticket ticketServingNow = getTicketById(queue.getTicketIdServingNow());
 
         return ticketServingNow.getTicketNo();
+    }
+
+    public ArrayList<Integer> getTicketsBehindByTicket(Ticket ticket){
+        queue = getQueueByTicketId(ticket.getId());
+        ArrayList<Integer> ticketsInQueue = queue.getTicketIds();
+        ArrayList<Integer> ticketsBehind = new ArrayList<>();
+
+        int ticketPos = ticketsInQueue.indexOf(ticket.getId());
+        int lastPos = ticketsInQueue.size() - 1;
+
+        for(int i = ticketPos + 1; i <= lastPos; i++){
+            ticketsBehind.add(ticketsInQueue.get(i));
+        }
+
+        return ticketsBehind;
+    }
+
+    public int getNumberOfTicketBehindByTicket(Ticket ticket){
+        return getTicketsBehindByTicket(ticket).size();
+    }
+
+    public int getAvgWaitTimeByTicket(Ticket ticket){
+
+        queue = getQueueByTicketId(ticket.getId());
+        branchService = getBranchServiceById(queue.getBranchServiceId());
+
+        return branchService.getAvgWaitTime();
     }
 }

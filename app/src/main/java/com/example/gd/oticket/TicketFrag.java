@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public class TicketFrag extends Fragment {
     private MainActivity mainActivity;
     private TicketRecyclerAdapter adapter;
     private RecyclerView recyclerView;
-    private ArrayList<Ticket> tickets;
+    private List<Ticket> tickets;
     private SearchView searchView;
     private Ticket ticket;
     private Toolbar toolbar;
@@ -61,6 +62,7 @@ public class TicketFrag extends Fragment {
 
         Bundle bundle = getArguments();
         tickets = (ArrayList<Ticket>) bundle.getSerializable("tickets");
+        Collections.sort((List<Ticket>) tickets);
 
         if(tickets != null){
             adapter = new TicketRecyclerAdapter(tickets, getContext());

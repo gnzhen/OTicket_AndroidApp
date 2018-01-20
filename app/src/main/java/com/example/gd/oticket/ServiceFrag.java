@@ -69,7 +69,6 @@ public class ServiceFrag extends Fragment {
         mainActivity.displayFab(false);
         mainActivity.showSearchBar(true);
 
-
         //set up branch list
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

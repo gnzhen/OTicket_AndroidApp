@@ -19,11 +19,11 @@ import java.util.List;
 
 public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAdapter.ViewHolder> {
 
-    private ArrayList<Ticket> ticketAL = new ArrayList<>();
+    private List<Ticket> ticketAL = new ArrayList<>();
     private Context context;
     private MainActivity mainActivity;
 
-    public TicketRecyclerAdapter(ArrayList<Ticket> ticketAL, Context context){
+    public TicketRecyclerAdapter(List<Ticket> ticketAL, Context context){
         this.ticketAL = ticketAL;
         this.context = context;
     }
@@ -46,7 +46,7 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
         Service ticketService = mainActivity.getServiceById(ticketBranchService.getServiceId());
 
         holder.queueNoTV.setText(ticket.getTicketNo());
-        holder.waitTimeTV.setText(mainActivity.getWaitTimeString(ticket.getWaitTime()));
+        holder.waitTimeTV.setText(mainActivity.intTimeToString(ticket.getWaitTime()));
         holder.branchTV.setText(ticketBranch.getName());
         holder.serviceTV.setText(ticketService.getName());
         holder.rowLL.setOnClickListener(new View.OnClickListener(){

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_edge"
+    android:minWidth="300dp"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:paddingHorizontal="10dp"
+        android:id="@+id/postpone_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Postpone Ticket"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="25sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_gravity="center_vertical"
+        android:backgroundTint="@color/colorAccent"
+        android:background="@drawable/horizontal_dashed_line" />
+
+    <TextView
+        android:paddingHorizontal="10dp"
+        android:id="@+id/postpone_dialog_postpone_time_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:textSize="18sp"
+        android:text="Choose postpone duration:"
+        android:textColor="@color/colorPrimary" />
+
+    <Spinner
+        android:paddingHorizontal="10dp"
+        android:id="@+id/postpone_dialog_postpone_time_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="10dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_gravity="center_vertical"
+        android:backgroundTint="@color/colorAccent"
+        android:background="@drawable/horizontal_dashed_line" />
+
+    <TextView
+        android:paddingHorizontal="10dp"
+        android:id="@+id/postpone_dialog_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:text="Note: You can only postpone each ticket for maximum 2 times."
+        android:textColor="@color/colorPrimary" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="right">
+
+        <Button
+            android:id="@+id/postpone_dialog_cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/colorAccent"
+            android:text="Cancel"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <Button
+            android:id="@+id/postpone_dialog_postpone_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toRightOf="@+id/postpone_dialog_cancel_btn"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:text="Postpone"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+</LinearLayout>

@@ -20,7 +20,6 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
 
     private ArrayList<BranchService> branchServiceAL = new ArrayList<>();
     private Context context;
-    private Branch branch;
     private MainActivity mainActivity;
 
     public ServiceRecyclerAdapter(ArrayList<BranchService> branchServiceAL, Context context){
@@ -45,7 +44,7 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
         int waitTime = mainActivity.getWaitTimeByQueue(queue);
 
         holder.headTV.setText(serviceName);
-        holder.bodyTV.setText("EWT: " + mainActivity.getWaitTimeString(waitTime));
+        holder.bodyTV.setText("EWT: " + mainActivity.intTimeToString(waitTime));
         holder.rowLL.setOnClickListener(new View.OnClickListener(){
 
             @Override
