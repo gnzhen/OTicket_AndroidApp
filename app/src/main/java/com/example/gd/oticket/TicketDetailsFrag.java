@@ -21,6 +21,7 @@ public class TicketDetailsFrag extends Fragment {
     private Button postpone, cancelTicket;
     private Ticket ticket;
     private Toolbar toolbar;
+    private View dot1, dot2;
 
     @Nullable
     @Override
@@ -33,7 +34,8 @@ public class TicketDetailsFrag extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //Initialize variables
-        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        dot1 = view.findViewById(R.id.ticket_details_dot1);
+        dot2 = view.findViewById(R.id.ticket_details_dot2);
         mainActivity = (MainActivity)this.getActivity();
         toolbar = mainActivity.getToolbar();
         ticketNumber = view.findViewById(R.id.ticket_details_ticket_number);
@@ -51,10 +53,12 @@ public class TicketDetailsFrag extends Fragment {
         mainActivity.displayFab(false);
         mainActivity.showSearchBar(false);
         mainActivity.showBackButton(true);
+        mainActivity.setLayerType(dot1);
+        mainActivity.setLayerType(dot2);
 
         //get bundle
         Bundle bundle = getArguments();
-        ticket = (Ticket) bundle.getSerializable("ticket");
+        ticket = (Ticket) bundle.getSerializable("ticketDetails");
         ticketNumber.setText(ticket.getTicketNo());
         pplAhead.setText(Integer.toString(ticket.getPplAhead()));
         waitTime.setText(mainActivity.intTimeToString(ticket.getWaitTime()));

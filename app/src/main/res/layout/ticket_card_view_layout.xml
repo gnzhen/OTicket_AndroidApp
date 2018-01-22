@@ -28,6 +28,7 @@
             android:foreground="?selectableItemBackground">
 
             <View
+                android:id="@+id/ticket_card_view_dot"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"

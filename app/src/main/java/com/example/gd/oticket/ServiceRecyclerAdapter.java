@@ -41,6 +41,7 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
 
         String serviceName = mainActivity.getServiceById(branchService.getServiceId()).getName();
         final Queue queue = mainActivity.getQueueByBranchServiceId(branchService.getId());
+
         int waitTime = mainActivity.getWaitTimeByQueue(queue);
 
         holder.headTV.setText(serviceName);

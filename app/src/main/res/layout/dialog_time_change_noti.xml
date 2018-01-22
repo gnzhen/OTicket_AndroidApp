@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="bottom"
-            android:text="12hr 30min"
+            android:text="-"
             android:layout_toRightOf="@+id/time_change_label2"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="23sp" />
@@ -68,6 +68,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/time_change_dot1"
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:layout_gravity="center_vertical"
@@ -84,7 +85,8 @@
         android:textColor="@color/colorPrimary"
         android:textSize="16sp" />
 
-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/time_change_ticket_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -97,6 +99,7 @@
             android:background="@drawable/ticket_background" />
 
         <LinearLayout
+            android:id="@+id/time_change_ticket"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
@@ -107,6 +110,7 @@
             android:paddingVertical="10dp">
 
             <View
+                android:id="@+id/time_change_dot2"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
@@ -146,6 +150,7 @@
         android:foreground="?selectableItemBackground"
         android:text="Dismiss"
         android:layout_marginTop="10dp"
-        android:textColor="@color/colorPrimaryDark" />
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginHorizontal="10dp"/>
 
 </LinearLayout>

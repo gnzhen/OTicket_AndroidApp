@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,6 @@ public class TicketFrag extends Fragment {
         setHasOptionsMenu(true);
 
         //Initialize variables
-        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mainActivity = (MainActivity)this.getActivity();
         recyclerView = view.findViewById(R.id.ticket_recycler_view);
         toolbar = mainActivity.getToolbar();

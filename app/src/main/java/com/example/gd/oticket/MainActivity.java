@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -187,13 +188,13 @@ public class MainActivity extends AppCompatActivity
             public void onTick(long millisUntilFinished) {
                 if(timeChangeDialog != null){
                     if(!timeChangeDialog.isShowing()){
-                        showTimeChangeDialog();
+                        showReminderDialog();
                     }
                 }
             }
 
             public void onFinish() {
-                showTimeChangeDialog();
+                showReminderDialog();
             }
 
         }.start();
@@ -303,17 +304,18 @@ public class MainActivity extends AppCompatActivity
         return toolbar;
     }
 
-    public void showIssueTicketDialog(Queue shortestQueue){
+    public void showIssueTicketDialog(Queue queue){
         issueTicketDialog = new Dialog(this);
         issueTicketDialog.setContentView(R.layout.dialog_issue_ticket);
         issueTicketDialog.setCancelable(false);
 
         TextView serviceTV = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_service);
         TextView waitTimeTV = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_wait_time);
-        String branchServiceId = shortestQueue.getBranchServiceId();
+
+        String branchServiceId = queue.getBranchServiceId();
         Service queueService = getServiceByBranchServiceId(branchServiceId);
         serviceTV.setText(queueService.getName());
-        waitTimeTV.setText(intTimeToString(getWaitTimeByQueue(shortestQueue)));
+        waitTimeTV.setText(intTimeToString(getWaitTimeByQueue(queue)));
 
         Button cancelBtn = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_cancel_btn);
         cancelBtn.setOnClickListener(new View.OnClickListener(){
@@ -337,18 +339,31 @@ public class MainActivity extends AppCompatActivity
     public void showReminderDialog(){
         reminderDialog = new Dialog(this);
         reminderDialog.setContentView(R.layout.dialog_reminder_noti);
-        LinearLayout reminderLayout = reminderDialog.findViewById(R.id.reminder_layout);
-        reminderLayout.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         reminderDialog.setCancelable(false);
 
+        LinearLayout ticketLayout = reminderDialog.findViewById(R.id.reminder_ticket);
         Button dismissBtn = reminderDialog.findViewById(R.id.reminder_dismiss_btn);
         Button postponeBtn = reminderDialog.findViewById(R.id.reminder_postpone_btn);
         Button cancelTicketBtn = reminderDialog.findViewById(R.id.reminder_cancel_ticket_btn);
         TextView ticketTV = reminderDialog.findViewById(R.id.reminder_ticket_number);
         TextView serviceTV = reminderDialog.findViewById(R.id.reminder_service);
+        View dot1 = reminderDialog.findViewById(R.id.reminder_dot1);
+        View dot2 = reminderDialog.findViewById(R.id.reminder_dot2);
+        View dot3 = reminderDialog.findViewById(R.id.reminder_dot3);
+        setLayerType(dot1);
+        setLayerType(dot2);
+        setLayerType(dot3);
 
         ticketTV.setText(ticket.getTicketNo());
         serviceTV.setText(getServiceByTicketId(ticket.getId()).getName());
+
+        ticketLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayFragment(new TicketDetailsFrag(), "ticketDetails");
+                reminderDialog.dismiss();
+            }
+        });
 
         dismissBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -374,25 +389,35 @@ public class MainActivity extends AppCompatActivity
         reminderDialog.show();
     }
 
-    public void showTimeChangeDialog(){
+    public void showTimeChangeDialog(Change change){
         timeChangeDialog = new Dialog(this);
         timeChangeDialog.setContentView(R.layout.dialog_time_change_noti);
-        LinearLayout timeChangeLayout = timeChangeDialog.findViewById(R.id.time_change_layout);
-        timeChangeLayout.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        final LinearLayout timeChangeLayout = timeChangeDialog.findViewById(R.id.time_change_layout);
         timeChangeDialog.setCancelable(false);
 
-        CardView ticketLayout = timeChangeDialog.findViewById(R.id.time_change_ticket_card_view);
+        View dot1 = timeChangeDialog.findViewById(R.id.time_change_dot1);
+        View dot2 = timeChangeDialog.findViewById(R.id.time_change_dot2);
+        setLayerType(dot1);
+        setLayerType(dot2);
+
+        LinearLayout ticketLayout = timeChangeDialog.findViewById(R.id.time_change_ticket);
         Button dismissBtn = timeChangeDialog.findViewById(R.id.time_change_dismiss_btn);
         TextView actionTV = timeChangeDialog.findViewById(R.id.time_change_action);
         TextView timeTV = timeChangeDialog.findViewById(R.id.time_change_time);
+        TextView ticketNoTV = timeChangeDialog.findViewById(R.id.time_change_ticket_number);
+        TextView serviceTV = timeChangeDialog.findViewById(R.id.time_change_service);
 
         actionTV.setText(change.getActionName());
         timeTV.setText(intTimeToString(change.getTime()));
+        ticket = getTicketById(change.getTicketIds().get(1));
+        ticketNoTV.setText(ticket.getTicketNo());
+        serviceTV.setText(getServiceByTicketId(ticket.getId()).getName());
 
         ticketLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                timeChangeDialog.dismiss();
+                displayFragment(new TicketDetailsFrag(), "ticketDetails");
             }
         });
 
@@ -469,7 +494,10 @@ public class MainActivity extends AppCompatActivity
         postponeDialog.setContentView(R.layout.dialog_postpone);
         postponeDialog.setCancelable(false);
         LinearLayout postponeLayout = postponeDialog.findViewById(R.id.postpone_layout);
-        postponeLayout.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        View dot1 = postponeDialog.findViewById(R.id.postpone_dialog_dot1);
+        View dot2= postponeDialog.findViewById(R.id.postpone_dialog_dot2);
+        setLayerType(dot1);
+        setLayerType(dot2);
 
         List<String> postponeTime = new ArrayList<>();
 
@@ -530,6 +558,10 @@ public class MainActivity extends AppCompatActivity
     /*
      * Other functions
      */
+    public void setLayerType(View view){
+        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+    }
+
     public void setData(){
         //hardcode service data
         for(int j = 0; j < 5; j++) {
@@ -718,6 +750,7 @@ public class MainActivity extends AppCompatActivity
     public Service getServiceByBranchServiceId(String id){
         service = null;
 
+        branchService = getBranchServiceById(id);
         service = getServiceById(branchService.getServiceId());
 
         return service;

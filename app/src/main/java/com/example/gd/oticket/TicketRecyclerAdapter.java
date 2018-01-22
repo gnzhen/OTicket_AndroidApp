@@ -22,6 +22,7 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
     private List<Ticket> ticketAL = new ArrayList<>();
     private Context context;
     private MainActivity mainActivity;
+    private View dot;
 
     public TicketRecyclerAdapter(List<Ticket> ticketAL, Context context){
         this.ticketAL = ticketAL;
@@ -32,6 +33,8 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.ticket_card_view_layout, parent, false);
+
+        dot = view.findViewById(R.id.ticket_card_view_dot);
         return new ViewHolder(view);
     }
 
@@ -39,6 +42,8 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
     public void onBindViewHolder(ViewHolder holder, int position) {
         mainActivity = (MainActivity)context;
         final Ticket ticket = ticketAL.get(position);
+
+        mainActivity.setLayerType(dot);
 
         Queue ticketQueue = mainActivity.getQueueByTicketId(ticket.getId());
         BranchService ticketBranchService = mainActivity.getBranchServiceById(ticketQueue.getBranchServiceId());
@@ -57,7 +62,7 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
                 Fragment ticketFrag = new TicketDetailsFrag();
 
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("ticket", ticket);
+                bundle.putSerializable("ticketDetails", ticket);
                 ticketFrag.setArguments(bundle);
 
                 mainActivity.displayFragment(ticketFrag, null);

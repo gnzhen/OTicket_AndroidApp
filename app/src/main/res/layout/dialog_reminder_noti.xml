@@ -43,6 +43,7 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/reminder_dot1"
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:layout_gravity="center_vertical"
@@ -72,6 +73,7 @@
             android:background="@drawable/ticket_background" />
 
         <LinearLayout
+            android:id="@+id/reminder_ticket"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
@@ -82,6 +84,7 @@
             android:paddingVertical="10dp">
 
             <View
+                android:id="@+id/reminder_dot3"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
@@ -113,6 +116,7 @@
     </android.support.v7.widget.CardView>
 
     <View
+        android:id="@+id/reminder_dot2"
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:layout_gravity="center_vertical"
