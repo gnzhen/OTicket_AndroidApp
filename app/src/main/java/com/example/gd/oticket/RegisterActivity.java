@@ -33,6 +33,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
@@ -63,6 +65,8 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     private View progressBar;
     private View loginForm;
     private Button createBtn, backLoginBtn;
+    private CircleImageView imageButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

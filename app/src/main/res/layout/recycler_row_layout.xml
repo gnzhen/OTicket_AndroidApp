@@ -3,7 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusable="true"
+    android:clickable="true">
 
     <View
         android:layout_width="fill_parent"
@@ -17,11 +19,12 @@
         <LinearLayout
             android:id="@+id/recycler_row_linear_layout"
             android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="true"
             android:padding="@dimen/activity_horizontal_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
 
             <TextView
                 android:id="@+id/recycler_row_head"

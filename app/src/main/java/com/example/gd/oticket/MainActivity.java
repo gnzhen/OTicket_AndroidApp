@@ -1,9 +1,13 @@
 package com.example.gd.oticket;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -22,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -55,7 +61,9 @@ public class MainActivity extends AppCompatActivity
     BranchService branchService;
     Queue queue;
     Ticket ticket;
+    Change change;
     Dialog confirmDialog, issueTicketDialog, postponeDialog, cancelTicketDialog;
+    Dialog reminderDialog, timeChangeDialog;
     ActionBarDrawerToggle toggle;
 
     @Override
@@ -88,7 +96,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DisplayFragment(new BranchFrag(), "branches");
+                displayFragment(new BranchFrag(), "branches");
                 setNavActiveItem(R.id.nav_take_a_ticket);
             }
         });
@@ -110,6 +118,8 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
         drawer.closeDrawer(GravityCompat.START);
         setNavActiveItem(R.id.nav_my_ticket);
+
+        testDialog();
     }
 
     @Override
@@ -163,7 +173,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        DisplayFragment(fragment, data);
+        displayFragment(fragment, data);
 
         return true;
     }
@@ -171,7 +181,25 @@ public class MainActivity extends AppCompatActivity
     /*
      * Functions for layout control
      */
-    public void DisplayFragment(Fragment fragment, String bundleData){
+    public void testDialog(){
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                if(timeChangeDialog != null){
+                    if(!timeChangeDialog.isShowing()){
+                        showTimeChangeDialog();
+                    }
+                }
+            }
+
+            public void onFinish() {
+                showTimeChangeDialog();
+            }
+
+        }.start();
+    }
+
+    public void displayFragment(Fragment fragment, String bundleData){
 
         if (fragment != null){
             if(bundleData != null)
@@ -185,6 +213,11 @@ public class MainActivity extends AppCompatActivity
         clearSearchView();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    public void displayActivity(Context fromActivity, Class<?> toActivity){
+        Intent intent = new Intent(fromActivity, toActivity);
+        startActivity(intent);
     }
 
     public void showBackButton(boolean show){
@@ -301,7 +334,79 @@ public class MainActivity extends AppCompatActivity
         issueTicketDialog.show();
     }
 
-    public void showConfirmationDialog(String action){
+    public void showReminderDialog(){
+        reminderDialog = new Dialog(this);
+        reminderDialog.setContentView(R.layout.dialog_reminder_noti);
+        LinearLayout reminderLayout = reminderDialog.findViewById(R.id.reminder_layout);
+        reminderLayout.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        reminderDialog.setCancelable(false);
+
+        Button dismissBtn = reminderDialog.findViewById(R.id.reminder_dismiss_btn);
+        Button postponeBtn = reminderDialog.findViewById(R.id.reminder_postpone_btn);
+        Button cancelTicketBtn = reminderDialog.findViewById(R.id.reminder_cancel_ticket_btn);
+        TextView ticketTV = reminderDialog.findViewById(R.id.reminder_ticket_number);
+        TextView serviceTV = reminderDialog.findViewById(R.id.reminder_service);
+
+        ticketTV.setText(ticket.getTicketNo());
+        serviceTV.setText(getServiceByTicketId(ticket.getId()).getName());
+
+        dismissBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                reminderDialog.dismiss();
+            }
+        });
+
+        postponeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPostponeDialog(tickets.get(0));
+            }
+        });
+
+        cancelTicketBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showConfirmationDialog("cancelTicket");
+            }
+        });
+
+        reminderDialog.show();
+    }
+
+    public void showTimeChangeDialog(){
+        timeChangeDialog = new Dialog(this);
+        timeChangeDialog.setContentView(R.layout.dialog_time_change_noti);
+        LinearLayout timeChangeLayout = timeChangeDialog.findViewById(R.id.time_change_layout);
+        timeChangeLayout.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        timeChangeDialog.setCancelable(false);
+
+        CardView ticketLayout = timeChangeDialog.findViewById(R.id.time_change_ticket_card_view);
+        Button dismissBtn = timeChangeDialog.findViewById(R.id.time_change_dismiss_btn);
+        TextView actionTV = timeChangeDialog.findViewById(R.id.time_change_action);
+        TextView timeTV = timeChangeDialog.findViewById(R.id.time_change_time);
+
+        actionTV.setText(change.getActionName());
+        timeTV.setText(intTimeToString(change.getTime()));
+
+        ticketLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        dismissBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                timeChangeDialog.dismiss();
+            }
+        });
+
+        timeChangeDialog.show();
+    }
+
+    public void showConfirmationDialog(final String action){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
         String message = "Are you sure?";
@@ -324,6 +429,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int arg1) {
                 dialog.dismiss();
+                if(action.equals("issueTicket"))
+                    displayFragment(new TicketFrag(), "tickets");
                 if(issueTicketDialog != null)
                     issueTicketDialog.dismiss();
                 if(postponeDialog != null)
@@ -361,7 +468,8 @@ public class MainActivity extends AppCompatActivity
         postponeDialog = new Dialog(this);
         postponeDialog.setContentView(R.layout.dialog_postpone);
         postponeDialog.setCancelable(false);
-
+        LinearLayout postponeLayout = postponeDialog.findViewById(R.id.postpone_layout);
+        postponeLayout.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         List<String> postponeTime = new ArrayList<>();
 
@@ -408,6 +516,14 @@ public class MainActivity extends AppCompatActivity
      * Functions for action control
      */
     public boolean issueTicket(){
+        return true;
+    }
+
+    public boolean postponeTicket(Ticket ticket){
+        return true;
+    }
+
+    public boolean cancelTicket(Ticket ticket){
         return true;
     }
 
@@ -477,6 +593,16 @@ public class MainActivity extends AppCompatActivity
             ticket = new Ticket(id, ticketNo, queueId, waitTime, pplAhead, userId);
             tickets.add(ticket);
         }
+
+        //hardcode change data
+        int id = 0;
+        int action = 1;
+        int time = 65;
+        ArrayList<Integer> affectedIds = new ArrayList<>();
+        affectedIds.add(0);
+        affectedIds.add(1);
+
+        change = new Change(id, action, time, affectedIds);
     }
 
     public void setBundle(Fragment fragment, String bundleData){
@@ -590,7 +716,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public Service getServiceByBranchServiceId(String id){
-        Service service = null;
+        service = null;
 
         service = getServiceById(branchService.getServiceId());
 
@@ -598,7 +724,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public Queue getQueueByBranchServiceId(String id){
-
         for(Queue q: queues){
             if(q.getBranchServiceId().equals(id)){
                 queue = q;
@@ -613,36 +738,36 @@ public class MainActivity extends AppCompatActivity
     }
 
     public Branch getBranchByTicketId(long id){
-        Branch branchOfQueue = null;
-        Queue queue = getQueueByTicketId(id);
+        branch = null;
+        queue = getQueueByTicketId(id);
         BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
         String branchId = branchService.getBranchId();
 
         for(Branch b: branches){
             if(b.getId().equals(branchId))
-                branchOfQueue = b;
+                branch = b;
         }
 
-        return branchOfQueue;
+        return branch;
     }
 
     public Service getServiceByTicketId(long id){
-        Service serviceOfQueue = null;
+        service = null;
         Queue queue = getQueueByTicketId(id);
         BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
         String serviceId = branchService.getServiceId();
 
         for(Service s: services){
             if(s.getId().equals(serviceId))
-                serviceOfQueue = s;
+                service = s;
         }
 
-        return serviceOfQueue;
+        return service;
     }
 
     public int getWaitTimeByQueue(Queue queue){
-        BranchService queueBranchService = getBranchServiceById(queue.getBranchServiceId());
-        int avgWaitTime = queueBranchService.getAvgWaitTime();
+        branchService = getBranchServiceById(queue.getBranchServiceId());
+        int avgWaitTime = branchService.getAvgWaitTime();
         int numberOfTicketInQueue = queue.getNumberOfTicket();
         int waitTime = numberOfTicketInQueue * avgWaitTime;
 

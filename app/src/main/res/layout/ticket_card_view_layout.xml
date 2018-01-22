@@ -8,8 +8,6 @@
         android:id="@+id/ticket_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:foreground="?selectableItemBackground"
         card_view:cardElevation="9dp"
         card_view:cardUseCompatPadding="true">
 
@@ -24,7 +22,10 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingHorizontal="20dp"
-            android:paddingVertical="10dp">
+            android:paddingVertical="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?selectableItemBackground">
 
             <View
                 android:layout_width="30dp"

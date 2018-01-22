@@ -63,9 +63,9 @@ public class TicketFrag extends Fragment {
 
         Bundle bundle = getArguments();
         tickets = (ArrayList<Ticket>) bundle.getSerializable("tickets");
-        Collections.sort((List<Ticket>) tickets);
 
         if(tickets != null){
+            Collections.sort((List<Ticket>) tickets);
             adapter = new TicketRecyclerAdapter(tickets, getContext());
             recyclerView.setAdapter(adapter);
         }

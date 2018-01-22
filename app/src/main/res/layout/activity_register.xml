@@ -85,16 +85,18 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:paddingTop="@dimen/nav_header_vertical_spacing"
-                    app:srcCompat="@mipmap/ic_launcher_round" />
+                    android:foreground="?selectableItemBackground"
+                    app:srcCompat="@mipmap/ic_launcher" />
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/colorAccent">
 
                     <AutoCompleteTextView
                         android:id="@+id/register_email"
@@ -104,14 +106,14 @@
                         android:hint="@string/prompt_email"
                         android:inputType="textEmailAddress"
                         android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColorHint="@color/colorAccent" />
+                        android:singleLine="true" />
 
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/colorAccent">
 
                     <AutoCompleteTextView
                         android:id="@+id/register_name"
@@ -121,48 +123,47 @@
                         android:hint="Name"
                         android:inputType="textEmailAddress"
                         android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColorHint="@color/colorAccent" />
+                        android:singleLine="true" />
 
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/colorAccent">
 
                     <EditText
                         android:id="@+id/register_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorPrimaryDark"
-                        android:hint="@string/prompt_password"
+                        android:hint="Password"
                         android:imeActionId="6"
                         android:imeActionLabel="@string/action_sign_in_short"
                         android:imeOptions="actionUnspecified"
                         android:inputType="textPassword"
                         android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColorHint="@color/colorAccent" />
+                        android:singleLine="true" />
 
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/colorAccent">
 
                     <EditText
                         android:id="@+id/register_confirm_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorPrimaryDark"
-                        android:hint="@string/prompt_password"
+                        android:hint="Confirm Password"
                         android:imeActionId="6"
                         android:imeActionLabel="@string/action_sign_in_short"
                         android:imeOptions="actionUnspecified"
                         android:inputType="textPassword"
                         android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColorHint="@color/colorAccent" />
+                        android:singleLine="true" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -174,6 +175,7 @@
                     android:layout_marginTop="30dp"
                     android:background="@color/colorPrimaryDark"
                     android:text="Create a new account"
+                    android:foreground="?selectableItemBackground"
                     android:textColor="@color/colorAccentLight" />
 
                 <Button
@@ -184,6 +186,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@color/colorAccentLight"
                     android:text="Back to Login"
+                    android:foreground="?selectableItemBackground"
                     android:textColor="@color/colorPrimaryDark" />
 
             </LinearLayout>

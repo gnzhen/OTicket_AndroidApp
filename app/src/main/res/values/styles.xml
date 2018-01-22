@@ -29,6 +29,7 @@
 
     <style name="BlueGreyTheme" parent="AppTheme" >
         <item name="android:textViewStyle">@style/sansSerif</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
 
     <style name="sansSerif" parent="android:Widget.TextView">

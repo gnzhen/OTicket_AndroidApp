@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/postpone_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/round_edge"
@@ -71,6 +72,7 @@
             android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorAccentLight"
             android:text="Cancel"
+            android:foreground="?selectableItemBackground"
             android:textColor="@color/colorPrimaryDark" />
 
         <Button
@@ -82,6 +84,7 @@
             android:layout_toRightOf="@+id/postpone_dialog_cancel_btn"
             android:backgroundTint="@color/colorPrimaryDark"
             android:text="Postpone"
+            android:foreground="?selectableItemBackground"
             android:textColor="@android:color/white" />
     </RelativeLayout>
 </LinearLayout>

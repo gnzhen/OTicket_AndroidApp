@@ -60,7 +60,7 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
                 bundle.putSerializable("ticket", ticket);
                 ticketFrag.setArguments(bundle);
 
-                mainActivity.DisplayFragment(ticketFrag, null);
+                mainActivity.displayFragment(ticketFrag, null);
             }
         });
     }
