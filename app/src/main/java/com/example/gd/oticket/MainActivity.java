@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.function.LongToIntFunction;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,12 +59,14 @@ public class MainActivity extends AppCompatActivity
     ArrayList<BranchService> branchServices;
     ArrayList<Queue> queues;
     ArrayList<Ticket> tickets;
+    ArrayList<History> histories;
     Branch branch;
     Service service;
     BranchService branchService;
     Queue queue;
     Ticket ticket;
     Change change;
+    History history;
     Dialog confirmDialog, issueTicketDialog, postponeDialog, cancelTicketDialog;
     Dialog reminderDialog, timeChangeDialog;
     ActionBarDrawerToggle toggle;
@@ -77,6 +81,7 @@ public class MainActivity extends AppCompatActivity
         branchServices = new ArrayList<>();
         queues = new ArrayList<>();
         tickets = new ArrayList<>();
+        histories = new ArrayList<>();
 
         fab = findViewById(R.id.fab);
         toolbar = findViewById(R.id.toolbar);
@@ -249,6 +254,12 @@ public class MainActivity extends AppCompatActivity
         if(searchView != null){
             searchView.setQuery("", false);
             searchView.setIconified(true);
+        }
+    }
+
+    public void setTitle(String title){
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setTitle(title);
         }
     }
 
@@ -620,21 +631,47 @@ public class MainActivity extends AppCompatActivity
             int queueId = i;
             int waitTime = (i + 1) * 2000;
             int pplAhead = 5;
-            int userId = i;
 
-            ticket = new Ticket(id, ticketNo, queueId, waitTime, pplAhead, userId);
+            ticket = new Ticket(id, ticketNo, queueId, waitTime, pplAhead);
             tickets.add(ticket);
         }
 
         //hardcode change data
-        int id = 0;
-        int action = 1;
-        int time = 65;
-        ArrayList<Integer> affectedIds = new ArrayList<>();
-        affectedIds.add(0);
-        affectedIds.add(1);
+        for(int i = 0; i < 1; i++){
+            int id = 0;
+            int action = 1;
+            int time = 65;
+            ArrayList<Integer> affectedIds = new ArrayList<>();
+            affectedIds.add(0);
+            affectedIds.add(1);
 
-        change = new Change(id, action, time, affectedIds);
+            change = new Change(id, action, time, affectedIds);
+        }
+
+        //hardcode history data
+        for(int i = 0; i < 5; i++){
+            int id = i;
+            int ticketId = i;
+            String staffId = "Staff 1";
+            String counterId = "Counter 1";
+            long serveTime = 1372339860;
+            long doneTime = 1372340000;
+
+            history = new History(id, ticketId, staffId, counterId, serveTime, doneTime);
+            histories.add(history);
+        }
+
+        for(int i = 0; i < 5; i++){
+            int id = i;
+            int ticketId = i;
+            String staffId = "Staff 1";
+            String counterId = "Counter 1";
+            long serveTime = 1372339860;
+            long doneTime = 1372340000;
+
+            history = new History(id, ticketId, staffId, counterId, serveTime, doneTime);
+            histories.add(history);
+        }
     }
 
     public void setBundle(Fragment fragment, String bundleData){
@@ -653,6 +690,8 @@ public class MainActivity extends AppCompatActivity
                 bundle.putSerializable(bundleData, tickets);
             else if(bundleData == "ticketDetails")
                 bundle.putSerializable(bundleData, ticket);
+            else if(bundleData == "histories")
+                bundle.putSerializable(bundleData, histories);
 
             fragment.setArguments(bundle);
         }
@@ -850,5 +889,35 @@ public class MainActivity extends AppCompatActivity
         branchService = getBranchServiceById(queue.getBranchServiceId());
 
         return branchService.getAvgWaitTime();
+    }
+
+    public String getDateTimeStringByUnix(long unix){
+        // convert seconds to milliseconds
+        Date date = new Date(unix * 1000L);
+
+        // the format of your date
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm a");
+
+        // give a timezone reference for formatting
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        String formattedDate = sdf.format(date);
+
+        return formattedDate;
+    }
+
+    public int calWaitTimeInt(long serveTime, long doneTime){
+        long diff = doneTime - serveTime;
+        int waitTime;
+
+        if ( diff > (long)Integer.MAX_VALUE ) {
+            // diff is too big to convert, throw an exception
+            waitTime = -((int)diff);
+
+        }
+        else {
+            waitTime = (int)diff;
+        }
+
+        return waitTime;
     }
 }

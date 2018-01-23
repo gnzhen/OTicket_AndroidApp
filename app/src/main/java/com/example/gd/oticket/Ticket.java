@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 public class Ticket implements Serializable, Comparable<Ticket>{
     private int id;
     private String ticketNo;
-    private SimpleDateFormat issueTime;
+    private long issueTime;
     private int queueId;
     private int waitTime;
     private int pplAhead;
@@ -26,9 +26,10 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         this.setWaitTime(waitTime);
         this.setPplAhead(pplAhead);
         this.setPostponed(0);
+        this.setIssueTime(1516451460);
     }
 
-    public Ticket(int id, String ticketNo, int queueId, int waitTime, int pplAhead, int userId){
+    public Ticket(int id, String ticketNo, int queueId, int waitTime, int pplAhead, int userId, long issueTime){
         this.setId(id);
         this.setTicketNo(ticketNo);
         this.setQueueId(queueId);
@@ -36,6 +37,7 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         this.setPplAhead(pplAhead);
         this.setUserId(userId);
         this.setPostponed(0);
+        this.setIssueTime(issueTime);
     }
 
     public int getId(){
@@ -46,7 +48,7 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         return this.ticketNo;
     }
 
-    public SimpleDateFormat getIssueTime() {
+    public long getIssueTime() {
         return this.issueTime;
     }
 
@@ -78,7 +80,7 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         this.ticketNo = ticketNo;
     }
 
-    public void setIssueTime(SimpleDateFormat issueTime) {
+    public void setIssueTime(long issueTime) {
         this.issueTime = issueTime;
     }
 

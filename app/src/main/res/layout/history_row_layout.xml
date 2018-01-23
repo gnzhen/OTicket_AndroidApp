@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/recycler_row_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="20dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="20dp">
+
+                <View
+                    android:id="@+id/history_row_dot1"
+                    android:layout_width="165dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/horizontal_dashed_line" />
+
+                <TextView
+                    android:id="@+id/history_row_issue_date_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/history_row_dot1"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="5dp"
+                    android:text="28 Dec 2017 12:59 PM"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <View
+                    android:id="@+id/history_row_dot2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/history_row_issue_date_time"
+                    android:background="@drawable/horizontal_dashed_line" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/history_row_branch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Damansara Height"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/history_row_comma"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:layout_toRightOf="@+id/history_row_branch"
+                        android:text=",  "
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/history_row_service"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:layout_toRightOf="@+id/history_row_comma"
+                        android:text="Customer Service"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                    <TextView
+                        android:id="@+id/history_row_wait_time_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/history_row_wait_time"
+                        android:layout_weight="1"
+                        android:gravity="bottom"
+                        android:text="Wait Time:  "
+                        android:textColor="@color/colorPrimary"/>
+
+                    <TextView
+                        android:id="@+id/history_row_wait_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/history_row_wait_time_label"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="59min 59sec"
+                        android:textColor="@color/colorPrimary"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

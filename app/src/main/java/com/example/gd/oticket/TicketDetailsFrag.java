@@ -53,6 +53,7 @@ public class TicketDetailsFrag extends Fragment {
         mainActivity.displayFab(false);
         mainActivity.showSearchBar(false);
         mainActivity.showBackButton(true);
+        mainActivity.setTitle("Ticket Details");
         mainActivity.setLayerType(dot1);
         mainActivity.setLayerType(dot2);
 

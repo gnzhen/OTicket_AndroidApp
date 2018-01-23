@@ -12,10 +12,10 @@ public class Serving implements Serializable{
     private int id;
     private String staffId;
     private int ticketId;
-    private SimpleDateFormat serveTime;
+    private long serveTime;
     private String counterId;
 
-    public Serving(int id, String staffId, int ticketId, SimpleDateFormat serveTime, String counterId){
+    public Serving(int id, String staffId, int ticketId, long serveTime, String counterId){
         this.setId(id);
         this.setStaffId(staffId);
         this.setTicketId(ticketId);
@@ -39,7 +39,7 @@ public class Serving implements Serializable{
         return this.counterId;
     }
 
-    public SimpleDateFormat getServeTime(){
+    public long getServeTime(){
         return this.serveTime;
     }
 
@@ -55,7 +55,7 @@ public class Serving implements Serializable{
         this.ticketId = ticketId;
     }
 
-    public void setServeTime(SimpleDateFormat serveTime){
+    public void setServeTime(long serveTime){
         this.serveTime = serveTime;
     }
 

@@ -54,6 +54,7 @@ public class TicketFrag extends Fragment {
         mainActivity.displayFab(true);
         mainActivity.showSearchBar(false);
         mainActivity.showBackButton(false);
+        mainActivity.setTitle("OTicket");
 
         //set up ticket list
         recyclerView.setHasFixedSize(true);

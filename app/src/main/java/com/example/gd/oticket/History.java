@@ -10,13 +10,25 @@ import java.text.SimpleDateFormat;
 public class History implements Serializable{
     private int id;
     private int ticketId;
-    private int servingId;
-    private SimpleDateFormat doneTime;
+    private String staffId;
+    private String counterId;
+    private long serveTime;
+    private long doneTime;
 
-    public History(int id, int ticketId, int servingId, SimpleDateFormat doneTime){
+    public History(int id, int ticketId, String staffId, String counterId, long serveTime){
         this.setId(id);
         this.setTicketId(ticketId);
-        this.setServingId(servingId);
+        this.setCounterId(counterId);
+        this.setStaffId(staffId);
+        this.setServeTime(serveTime);
+    }
+
+    public History(int id, int ticketId, String staffId, String counterId, long serveTime, long doneTime){
+        this.setId(id);
+        this.setTicketId(ticketId);
+        this.setCounterId(counterId);
+        this.setStaffId(staffId);
+        this.setServeTime(serveTime);
         this.setDoneTime(doneTime);
     }
 
@@ -28,11 +40,19 @@ public class History implements Serializable{
         return this.ticketId;
     }
 
-    public int getServingId(){
-        return this.servingId;
+    public String getStaffId(){
+        return this.staffId;
     }
 
-    public SimpleDateFormat getDoneTime(){
+    public String getCounterId(){
+        return this.counterId;
+    }
+
+    public long getServeTime(){
+        return this.serveTime;
+    }
+
+    public long getDoneTime(){
         return this.doneTime;
     }
 
@@ -44,11 +64,19 @@ public class History implements Serializable{
         this.ticketId = ticketId;
     }
 
-    public void setServingId(int servingId){
-        this.servingId = servingId;
+    public void setStaffId(String staffId){
+        this.staffId = staffId;
     }
 
-    public void setDoneTime(SimpleDateFormat doneTime){
+    public void setCounterId(String counterId){
+        this.counterId = counterId;
+    }
+
+    public void setServeTime(long serveTime){
+        this.serveTime = serveTime;
+    }
+
+    public void setDoneTime(long doneTime){
         this.doneTime = doneTime;
     }
 }

@@ -86,7 +86,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColorHint="@color/colorAccent">
+                    android:textColorHint="@color/colorPrimary">
 
                     <AutoCompleteTextView
                         android:id="@+id/login_email"
@@ -103,7 +103,7 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColorHint="@color/colorAccent">
+                    android:textColorHint="@color/colorPrimary">
 
                     <EditText
                         android:id="@+id/login_password"
