@@ -418,7 +418,7 @@ public class MainActivity extends AppCompatActivity
         TextView ticketNoTV = timeChangeDialog.findViewById(R.id.time_change_ticket_number);
         TextView serviceTV = timeChangeDialog.findViewById(R.id.time_change_service);
 
-        actionTV.setText(change.getActionName());
+        actionTV.setText(change.getChangeName());
         timeTV.setText(intTimeToString(change.getTime()));
         ticket = getTicketById(change.getTicketIds().get(1));
         ticketNoTV.setText(ticket.getTicketNo());
@@ -608,7 +608,7 @@ public class MainActivity extends AppCompatActivity
         //hardcode queue data
         int a = 0;
         for(BranchService bs: branchServices){
-            int id = a;
+            long id = a;
             ArrayList<String> counterIds = new ArrayList<>();
             int ticketServingNow = 1;
             String counterId = "counter" + a;
@@ -756,7 +756,7 @@ public class MainActivity extends AppCompatActivity
         return branchService;
     }
 
-    public Queue getQueueById(int id){
+    public Queue getQueueById(long id){
         queue = null;
 
         for(Queue q: queues){

@@ -9,13 +9,13 @@ import java.text.SimpleDateFormat;
 
 public class History implements Serializable{
     private int id;
-    private int ticketId;
+    private long ticketId;
     private String staffId;
     private String counterId;
     private long serveTime;
     private long doneTime;
 
-    public History(int id, int ticketId, String staffId, String counterId, long serveTime){
+    public History(int id, long ticketId, String staffId, String counterId, long serveTime){
         this.setId(id);
         this.setTicketId(ticketId);
         this.setCounterId(counterId);
@@ -23,7 +23,7 @@ public class History implements Serializable{
         this.setServeTime(serveTime);
     }
 
-    public History(int id, int ticketId, String staffId, String counterId, long serveTime, long doneTime){
+    public History(int id, long ticketId, String staffId, String counterId, long serveTime, long doneTime){
         this.setId(id);
         this.setTicketId(ticketId);
         this.setCounterId(counterId);
@@ -36,7 +36,7 @@ public class History implements Serializable{
         return this.id;
     }
 
-    public int getTicketId(){
+    public long getTicketId(){
         return this.ticketId;
     }
 
@@ -60,7 +60,7 @@ public class History implements Serializable{
         this.id = id;
     }
 
-    public void setTicketId(int ticketId){
+    public void setTicketId(long ticketId){
         this.ticketId = ticketId;
     }
 

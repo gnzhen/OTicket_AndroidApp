@@ -30,6 +30,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.example.gd.oticket.myrequest.MyRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,27 +63,36 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView regEmail;
-    private EditText regPassword;
+    private AutoCompleteTextView regUsername, regEmail;
+    private EditText regPassword, regPasswordConfirm;
     private View progressBar;
     private View loginForm;
     private Button createBtn, backLoginBtn;
-    private CircleImageView imageButton;
+    private RequestQueue queue;
+    private MyRequest request;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
         // Set up the login form.
+        regUsername = findViewById(R.id.register_username);
         regEmail = findViewById(R.id.register_email);
         regPassword = findViewById(R.id.register_password);
+        regPasswordConfirm = findViewById(R.id.register_password_confirm);
         createBtn = findViewById(R.id.register_create_button);
         loginForm = findViewById(R.id.register_form_scroll_view);
         progressBar = findViewById(R.id.register_progress);
         backLoginBtn = findViewById(R.id.register_back_button);
 
         populateAutoComplete();
+
+        // Get a RequestQueue
+        queue = VolleySingleton.getInstance(this).getRequestQueue();
+
+        request = new MyRequest(this, queue);
 
         regPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -96,9 +108,17 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         createBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                String username = regUsername.getText().toString().trim();
+                String email = regEmail.getText().toString().trim();
+                String password = regPassword.getText().toString().trim();
+                String passwordConfirm = regPasswordConfirm.getText().toString().trim();
+
+                request.register(username, email, password, passwordConfirm);
+
+//                VolleySingleton.getInstance(view.getContext()).addToRequestQueue(request);
 //                attemptLogin();
-                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+//                startActivity(intent);
             }
         });
 

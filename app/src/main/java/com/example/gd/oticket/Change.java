@@ -8,8 +8,8 @@ import java.util.ArrayList;
  */
 
 public class Change implements Serializable{
-    private int id;
-    private int action;
+    private long id;
+    private int change;
     private int time;
     private ArrayList<Integer> ticketIds = new ArrayList<>();
 
@@ -17,25 +17,25 @@ public class Change implements Serializable{
 
     }
 
-    public Change(int id, int action, int time){
+    public Change(long id, int change, int time){
         this.setId(id);
-        this.setAction(action);
+        this.setChange(change);
         this.setTime(time);
     }
 
-    public Change(int id, int action, int time, ArrayList<Integer> ticketIds){
+    public Change(long id, int change, int time, ArrayList<Integer> ticketIds){
         this.setId(id);
-        this.setAction(action);
+        this.setChange(change);
         this.setTime(time);
         this.setTicketIds(ticketIds);
     }
 
-    public int getId(){
+    public long getId(){
         return this.id;
     }
 
-    public int getAction(){
-        return this.action;
+    public int getChange(){
+        return this.change;
     }
 
     public int getTime(){
@@ -46,12 +46,12 @@ public class Change implements Serializable{
         return this.ticketIds;
     }
 
-    public void setId(int id){
+    public void setId(long id){
         this.id = id;
     }
 
-    public void setAction(int action){
-        this.action = action;
+    public void setChange(int change){
+        this.change = change;
     }
 
     public void setTime(int time){
@@ -66,10 +66,10 @@ public class Change implements Serializable{
         this.ticketIds.add(id);
     }
 
-    public String getActionName(){
-        if(this.action == 0)
+    public String getChangeName(){
+        if(this.change == 0)
             return "reduced";
-        else if(this.action == 1)
+        else if(this.change == 1)
             return "increased";
         else
             return "";

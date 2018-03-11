@@ -13,13 +13,13 @@ public class Ticket implements Serializable, Comparable<Ticket>{
     private int id;
     private String ticketNo;
     private long issueTime;
-    private int queueId;
+    private long queueId;
     private int waitTime;
     private int pplAhead;
-    private int userId;
+    private String username;
     private int postponed;
 
-    public Ticket(int id, String ticketNo, int queueId, int waitTime, int pplAhead){
+    public Ticket(int id, String ticketNo, long queueId, int waitTime, int pplAhead){
         this.setId(id);
         this.setTicketNo(ticketNo);
         this.setQueueId(queueId);
@@ -29,13 +29,13 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         this.setIssueTime(1516451460);
     }
 
-    public Ticket(int id, String ticketNo, int queueId, int waitTime, int pplAhead, int userId, long issueTime){
+    public Ticket(int id, String ticketNo, long queueId, int waitTime, int pplAhead, String username, long issueTime){
         this.setId(id);
         this.setTicketNo(ticketNo);
         this.setQueueId(queueId);
         this.setWaitTime(waitTime);
         this.setPplAhead(pplAhead);
-        this.setUserId(userId);
+        this.setUsername(username);
         this.setPostponed(0);
         this.setIssueTime(issueTime);
     }
@@ -52,7 +52,7 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         return this.issueTime;
     }
 
-    public int getQueueId(){
+    public long getQueueId(){
         return this.queueId;
     }
 
@@ -64,8 +64,8 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         return this.pplAhead;
     }
 
-    public int getUserId(){
-        return this.userId;
+    public String getUsername(){
+        return this.username;
     }
 
     public int getPostponed(){
@@ -84,7 +84,7 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         this.issueTime = issueTime;
     }
 
-    public void setQueueId(int queueId){
+    public void setQueueId(long queueId){
         this.queueId = queueId;
     }
 
@@ -96,8 +96,8 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         this.pplAhead = pplAhead;
     }
 
-    public void setUserId(int userId){
-        this.userId = userId;
+    public void setUsername(String username){
+        this.username = username;
     }
 
     public void setPostponed(int postponed){
