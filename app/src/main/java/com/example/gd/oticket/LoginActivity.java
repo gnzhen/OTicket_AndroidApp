@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +31,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +72,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View progressBar;
     private View loginForm;
     private Button signInBtn, registerBtn;
+    private String ip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Intent intent = getIntent();
+        ip = intent.getExtras().getString("ip");
 
         // Set up the login form.
         loginEmail = findViewById(R.id.login_email);
@@ -94,9 +106,32 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         signInBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                String url = ip + "test";
+
+                final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d("login response", response);
+                                requestQueue.stop();
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        requestQueue.stop();
+                    }
+                });
+
+                requestQueue.add(stringRequest);
+
 //                attemptLogin();
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                startActivity(intent);
             }
         });
 
@@ -104,6 +139,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                intent.putExtra("ip", ip);
                 startActivity(intent);
             }
         });

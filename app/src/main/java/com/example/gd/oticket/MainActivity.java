@@ -70,11 +70,14 @@ public class MainActivity extends AppCompatActivity
     Dialog confirmDialog, issueTicketDialog, postponeDialog, cancelTicketDialog;
     Dialog reminderDialog, timeChangeDialog;
     ActionBarDrawerToggle toggle;
+    String ip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ip = "http://192.168.0.120/OTicket/public/api/";
 
         branches = new ArrayList<>();
         services = new ArrayList<>();
@@ -176,6 +179,11 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_history:
                 fragment = new HistoryFrag();
                 data = "histories";
+                break;
+            case R.id.nav_register:
+                Intent intent = new Intent(this, RegisterActivity.class);
+                intent.putExtra("ip", ip);
+                startActivity(intent);
                 break;
         }
 
