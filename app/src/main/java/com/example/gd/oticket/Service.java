@@ -8,14 +8,16 @@ import java.io.Serializable;
 
 public class Service implements Serializable{
     private String id;
+    private String code;
     private String name;
 
     public Service(){
 
     }
 
-    public Service(String id, String name){
+    public Service(String id, String code, String name){
         this.setId(id);
+        this.setCode(code);
         this.setName(name);
     }
 
@@ -23,8 +25,16 @@ public class Service implements Serializable{
         return this.id;
     }
 
+    public String getCode() {
+        return this.code;
+    }
+
     public String getName() {
         return this.name;
+    }
+
+    public void setCode(String code){
+        this.code = code;
     }
 
     public void setId(String id){

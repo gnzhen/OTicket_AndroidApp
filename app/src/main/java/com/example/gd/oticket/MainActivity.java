@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +34,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.example.gd.oticket.myrequest.MyRequest;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -71,13 +74,12 @@ public class MainActivity extends AppCompatActivity
     Dialog reminderDialog, timeChangeDialog;
     ActionBarDrawerToggle toggle;
     String ip;
+    MyRequest request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ip = "http://192.168.0.120/OTicket/public/api/";
 
         branches = new ArrayList<>();
         services = new ArrayList<>();
@@ -92,6 +94,8 @@ public class MainActivity extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         searchBar = toolbar.findViewById(R.id.search_bar);
         searchView = toolbar.findViewById(R.id.search_view);
+
+        request = new MyRequest(this);
 
         setSupportActionBar(toolbar);
 
@@ -117,7 +121,8 @@ public class MainActivity extends AppCompatActivity
 
         showBackButton(true);
 
-        setData();
+//        setData();
+        getData();
 
         //Set default fragment display
         Fragment defaultFragment = new TicketFrag();
@@ -128,7 +133,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         setNavActiveItem(R.id.nav_my_ticket);
 
-        testDialog();
+//        testDialog();
     }
 
     @Override
@@ -182,7 +187,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_register:
                 Intent intent = new Intent(this, RegisterActivity.class);
-                intent.putExtra("ip", ip);
                 startActivity(intent);
                 break;
         }
@@ -554,6 +558,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setContentText(String text){
+        Log.d("setContentText", text);
         TextView content = findViewById(R.id.content_text_view);
         content.setText(text);
     }
@@ -581,106 +586,113 @@ public class MainActivity extends AppCompatActivity
         view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
-    public void setData(){
-        //hardcode service data
-        for(int j = 0; j < 5; j++) {
-            String serviceId = "service " + Integer.toString(j);
-            String[] serviceName = {"Customer Service", "Order", "Cashier", "Pick Up", "Other Services"};
-            Service service = new Service(serviceId, serviceName[j]);
-            services.add(service);
-        }
-
-        //hardcode branch data
-        for(int i = 0; i < 5; i++){
-            String id = "branch " + Integer.toString(i+1);
-            String[] name = {"Kepong", "KL", "PJ", "Rawang", "Cheras"};
-            String desc = "1, jalan kepong, Kepong.";
-
-            Branch branch = new Branch(id, name[i], desc, services);
-            branches.add(branch);
-        }
-
-        //hardcode branchservice data
-        for(int i = 0; i < 5; i++){
-            for(int j = 0; j < 5; j++){
-                String id = branches.get(i).getId() + "_" + services.get(j).getId();
-                String branchId = branches.get(i).getId();
-                String serviceId = services.get(j).getId();
-                int avgWaitTime = 700;
-
-                BranchService branchService = new BranchService(id, branchId, serviceId, avgWaitTime);
-                branchServices.add(branchService);
-            }
-        }
-
-        //hardcode queue data
-        int a = 0;
-        for(BranchService bs: branchServices){
-            long id = a;
-            ArrayList<String> counterIds = new ArrayList<>();
-            int ticketServingNow = 1;
-            String counterId = "counter" + a;
-            counterIds.add(counterId);
-
-            queue = new Queue(id, bs.getId(), counterIds, ticketServingNow);
-            queues.add(queue);
-            a++;
-            queue.addTicketIdToQueue(0);
-            queue.addTicketIdToQueue(1);
-            queue.addTicketIdToQueue(2);
-            queue.addTicketIdToQueue(3);
-            queue.addTicketIdToQueue(4);
-        }
-
-        //hardcode ticket data
-        for(int i = 0; i < 5; i++){
-            int id = i;
-            String ticketNo = String.format("%04d", id);
-            int queueId = i;
-            int waitTime = (i + 1) * 2000;
-            int pplAhead = 5;
-
-            ticket = new Ticket(id, ticketNo, queueId, waitTime, pplAhead);
-            tickets.add(ticket);
-        }
-
-        //hardcode change data
-        for(int i = 0; i < 1; i++){
-            int id = 0;
-            int action = 1;
-            int time = 65;
-            ArrayList<Integer> affectedIds = new ArrayList<>();
-            affectedIds.add(0);
-            affectedIds.add(1);
-
-            change = new Change(id, action, time, affectedIds);
-        }
-
-        //hardcode history data
-        for(int i = 0; i < 5; i++){
-            int id = i;
-            int ticketId = i;
-            String staffId = "Staff 1";
-            String counterId = "Counter 1";
-            long serveTime = 1372339860;
-            long doneTime = 1372340000;
-
-            history = new History(id, ticketId, staffId, counterId, serveTime, doneTime);
-            histories.add(history);
-        }
-
-        for(int i = 0; i < 5; i++){
-            int id = i;
-            int ticketId = i;
-            String staffId = "Staff 1";
-            String counterId = "Counter 1";
-            long serveTime = 1372339860;
-            long doneTime = 1372340000;
-
-            history = new History(id, ticketId, staffId, counterId, serveTime, doneTime);
-            histories.add(history);
-        }
+    public void getData(){
+        request = new MyRequest(this);
+//        branches = request.getBranches();
+//        services = request.getServices();
+//        branchServices = request.getBranchServices();
     }
+
+//    public void setData(){
+//        //hardcode service data
+//        for(int j = 0; j < 5; j++) {
+//            String serviceId = "service " + Integer.toString(j);
+//            String[] serviceName = {"Customer Service", "Order", "Cashier", "Pick Up", "Other Services"};
+//            Service service = new Service(serviceId, serviceName[j]);
+//            services.add(service);
+//        }
+//
+//        //hardcode branch data
+//        for(int i = 0; i < 5; i++){
+//            String id = "branch " + Integer.toString(i+1);
+//            String[] name = {"Kepong", "KL", "PJ", "Rawang", "Cheras"};
+//            String desc = "1, jalan kepong, Kepong.";
+//
+//            Branch branch = new Branch(id, name[i], desc, services);
+//            branches.add(branch);
+//        }
+//
+//        //hardcode branchservice data
+//        for(int i = 0; i < 5; i++){
+//            for(int j = 0; j < 5; j++){
+//                String id = branches.get(i).getId() + "_" + services.get(j).getId();
+//                String branchId = branches.get(i).getId();
+//                String serviceId = services.get(j).getId();
+//                int avgWaitTime = 700;
+//
+//                BranchService branchService = new BranchService(id, branchId, serviceId, avgWaitTime);
+//                branchServices.add(branchService);
+//            }
+//        }
+//
+//        //hardcode queue data
+//        int a = 0;
+//        for(BranchService bs: branchServices){
+//            long id = a;
+//            ArrayList<String> counterIds = new ArrayList<>();
+//            int ticketServingNow = 1;
+//            String counterId = "counter" + a;
+//            counterIds.add(counterId);
+//
+//            queue = new Queue(id, bs.getId(), counterIds, ticketServingNow);
+//            queues.add(queue);
+//            a++;
+//            queue.addTicketIdToQueue(0);
+//            queue.addTicketIdToQueue(1);
+//            queue.addTicketIdToQueue(2);
+//            queue.addTicketIdToQueue(3);
+//            queue.addTicketIdToQueue(4);
+//        }
+//
+//        //hardcode ticket data
+//        for(int i = 0; i < 5; i++){
+//            int id = i;
+//            String ticketNo = String.format("%04d", id);
+//            int queueId = i;
+//            int waitTime = (i + 1) * 2000;
+//            int pplAhead = 5;
+//
+//            ticket = new Ticket(id, ticketNo, queueId, waitTime, pplAhead);
+//            tickets.add(ticket);
+//        }
+//
+//        //hardcode change data
+//        for(int i = 0; i < 1; i++){
+//            int id = 0;
+//            int action = 1;
+//            int time = 65;
+//            ArrayList<Integer> affectedIds = new ArrayList<>();
+//            affectedIds.add(0);
+//            affectedIds.add(1);
+//
+//            change = new Change(id, action, time, affectedIds);
+//        }
+//
+//        //hardcode history data
+//        for(int i = 0; i < 5; i++){
+//            int id = i;
+//            int ticketId = i;
+//            String staffId = "Staff 1";
+//            String counterId = "Counter 1";
+//            long serveTime = 1372339860;
+//            long doneTime = 1372340000;
+//
+//            history = new History(id, ticketId, staffId, counterId, serveTime, doneTime);
+//            histories.add(history);
+//        }
+//
+//        for(int i = 0; i < 5; i++){
+//            int id = i;
+//            int ticketId = i;
+//            String staffId = "Staff 1";
+//            String counterId = "Counter 1";
+//            long serveTime = 1372339860;
+//            long doneTime = 1372340000;
+//
+//            history = new History(id, ticketId, staffId, counterId, serveTime, doneTime);
+//            histories.add(history);
+//        }
+//    }
 
     public void setBundle(Fragment fragment, String bundleData){
         if(bundleData != null){
@@ -703,6 +715,13 @@ public class MainActivity extends AppCompatActivity
 
             fragment.setArguments(bundle);
         }
+    }
+
+    public String getIp(){
+        if(ip != null)
+            return ip;
+        else
+            return "";
     }
 
     public String intTimeToString(int waitTime){

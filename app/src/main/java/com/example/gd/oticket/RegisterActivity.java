@@ -79,16 +79,12 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
     private Button createBtn, backLoginBtn;
     private RequestQueue queue;
     private MyRequest request;
-    private String ip;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
-        Intent intent = getIntent();
-        ip = intent.getExtras().getString("ip");
 
         // Validator
         validator = new Validator(this);
@@ -106,8 +102,8 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
         backLoginBtn = findViewById(R.id.register_back_button);
 
         // Get a RequestQueue
-        queue = VolleySingleton.getInstance(this).getRequestQueue();
-        request = new MyRequest(this, queue, ip);
+//        queue = VolleySingleton.getInstance(this).getRequestQueue();
+        request = new MyRequest(this);
 
         createBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -121,9 +117,7 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                intent.putExtra("ip", ip);
                 startActivity(intent);
-
             }
         });
 

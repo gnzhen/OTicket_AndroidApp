@@ -3,6 +3,7 @@ package com.example.gd.oticket;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,24 +13,23 @@ import java.util.List;
 public class Queue implements Serializable{
     private long id;
     private String branchServiceId;
-    private ArrayList<Integer> ticketIds = new ArrayList<>();
     private long ticketIdServingNow;
+    private int waitTime;
+    private int totalTicket;
+    private int pendingTicket;
+    private Date startTime;
+    private Date endTime;
+    private int active;
+    private int avgWaitTime;
+    private ArrayList<Integer> ticketIds = new ArrayList<>();
     private ArrayList<String> counterIds = new ArrayList<>();
 
-    public Queue(long id, String branchServiceId, ArrayList<String> counterIds){
-        this.setId(id);
-        this.setBranchServiceId(branchServiceId);
-        this.setCounterIds(counterIds);
-        this.setTicketIdServingNow(0);
-        this.setCounterIds(counterIds);
-    }
-
-    public Queue(long id, String branchServiceId, ArrayList<String> counterIds, long ticketIdServingNow){
+    public Queue(long id, String branchServiceId, long ticketIdServingNow, int waitTime, int pendingTicket){
         this.setId(id);
         this.setBranchServiceId(branchServiceId);
         this.setTicketIdServingNow(ticketIdServingNow);
-        counterIds = new ArrayList<>();
-        this.setCounterIds(counterIds);
+        this.setWaitTime(waitTime);
+        this.setPendingTicket(pendingTicket);
     }
 
     public long getId(){
@@ -42,6 +42,14 @@ public class Queue implements Serializable{
 
     public long getTicketIdServingNow() {
         return this.ticketIdServingNow;
+    }
+
+    public int getWaitTime(){
+        return this.waitTime;
+    }
+
+    public int getPendingTicket(){
+        return this.pendingTicket;
     }
 
     public ArrayList<String> getCounterIds(){
@@ -66,6 +74,14 @@ public class Queue implements Serializable{
 
     public void setBranchServiceId(String branchServiceId){
         this.branchServiceId = branchServiceId;
+    }
+
+    public void setWaitTime(int waitTime){
+        this.waitTime = waitTime;
+    }
+
+    public void setPendingTicket(int pendingTicket){
+        this.pendingTicket = pendingTicket;
     }
 
     public void setCounterIds(ArrayList<String> counterIds){

@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.gd.oticket.myrequest.MyRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +23,12 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
     private ArrayList<BranchService> branchServiceAL = new ArrayList<>();
     private Context context;
     private MainActivity mainActivity;
+    private MyRequest request;
 
     public ServiceRecyclerAdapter(ArrayList<BranchService> branchServiceAL, Context context){
         this.branchServiceAL = branchServiceAL;
         this.context = context;
+        request = new MyRequest(context);
     }
 
     @Override
@@ -40,9 +44,10 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
         BranchService branchService = branchServiceAL.get(position);
 
         String serviceName = mainActivity.getServiceById(branchService.getServiceId()).getName();
-        final Queue queue = mainActivity.getQueueByBranchServiceId(branchService.getId());
+        final Queue queue = request.getQueueByBranchServiceId(branchService.getId());
+//        final Queue queue = mainActivity.getQueueByBranchServiceId(branchService.getId());
 
-        int waitTime = mainActivity.getWaitTimeByQueue(queue);
+        int waitTime = queue.getWaitTime();
 
         holder.headTV.setText(serviceName);
         holder.bodyTV.setText("EWT: " + mainActivity.intTimeToString(waitTime));

@@ -37,6 +37,7 @@ public class ServiceFrag extends Fragment {
     private TextView branchName, ewtLabel;
     private Toolbar toolbar;
     private ArrayList<BranchService> branchServices;
+    private ArrayList<Queue> queues;
 
     @Override
     public void onAttach(Context context) {
@@ -80,6 +81,7 @@ public class ServiceFrag extends Fragment {
         //get bundle
         Bundle bundle = getArguments();
         branchServices = (ArrayList<BranchService>) bundle.getSerializable("branchServices");
+        queues = (ArrayList<Queue>) bundle.getSerializable("queues");
 
         if(branchServices != null) {
             Branch selectedBranch = mainActivity.getBranchById(branchServices.get(0).getBranchId());

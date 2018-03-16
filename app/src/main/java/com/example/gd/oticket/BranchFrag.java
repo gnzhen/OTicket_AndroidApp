@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
+
+import com.example.gd.oticket.myrequest.MyRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +38,7 @@ public class BranchFrag extends Fragment {
     private Branch branch;
     private SearchView searchView;
     private Toolbar toolbar;
-
+    private MyRequest request;
 
     @Nullable
     @Override
@@ -63,18 +70,50 @@ public class BranchFrag extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        request = new MyRequest(view.getContext());
         branches = new ArrayList<>();
 
-        Bundle bundle = getArguments();
-        branches = (ArrayList<Branch>) bundle.getSerializable("branches");
+        /* Get branches */
+        request.getBranches(new MyRequest.VolleyCallback(){
 
-        if(branches != null) {
-            adapter = new BranchRecyclerAdapter(branches, getContext());
-            recyclerView.setAdapter(adapter);
-        }
-        else{
-            mainActivity.setContentText("-  No branch to display  -");
-        }
+            @Override
+            public void onSuccess(String result) {
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if(jsonArray != null){
+                    branches.clear();
+                    for(int i = 0; i < jsonArray.length(); i++){
+                        try {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            Branch branch = new Branch(
+                                    jsonObject.get("id").toString(),
+                                    jsonObject.get("code").toString(),
+                                    jsonObject.get("name").toString(),
+                                    jsonObject.get("desc").toString()
+                            );
+                            branches.add(branch);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                if(branches != null) {
+                    adapter = new BranchRecyclerAdapter(branches, getContext());
+                    recyclerView.setAdapter(adapter);
+                }
+                else{
+                    mainActivity.setContentText("-  No branch to display  -");
+                }
+            }
+        });
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
 

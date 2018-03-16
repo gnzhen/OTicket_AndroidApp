@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.gd.oticket.myrequest.MyRequest;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +27,10 @@ public class BranchRecyclerAdapter extends RecyclerView.Adapter<BranchRecyclerAd
 
     private ArrayList<Branch> branchAL = new ArrayList<>();
     private ArrayList<BranchService> branchServices = new ArrayList<>();
+    private ArrayList<Queue> queues = new ArrayList<>();
     private Context context;
     private MainActivity mainActivity;
+    private MyRequest request;
 
     public BranchRecyclerAdapter(ArrayList<Branch> branchAL, Context context){
         this.branchAL = branchAL;
@@ -46,7 +50,7 @@ public class BranchRecyclerAdapter extends RecyclerView.Adapter<BranchRecyclerAd
         final Branch branch = branchAL.get(position);
 
         holder.headTV.setText(branch.getName());
-        holder.bodyTV.setText(branch.getId());
+        holder.bodyTV.setText(branch.getDesc());
         holder.rowLL.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -54,10 +58,18 @@ public class BranchRecyclerAdapter extends RecyclerView.Adapter<BranchRecyclerAd
 
                 Fragment serviceFrag = new ServiceFrag();
 
-                branchServices = mainActivity.getBranchServicesByBranchId(branch.getId());
+                request = new MyRequest(view.getContext());
+                branchServices = new ArrayList<>();
+                branchServices = request.getBranchServicesByBranchId(branch.getId());
+                //get queue
+                for(int i = 0; i < branchServices.size(); i++){
+                    queues.add(request.getQueueByBranchServiceId(branchServices.get(i).getId()));
+                }
+//                branchServices = mainActivity.getBranchServicesByBranchId(branch.getId());
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("branchServices", branchServices);
+                bundle.putSerializable("queues", queues);
                 serviceFrag.setArguments(bundle);
 
                 mainActivity.displayFragment(serviceFrag, null);
