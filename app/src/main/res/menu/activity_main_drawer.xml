@@ -20,10 +20,10 @@
 
     <group android:id="@+id/logout_group" android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_acc_setting"
+            android:title="Account Settings" />
+        <item
             android:id="@+id/nav_logout"
             android:title="@string/log_out" />
-        <item
-            android:id="@+id/nav_register"
-            android:title="@string/register" />
     </group>
 </menu>

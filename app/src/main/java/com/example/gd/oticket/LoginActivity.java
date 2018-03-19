@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,7 +47,12 @@ import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Email;
 import com.mobsandgeeks.saripaar.annotation.Password;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -65,12 +72,18 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
     private View loginForm;
     private Button signInBtn, registerBtn;
     private MyRequest request;
-    private String ip;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        pref = getApplicationContext().getSharedPreferences("auth", MODE_PRIVATE); // 0 - for private mode
+        editor = pref.edit();
+        checkAuth();
 
         // Validator
         validator = new Validator(this);
@@ -103,12 +116,59 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
         });
     }
 
+    public void onResume() {
+        super.onResume();
+
+        checkAuth();
+    }
+
     @Override
     public void onValidationSucceeded() {
-        String email = loginEmail.getText().toString().trim();
-        String password = loginPassword.getText().toString().trim();
+        final String email = loginEmail.getText().toString().trim();
+        final String password = loginPassword.getText().toString().trim();
 
-        request.login(email, password);
+        /* Login */
+        request.login(email, password, new MyRequest.VolleyCallback(){
+            @Override
+            public void onSuccess(String result) {
+                JSONObject jResponse = null;
+                try {
+                    jResponse = new JSONObject(result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if(jResponse.has("success")) {
+
+                        saveCredentials(
+                                jResponse.getJSONObject("user").get("id").toString(),
+                                jResponse.getJSONObject("user").get("name").toString(),
+                                jResponse.getJSONObject("user").get("email").toString()
+                        );
+
+                        checkAuth();
+                        showToast(jResponse.get("success").toString());
+
+                    } else if(jResponse.has("fail")){
+
+                        showToast(jResponse.get("fail").toString());
+                    } else {
+                        //Show first validation error from server
+                        Iterator<String> keys = jResponse.keys();
+                        String str_Name = keys.next();
+                        JSONArray value = null;
+                        try {
+                            value = jResponse.getJSONArray(str_Name);
+                            showToast(value.get(0).toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -124,6 +184,31 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+
+    public void saveCredentials(String id, String name, String email){
+
+        editor.putString("id", id);
+        editor.putString("name", name);
+        editor.putString("email", email);
+        editor.commit();
+    }
+
+    public void checkAuth(){
+        if(pref.getString("id", null) != null){
+            Log.d("check Auth login", "user alredy login");
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }else{
+            Log.d("check Auth Login", "user haven't login");
+        }
+    }
+
+    public void showToast(String text){
+        toast = Toast.makeText(getApplicationContext() ,text, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 150);
+        toast.show();
     }
 }
 

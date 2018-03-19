@@ -8,36 +8,36 @@ import java.io.Serializable;
 
 public class User implements Serializable{
     private String id;
-    private String username;
     private String name;
+    private String email;
 
-    public User(String id, String username, String name){
+    public User(String id, String name, String email){
         this.setId(id);
-        this.setUsername(username);
         this.setName(name);
+        this.setEmail(email);
     }
 
     public String getId(){
         return this.id;
     }
 
-    public String getUsername(){
-        return this.username;
-    }
-
     public String getName(){
         return this.name;
+    }
+
+    public String getEmail(){
+        return this.email;
     }
 
     public void setId(String id){
         this.id = id;
     }
 
-    public void setUsername(String username){
-        this.username = username;
-    }
-
     public void setName(String name){
         this.name = name;
+    }
+
+    public void setEmail(String email){
+        this.email = email;
     }
 }

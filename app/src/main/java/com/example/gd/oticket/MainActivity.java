@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
@@ -89,15 +90,21 @@ public class MainActivity extends AppCompatActivity
     Dialog confirmDialog, issueTicketDialog, postponeDialog, cancelTicketDialog;
     Dialog reminderDialog, timeChangeDialog;
     ActionBarDrawerToggle toggle;
+    TextView name, email;
     MyRequest request;
-    boolean callback;
     ProgressBar spinner;
     Toast toast;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        pref = getApplicationContext().getSharedPreferences("auth", MODE_PRIVATE);
+        editor = pref.edit();
+        checkAuth();
 
         branches = new ArrayList<>();
         services = new ArrayList<>();
@@ -112,9 +119,10 @@ public class MainActivity extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         searchBar = toolbar.findViewById(R.id.search_bar);
         searchView = toolbar.findViewById(R.id.search_view);
+        name = navigationView.getHeaderView(0).findViewById(R.id.header_name);
+        email = navigationView.getHeaderView(0).findViewById(R.id.header_email);
 
         request = new MyRequest(this);
-        callback = false;
         spinner = findViewById(R.id.progress_bar);
 
         setSupportActionBar(toolbar);
@@ -152,7 +160,15 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         setNavActiveItem(R.id.nav_my_ticket);
 
+        setUserDetails();
+
 //        testDialog();
+    }
+
+    public void onResume() {
+        super.onResume();
+
+        checkAuth();
     }
 
     @Override
@@ -204,9 +220,11 @@ public class MainActivity extends AppCompatActivity
                 fragment = new HistoryFrag();
                 data = "histories";
                 break;
-            case R.id.nav_register:
-                Intent intent = new Intent(this, RegisterActivity.class);
-                startActivity(intent);
+            case R.id.nav_acc_setting:
+                break;
+            case R.id.nav_logout:
+                editor.clear().commit();
+                checkAuth();
                 break;
         }
 
@@ -593,6 +611,20 @@ public class MainActivity extends AppCompatActivity
         content.setText(text);
     }
 
+    public void setUserDetails(){
+
+        String prefName = pref.getString("name", null);
+        String prefEmail = pref.getString("email", null);
+
+        if(prefName != null && prefEmail != null) {
+            name.setText(prefName);
+            email.setText(prefEmail);
+        }
+        else{
+            editor.clear().commit();
+            checkAuth();
+        }
+    }
 
     /*
      * Functions for action control
@@ -612,6 +644,16 @@ public class MainActivity extends AppCompatActivity
     /*
      * Other functions
      */
+    public void checkAuth(){
+        if(pref.getString("id", null) == null){
+            Log.d("check Auth", "user haven't login");
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }else{
+            Log.d("check Auth Main", "user already login");
+        }
+    }
+
     public void setLayerType(View view){
         view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
@@ -619,10 +661,6 @@ public class MainActivity extends AppCompatActivity
     public void setData(){
         setServices();
 //        setBranches();
-    }
-
-    public boolean getCallback(){
-        return callback;
     }
 
     public ArrayList<Branch> getBranches(){

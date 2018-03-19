@@ -62,7 +62,8 @@ public class MyRequest {
         this.count = 10;
     }
 
-    public void register(final String name, final String email, final String phone, final String password, final String passwordConfirm) {
+    public void register(final String name, final String email, final String phone, final String password,
+                         final String passwordConfirm, final VolleyCallback callback) {
 
         String url = ip + "register";
 
@@ -71,28 +72,11 @@ public class MyRequest {
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                        Log.d("register response", response);
                     try {
-                        Log.d("My App volley response", response);
-
-                        JSONObject jResponse =  new JSONObject(response);
-
-                        if(jResponse.has("success")){
-                            showToast(jResponse.get("success").toString());
-
-                            Intent intent = new Intent(context, MainActivity.class);
-                            context.startActivity(intent);
-
-                        } else {
-                            //Show first validation error from server
-                            Iterator<String> keys = jResponse.keys();
-                            String str_Name = keys.next();
-                            JSONArray value = jResponse.getJSONArray(str_Name);
-                            showToast(value.get(0).toString());
-                        }
-
-                    } catch (Throwable t) {
-                        showToast("Opps! Some error occurred.");
-                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                        callback.onSuccess(response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             },
@@ -120,7 +104,7 @@ public class MyRequest {
             VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public void login(final String email, final String password){
+    public void login(final String email, final String password, final VolleyCallback callback){
         String url = ip + "login";
 
         // Formulate the request and handle the response.
@@ -129,7 +113,12 @@ public class MyRequest {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            Log.d("My App volley response", response);
+                            Log.d("login response", response);
+                            try {
+                                callback.onSuccess(response);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
                             JSONObject jResponse =  new JSONObject(response);
 
@@ -180,7 +169,11 @@ public class MyRequest {
                     public void onResponse(String response) {
 
                         Log.d("My App volley response", response);
-                        callback.onSuccess(response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -213,9 +206,11 @@ public class MyRequest {
                     public void onResponse(String response) {
 
                         Log.d("My App volley response", response);
-
-                        callback.onSuccess(response);
-
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -244,7 +239,11 @@ public class MyRequest {
                     @Override
                     public void onResponse(String response) {
                         Log.d("My App volley response", response);
-                        callback.onSuccess(response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -275,7 +274,11 @@ public class MyRequest {
                     public void onResponse(String response) {
 
                         Log.d("My App volley response", response);
-                        callback.onSuccess(response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -305,7 +308,11 @@ public class MyRequest {
                 public void onResponse(String response) {
 
                     Log.d("My App volley response", response);
-                    callback.onSuccess(response);
+                    try {
+                        callback.onSuccess(response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             },
             new Response.ErrorListener() {
@@ -338,7 +345,11 @@ public class MyRequest {
                     public void onResponse(String response) {
 
                         Log.d("My App volley response", response);
-                        callback.onSuccess(response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -382,6 +393,6 @@ public class MyRequest {
     }
 
     public interface VolleyCallback{
-        void onSuccess(String result);
+        void onSuccess(String result) throws JSONException;
     }
 }
