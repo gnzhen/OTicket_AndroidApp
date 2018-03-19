@@ -59,13 +59,13 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
             @Override
             public void onClick(View view) {
 
-                Fragment ticketFrag = new TicketDetailsFrag();
+                Fragment ticketDetailsFrag = new TicketDetailsFrag();
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("ticketDetails", ticket);
-                ticketFrag.setArguments(bundle);
+                ticketDetailsFrag.setArguments(bundle);
 
-                mainActivity.displayFragment(ticketFrag, null);
+                mainActivity.displayFragment(ticketDetailsFrag, null);
             }
         });
     }

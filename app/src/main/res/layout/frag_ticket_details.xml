@@ -4,264 +4,272 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="20dp">
+        android:layout_height="match_parent"
+        android:id="@+id/ticket_details_swipe_layout">
 
-        <android.support.v7.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/ticket_card_view"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            card_view:cardUseCompatPadding="true">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="20dp">
 
-            <RelativeLayout
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/ticket_card_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/ticket_background" />
-
-            <LinearLayout
-                android:id="@+id/take_card_view_linear_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="10dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Ticket Number:"
-                    android:textColor="@color/colorPrimary" />
-
-                <TextView
-                    android:id="@+id/ticket_details_ticket_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="-"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="60dp" />
-
-                <View
-                    android:id="@+id/ticket_details_dot1"
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/horizontal_dashed_line" />
+                card_view:cardUseCompatPadding="true">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ticket_background" />
+
+                <LinearLayout
+                    android:id="@+id/take_card_view_linear_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp">
 
                     <TextView
-                        android:id="@+id/ticket_details_serving_now_label"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:text="Number Serving Now:"
+                        android:text="Ticket Number:"
                         android:textColor="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/ticket_details_serving_now"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/ticket_details_ticket_number"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_toEndOf="@+id/ticket_details_serving_now_label"
-                        android:layout_toRightOf="@+id/ticket_details_serving_now_label"
-                        android:paddingHorizontal="10dp"
+                        android:gravity="center_horizontal"
                         android:text="-"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textSize="20dp" />
+                        android:textSize="60dp" />
 
-                </RelativeLayout>
+                    <View
+                        android:id="@+id/ticket_details_dot1"
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/horizontal_dashed_line" />
 
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="10dp">
-
-                    <TableRow
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/ticket_details_wait_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="10hr 50min"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="25dp" />
-
-                        <TextView
-                            android:id="@+id/ticket_details_serve_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:fontFamily="sans-serif"
-                            android:gravity="center"
-                            android:paddingHorizontal="20dp"
-                            android:text="12:59 AM"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="25dp" />
-
-                    </TableRow>
-
-                    <TableRow
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
                         <TextView
+                            android:id="@+id/ticket_details_serving_now_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:paddingHorizontal="20dp"
-                            android:textColor="@color/colorPrimary"
-                            android:text="Estimated Wait Time" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:fontFamily="sans-serif"
-                            android:gravity="center_horizontal"
-                            android:paddingHorizontal="20dp"
-                            android:text="Estimated Serve Time"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="Number Serving Now:"
                             android:textColor="@color/colorPrimary" />
 
-                    </TableRow>
+                        <TextView
+                            android:id="@+id/ticket_details_serving_now"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_toEndOf="@+id/ticket_details_serving_now_label"
+                            android:layout_toRightOf="@+id/ticket_details_serving_now_label"
+                            android:paddingHorizontal="10dp"
+                            android:text="-"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="20dp" />
 
-                </TableLayout>
+                    </RelativeLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/ticket_details_ppl_ahead_label"
-                        android:layout_width="wrap_content"
+                    <TableLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:text="Number of turns to reach you:"
-                        android:textColor="@color/colorPrimary" />
+                        android:paddingVertical="10dp">
 
-                    <TextView
-                        android:id="@+id/ticket_details_ppl_ahead"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_toEndOf="@+id/ticket_details_ppl_ahead_label"
-                        android:layout_toRightOf="@+id/ticket_details_ppl_ahead_label"
-                        android:paddingHorizontal="10dp"
-                        android:text="-"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="20dp" />
-                </RelativeLayout>
+                        <TableRow
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content">
 
-                <View
-                    android:id="@+id/ticket_details_dot2"
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/horizontal_dashed_line" />
+                            <TextView
+                                android:id="@+id/ticket_details_wait_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="10hr 50min"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:textSize="25dp" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/ticket_details_serve_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:fontFamily="sans-serif"
+                                android:gravity="center"
+                                android:paddingHorizontal="20dp"
+                                android:text="12:59 AM"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:textSize="25dp" />
 
-                    <TextView
-                        android:id="@+id/ticket_details_branch_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:text="Branch:"
-                        android:textColor="@color/colorPrimary" />
+                        </TableRow>
 
-                    <TextView
-                        android:id="@+id/ticket_details_branch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/ticket_details_branch_label"
-                        android:layout_toRightOf="@+id/ticket_details_branch_label"
-                        android:paddingHorizontal="10dp"
-                        android:text="-"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="18dp" />
-                </RelativeLayout>
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center_horizontal"
+                                android:paddingHorizontal="20dp"
+                                android:textColor="@color/colorPrimary"
+                                android:text="Estimated Wait Time" />
 
-                    <TextView
-                        android:id="@+id/ticket_details_service_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:text="Service:"
-                        android:textColor="@color/colorPrimary" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="sans-serif"
+                                android:gravity="center_horizontal"
+                                android:paddingHorizontal="20dp"
+                                android:text="Estimated Serve Time"
+                                android:textColor="@color/colorPrimary" />
 
-                    <TextView
-                        android:id="@+id/ticket_details_service"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/ticket_details_service_label"
-                        android:layout_toRightOf="@+id/ticket_details_service_label"
-                        android:paddingHorizontal="10dp"
-                        android:text="-"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="18dp" />
-                </RelativeLayout>
+                        </TableRow>
+
+                    </TableLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/ticket_details_ppl_ahead_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="Number of turns to reach you:"
+                            android:textColor="@color/colorPrimary" />
+
+                        <TextView
+                            android:id="@+id/ticket_details_ppl_ahead"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_toEndOf="@+id/ticket_details_ppl_ahead_label"
+                            android:layout_toRightOf="@+id/ticket_details_ppl_ahead_label"
+                            android:paddingHorizontal="10dp"
+                            android:text="-"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="20dp" />
+                    </RelativeLayout>
+
+                    <View
+                        android:id="@+id/ticket_details_dot2"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/horizontal_dashed_line" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/ticket_details_branch_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="Branch:"
+                            android:textColor="@color/colorPrimary" />
+
+                        <TextView
+                            android:id="@+id/ticket_details_branch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@+id/ticket_details_branch_label"
+                            android:layout_toRightOf="@+id/ticket_details_branch_label"
+                            android:paddingHorizontal="10dp"
+                            android:text="-"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="18dp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/ticket_details_service_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="Service:"
+                            android:textColor="@color/colorPrimary" />
+
+                        <TextView
+                            android:id="@+id/ticket_details_service"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@+id/ticket_details_service_label"
+                            android:layout_toRightOf="@+id/ticket_details_service_label"
+                            android:paddingHorizontal="10dp"
+                            android:text="-"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="18dp" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="3dp"
+                android:paddingVertical="15dp">
+
+                <Button
+                    android:id="@+id/ticket_details_postpone_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/ticket_details_cancel_btn"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimaryDark"
+                    android:text="Postpone"
+                    android:textColor="@android:color/white"
+                    android:foreground="?selectableItemBackground"  />
+
+                <Button
+                    android:id="@+id/ticket_details_cancel_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimaryDark"
+                    android:text="Cancel Ticket"
+                    android:textColor="@android:color/white"
+                    android:foreground="?selectableItemBackground" />
+
             </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingHorizontal="3dp"
-            android:paddingVertical="15dp">
-
-            <Button
-                android:id="@+id/ticket_details_postpone_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/ticket_details_cancel_btn"
-                android:layout_weight="1"
-                android:background="@color/colorPrimaryDark"
-                android:text="Postpone"
-                android:textColor="@android:color/white"
-                android:foreground="?selectableItemBackground"  />
-
-            <Button
-                android:id="@+id/ticket_details_cancel_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="1"
-                android:background="@color/colorPrimaryDark"
-                android:text="Cancel Ticket"
-                android:textColor="@android:color/white"
-                android:foreground="?selectableItemBackground" />
-
         </LinearLayout>
-    </LinearLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 </ScrollView>
 
 

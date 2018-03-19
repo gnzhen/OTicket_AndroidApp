@@ -3,6 +3,7 @@ package com.example.gd.oticket;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.gd.oticket.myrequest.MyRequest;
@@ -29,7 +31,7 @@ import java.util.List;
  * Created by GD on 1/13/2018.
  */
 
-public class BranchFrag extends Fragment {
+public class BranchFrag extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private BranchRecyclerAdapter adapter;
     private RecyclerView recyclerView;
@@ -39,6 +41,8 @@ public class BranchFrag extends Fragment {
     private SearchView searchView;
     private Toolbar toolbar;
     private MyRequest request;
+    private boolean callback;
+    private SwipeRefreshLayout swipeLayout;
 
     @Nullable
     @Override
@@ -58,6 +62,7 @@ public class BranchFrag extends Fragment {
         recyclerView = view.findViewById(R.id.branch_recycler_view);
         toolbar = mainActivity.getToolbar();
         searchView = toolbar.findViewById(R.id.search_view);
+        swipeLayout = view.findViewById(R.id.branch_swipe_layout);
 
         //set up fragment
         mainActivity.setNavActiveItem(R.id.nav_take_a_ticket);
@@ -65,17 +70,47 @@ public class BranchFrag extends Fragment {
         mainActivity.displayFab(false);
         mainActivity.showSearchBar(true);
         mainActivity.showBackButton(false);
+        mainActivity.showSpinner(true);
 
         //set up branch list
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        swipeLayout.setOnRefreshListener(this);
 
         request = new MyRequest(view.getContext());
         branches = new ArrayList<>();
 
-        /* Get branches */
-        request.getBranches(new MyRequest.VolleyCallback(){
+        loadView();
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String searchText) {
+
+                ArrayList<Branch> filteredList = new ArrayList<>();
+
+                if(branches != null) {
+                    for (Branch branch : branches) {
+                        String name = branch.getName().toUpperCase();
+                        if (name.contains(searchText.toUpperCase())) {
+                            filteredList.add(branch);
+                        }
+                    }
+
+                    adapter.setFilter(filteredList);
+                }
+                return false;
+            }
+        });
+    }
+
+    public void loadView() {
+        /* Get branches */
+        request.getBranches(new MyRequest.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
                 JSONArray jsonArray = null;
@@ -103,41 +138,16 @@ public class BranchFrag extends Fragment {
                         }
                     }
                 }
-
-                if(branches != null) {
+                if(branches.size() > 0) {
                     adapter = new BranchRecyclerAdapter(branches, getContext());
                     recyclerView.setAdapter(adapter);
+                    mainActivity.showSpinner(false);
                 }
                 else{
+                    recyclerView.setAdapter(new EmptyAdapter());
+                    mainActivity.showSpinner(false);
                     mainActivity.setContentText("-  No branch to display  -");
                 }
-            }
-        });
-
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String searchText) {
-
-                ArrayList<Branch> filteredList = new ArrayList<>();
-
-                if(branches != null) {
-                    for (Branch branch : branches) {
-                        String name = branch.getName().toUpperCase();
-                        if (name.contains(searchText.toUpperCase())) {
-                            filteredList.add(branch);
-                        }
-                    }
-
-                    adapter.setFilter(filteredList);
-                }
-                return false;
             }
         });
     }
@@ -152,5 +162,11 @@ public class BranchFrag extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
 
+    }
+
+    @Override
+    public void onRefresh() {
+        loadView();
+        swipeLayout.setRefreshing(false);
     }
 }

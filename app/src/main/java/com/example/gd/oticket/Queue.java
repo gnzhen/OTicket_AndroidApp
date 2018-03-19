@@ -32,6 +32,13 @@ public class Queue implements Serializable{
         this.setPendingTicket(pendingTicket);
     }
 
+    public Queue(long id, String branchServiceId, int waitTime, int pendingTicket){
+        this.setId(id);
+        this.setBranchServiceId(branchServiceId);
+        this.setWaitTime(waitTime);
+        this.setPendingTicket(pendingTicket);
+    }
+
     public long getId(){
         return this.id;
     }

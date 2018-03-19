@@ -14,14 +14,14 @@ public class BranchService implements Serializable{
 
     public BranchService(String id, String branchId, String serviceId){
         this.setId(id);
-        this.setBranch(branchId);
-        this.setService(serviceId);
+        this.setBranchId(branchId);
+        this.setServiceId(serviceId);
     }
 
     public BranchService(String id, String branchId, String serviceId, int avgWaitTime){
         this.setId(id);
-        this.setBranch(branchId);
-        this.setService(serviceId);
+        this.setBranchId(branchId);
+        this.setServiceId(serviceId);
         this.setAvgWaitTime(avgWaitTime);
     }
 
@@ -45,11 +45,11 @@ public class BranchService implements Serializable{
         this.id = id;
     }
 
-    public void setBranch(String branchId){
+    public void setBranchId(String branchId){
         this.branchId = branchId;
     }
 
-    public void setService(String servicId){
+    public void setServiceId(String servicId){
         this.serviceId = servicId;
     }
 

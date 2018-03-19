@@ -3,6 +3,7 @@ package com.example.gd.oticket;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,7 @@ import android.widget.TextView;
  * Created by GD on 1/13/2018.
  */
 
-public class TicketDetailsFrag extends Fragment {
+public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     private MainActivity mainActivity;
     private TextView ticketNumber, waitTime, serveTime, servingNow, pplAhead, branch, service;
@@ -22,6 +23,7 @@ public class TicketDetailsFrag extends Fragment {
     private Ticket ticket;
     private Toolbar toolbar;
     private View dot1, dot2;
+    private SwipeRefreshLayout swipeLayout;
 
     @Nullable
     @Override
@@ -47,6 +49,7 @@ public class TicketDetailsFrag extends Fragment {
         servingNow = view.findViewById(R.id.ticket_details_serving_now);
         postpone = view.findViewById(R.id.ticket_details_postpone_btn);
         cancelTicket = view.findViewById(R.id.ticket_details_cancel_btn);
+        swipeLayout = view.findViewById(R.id.ticket_details_swipe_layout);
 
         //set up fragment
         mainActivity.setNavActiveItem(R.id.nav_my_ticket);
@@ -56,6 +59,8 @@ public class TicketDetailsFrag extends Fragment {
         mainActivity.setTitle("Ticket Details");
         mainActivity.setLayerType(dot1);
         mainActivity.setLayerType(dot2);
+        mainActivity.showSpinner(true);
+        swipeLayout.setOnRefreshListener(this);
 
         //get bundle
         Bundle bundle = getArguments();
@@ -82,5 +87,15 @@ public class TicketDetailsFrag extends Fragment {
             }
         });
 
+    }
+
+    public void loadView() {
+
+    }
+
+    @Override
+    public void onRefresh() {
+        loadView();
+        swipeLayout.setRefreshing(false);
     }
 }

@@ -7,20 +7,26 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.example.gd.oticket.Branch;
+import com.example.gd.oticket.BranchRecyclerAdapter;
 import com.example.gd.oticket.Queue;
 import com.example.gd.oticket.Service;
 import com.example.gd.oticket.BranchService;
 import com.example.gd.oticket.LoginActivity;
 import com.example.gd.oticket.MainActivity;
 import com.example.gd.oticket.RegisterActivity;
+import com.example.gd.oticket.ServiceRecyclerAdapter;
 import com.example.gd.oticket.VolleySingleton;
 
 import org.json.JSONArray;
@@ -39,16 +45,16 @@ import java.util.Map;
 public class MyRequest {
     private Context context;
     private String ip;
-    private Toast toast;
     private ArrayList<Branch> branches;
     private ArrayList<Service> services;
     private ArrayList<BranchService> branchServices;
     private Branch branch;
     private Queue queue;
     static int count;
+    private Toast toast;
 
     public MyRequest(Context context) {
-        this.ip = "http://192.168.43.115/OTicket/public/api/";
+        this.ip = "http://192.168.0.120/OTicket/public/api/";
         this.context = context;
         this.branches = new ArrayList<>();
         this.services = new ArrayList<>();
@@ -85,7 +91,7 @@ public class MyRequest {
                         }
 
                     } catch (Throwable t) {
-                        showToast("Something wrong!");
+                        showToast("Opps! Some error occurred.");
                         Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
                     }
                 }
@@ -93,7 +99,7 @@ public class MyRequest {
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    showToast("Something wrong!");
+                    showVolleyError(error);
                     Log.d("Volley Error", error.toString());
                 }
             }){
@@ -146,7 +152,7 @@ public class MyRequest {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        showToast("Something wrong!");
+                        showVolleyError(error);
                         Log.d("Volley Error", error.toString());
                     }
                 }){
@@ -164,7 +170,40 @@ public class MyRequest {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public ArrayList<Branch> getBranches(final VolleyCallback callback){
+    public void getUserCurrentTickets(final String id, final VolleyCallback callback){
+        String url = ip + "userCurrentTickets";
+
+        // Formulate the request and handle the response.
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        Log.d("My App volley response", response);
+                        callback.onSuccess(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Volley Error", error.toString());
+                        showVolleyError(error);
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> map = new HashMap<>();
+                map.put("id", id);
+
+                return map;
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public void getBranches(final VolleyCallback callback){
         String url = ip + "branches";
 
         // Formulate the request and handle the response.
@@ -183,7 +222,7 @@ public class MyRequest {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("Volley Error", error.toString());
-                        showToast("Some error occured!");
+                        showVolleyError(error);
                     }
                 }){
             @Override
@@ -194,11 +233,9 @@ public class MyRequest {
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
-
-        return branches;
     }
 
-    public ArrayList<Service> getServices(){
+    public void getServices(final VolleyCallback callback){
         String url = ip + "services";
 
         // Formulate the request and handle the response.
@@ -206,43 +243,16 @@ public class MyRequest {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
                         Log.d("My App volley response", response);
-                        JSONArray jsonArray = null;
-                        try {
-                            jsonArray = new JSONArray(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if(jsonArray != null){
-                            branches.clear();
-                            for(int i = 0; i < jsonArray.length(); i++){
-                                try {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    Service service = new Service(
-                                            jsonObject.get("id").toString(),
-                                            jsonObject.get("code").toString(),
-                                            jsonObject.get("name").toString()
-                                    );
-                                    services.add(service);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
+                        callback.onSuccess(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        count = count - 1;
                         Log.d("Volley Error", error.toString());
-                        if (error instanceof TimeoutError && count > 0) {
-                            Log.d("Retry request", Integer.toString(count));
-                            // note : may cause recursive invoke if always timeout.
-                            getServices();
-                        }
+                        showVolleyError(error);
+
                     }
                 }){
             @Override
@@ -253,11 +263,9 @@ public class MyRequest {
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
-
-        return services;
     }
 
-    public ArrayList<BranchService> getBranchServices(){
+    public void getBranchServices(final VolleyCallback callback){
         String url = ip + "branchServices";
 
         // Formulate the request and handle the response.
@@ -267,42 +275,14 @@ public class MyRequest {
                     public void onResponse(String response) {
 
                         Log.d("My App volley response", response);
-                        JSONArray jsonArray = null;
-                        try {
-                            jsonArray = new JSONArray(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if(jsonArray != null){
-                            branchServices.clear();
-                            for(int i = 0; i < jsonArray.length(); i++){
-                                try {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    BranchService branchService = new BranchService(
-                                            jsonObject.get("id").toString(),
-                                            jsonObject.get("branchId").toString(),
-                                            jsonObject.get("serviceId").toString(),
-                                            (Integer)jsonObject.get("avgWaitTime")
-                                    );
-                                    branchServices.add(branchService);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
+                        callback.onSuccess(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        count = count - 1;
                         Log.d("Volley Error", error.toString());
-                        if (error instanceof TimeoutError && count > 0) {
-                            Log.d("Retry request", Integer.toString(count));
-                            // note : may cause recursive invoke if always timeout.
-                            getBranchServices();
-                        }
+                        showVolleyError(error);
                     }
                 }){
             @Override
@@ -313,58 +293,28 @@ public class MyRequest {
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
-
-        return branchServices;
     }
 
-    public ArrayList<BranchService> getBranchServicesByBranchId(final String id){
+    public void getBranchServicesByBranchId(final String id, final VolleyCallback callback){
         String url = ip + "branchServicesByBranchId";
 
         // Formulate the request and handle the response.
-        StringRequest request = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+            new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
 
-                        Log.d("My App volley response", response);
-                        JSONArray jsonArray = null;
-                        try {
-                            jsonArray = new JSONArray(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if(jsonArray != null){
-                            branchServices.clear();
-                            for(int i = 0; i < jsonArray.length(); i++){
-                                try {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    BranchService branchService = new BranchService(
-                                            jsonObject.get("id").toString(),
-                                            jsonObject.get("branchId").toString(),
-                                            jsonObject.get("serviceId").toString(),
-                                            (Integer)jsonObject.get("avgWaitTime")
-                                    );
-                                    branchServices.add(branchService);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        count = count - 1;
-                        Log.d("Volley Error", error.toString());
-                        if (error instanceof TimeoutError && count > 0) {
-                            Log.d("Retry request", Integer.toString(count));
-                            // note : may cause recursive invoke if always timeout.
-                            getBranchServices();
-                        }
-                    }
-                }){
+                    Log.d("My App volley response", response);
+                    callback.onSuccess(response);
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("Volley Error", error.toString());
+                    showVolleyError(error);
+                }
+            }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
 
@@ -376,50 +326,26 @@ public class MyRequest {
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
-
-        return branchServices;
     }
 
-    public Queue getQueueByBranchServiceId(final String id){
-        String url = ip + "queueByBranchServiceId";
+    public void getQueuesByBranchId(final String id, final VolleyCallback callback){
+        String url = ip + "queuesByBranchId";
 
         // Formulate the request and handle the response.
-        StringRequest request = new StringRequest(Request.Method.GET, url,
+        StringRequest request = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
                         Log.d("My App volley response", response);
-                        JSONObject jsonObject;
-                        queue = null;
-                        try {
-                            jsonObject = new JSONObject(response);
-
-                            if(jsonObject != null){
-                                queue = new Queue(
-                                        (long)jsonObject.get("id"),
-                                        jsonObject.get("branchServiceId").toString(),
-                                        (Integer)jsonObject.get("ticketServingNow"),
-                                        (Integer)jsonObject.get("waitTime"),
-                                        (Integer)jsonObject.get("pendingTicket")
-                                );
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        callback.onSuccess(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        count = count - 1;
                         Log.d("Volley Error", error.toString());
-                        if (error instanceof TimeoutError && count > 0) {
-                            Log.d("Retry request", Integer.toString(count));
-                            // note : may cause recursive invoke if always timeout.
-                            getBranchServices();
-                        }
+                        showVolleyError(error);
                     }
                 }){
             @Override
@@ -433,8 +359,20 @@ public class MyRequest {
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
 
-        return queue;
+    public void showVolleyError(VolleyError error){
+        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+            showToast("No internet connection");
+        } else if (error instanceof AuthFailureError) {
+            showToast("Authentication problem");
+        } else if (error instanceof ServerError) {
+            showToast("Server error");
+        } else if (error instanceof NetworkError) {
+            showToast("Network error");
+        } else if (error instanceof ParseError) {
+            showToast("Parse error");
+        }
     }
 
     public void showToast(String text){

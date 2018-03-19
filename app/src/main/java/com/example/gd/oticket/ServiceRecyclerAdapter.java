@@ -21,14 +21,22 @@ import java.util.List;
 public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecyclerAdapter.ViewHolder> {
 
     private ArrayList<BranchService> branchServiceAL = new ArrayList<>();
+    private ArrayList<Queue> queues = new ArrayList<>();
+    private ArrayList<Service> services = new ArrayList<>();
     private Context context;
     private MainActivity mainActivity;
-    private MyRequest request;
+    private Queue queue;
+    private Service service;
+    private String serviceName;
+    private int waitTime;
+    private int pplInQueue;
 
-    public ServiceRecyclerAdapter(ArrayList<BranchService> branchServiceAL, Context context){
+    public ServiceRecyclerAdapter(ArrayList<BranchService> branchServiceAL, Context context, ArrayList<Queue> queues,  ArrayList<Service> services){
         this.branchServiceAL = branchServiceAL;
         this.context = context;
-        request = new MyRequest(context);
+        this.mainActivity = (MainActivity)context;
+        this.queues = queues;
+        this.services = services;
     }
 
     @Override
@@ -41,23 +49,40 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         mainActivity = (MainActivity)context;
-        BranchService branchService = branchServiceAL.get(position);
+        final BranchService branchService = branchServiceAL.get(position);
+        waitTime = 0;
+        serviceName = "Service name not found." +
+                "";
+        pplInQueue = 0;
 
-        String serviceName = mainActivity.getServiceById(branchService.getServiceId()).getName();
-        final Queue queue = request.getQueueByBranchServiceId(branchService.getId());
-//        final Queue queue = mainActivity.getQueueByBranchServiceId(branchService.getId());
+        if(services.size() > 0){
+            service = mainActivity.searchServiceById(services, branchService.getServiceId());
+            serviceName = service.getName();
+        }
 
-        int waitTime = queue.getWaitTime();
+        for(int i = 0; i < queues.size(); i++){
+            if(queues.get(i).getBranchServiceId().equals(branchService.getId())){
+                queue = queues.get(i);
+                waitTime = queue.getWaitTime();
+                pplInQueue = queue.getPendingTicket();
+            }
+        }
+
+        final int queueWaitTime = waitTime;
+        final String queueServiceName = serviceName;
+        final int queuePplInQueue = pplInQueue;
 
         holder.headTV.setText(serviceName);
-        holder.bodyTV.setText("EWT: " + mainActivity.intTimeToString(waitTime));
+        holder.bodyTV.setText("Estimated: " + mainActivity.intTimeToString(waitTime));
         holder.rowLL.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-                mainActivity.showIssueTicketDialog(queue);
+                mainActivity.showIssueTicketDialog(branchService, queueServiceName, queueWaitTime, queuePplInQueue);
             }
         });
+
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

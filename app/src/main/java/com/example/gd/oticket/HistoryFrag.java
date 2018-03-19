@@ -3,6 +3,7 @@ package com.example.gd.oticket;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,12 +16,13 @@ import java.util.ArrayList;
  * Created by GD on 1/13/2018.
  */
 
-public class HistoryFrag extends Fragment {
+public class HistoryFrag extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     private MainActivity mainActivity;
     private RecyclerView recyclerView;
     private ArrayList<History> histories;
     private HistoryRecyclerAdapter adapter;
+    private SwipeRefreshLayout swipeLayout;
 
     @Nullable
     @Override
@@ -37,6 +39,7 @@ public class HistoryFrag extends Fragment {
         //initialize variable
         mainActivity = (MainActivity)this.getActivity();
         recyclerView = view.findViewById(R.id.history_recycler_view);
+        swipeLayout = view.findViewById(R.id.history_swipe_layout);
 
         //set up fragment
         mainActivity.setNavActiveItem(R.id.nav_history);
@@ -44,6 +47,8 @@ public class HistoryFrag extends Fragment {
         mainActivity.showBackButton(false);
         mainActivity.displayFab(false);
         mainActivity.setTitle("History");
+        mainActivity.showSpinner(true);
+        swipeLayout.setOnRefreshListener(this);
 
         //set up history list
         recyclerView.setHasFixedSize(true);
@@ -51,15 +56,30 @@ public class HistoryFrag extends Fragment {
 
         histories = new ArrayList<>();
 
-        Bundle bundle = getArguments();
-        histories = (ArrayList<History>) bundle.getSerializable("histories");
+        loadView();
 
-        if(histories != null) {
+//        Bundle bundle = getArguments();
+//        histories = (ArrayList<History>) bundle.getSerializable("histories");
+
+        if(histories.size() > 0) {
             adapter = new HistoryRecyclerAdapter(histories, getContext());
             recyclerView.setAdapter(adapter);
+            mainActivity.showSpinner(false);
         }
         else{
+            recyclerView.setAdapter(new EmptyAdapter());
             mainActivity.setContentText("-  No history to display  -");
+            mainActivity.showSpinner(false);
         }
+    }
+
+    public void loadView() {
+
+    }
+
+    @Override
+    public void onRefresh() {
+        loadView();
+        swipeLayout.setRefreshing(false);
     }
 }

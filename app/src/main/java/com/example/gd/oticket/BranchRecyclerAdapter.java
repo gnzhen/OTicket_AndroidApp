@@ -15,6 +15,10 @@ import android.widget.Toast;
 
 import com.example.gd.oticket.myrequest.MyRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,7 @@ public class BranchRecyclerAdapter extends RecyclerView.Adapter<BranchRecyclerAd
     public BranchRecyclerAdapter(ArrayList<Branch> branchAL, Context context){
         this.branchAL = branchAL;
         this.context = context;
+        request = new MyRequest(context);
     }
 
     @Override
@@ -56,20 +61,10 @@ public class BranchRecyclerAdapter extends RecyclerView.Adapter<BranchRecyclerAd
             @Override
             public void onClick(View view) {
 
-                Fragment serviceFrag = new ServiceFrag();
-
-                request = new MyRequest(view.getContext());
-                branchServices = new ArrayList<>();
-                branchServices = request.getBranchServicesByBranchId(branch.getId());
-                //get queue
-                for(int i = 0; i < branchServices.size(); i++){
-                    queues.add(request.getQueueByBranchServiceId(branchServices.get(i).getId()));
-                }
-//                branchServices = mainActivity.getBranchServicesByBranchId(branch.getId());
+                final Fragment serviceFrag = new ServiceFrag();
 
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("branchServices", branchServices);
-                bundle.putSerializable("queues", queues);
+                bundle.putSerializable("branch", branch);
                 serviceFrag.setArguments(bundle);
 
                 mainActivity.displayFragment(serviceFrag, null);

@@ -19,9 +19,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,13 +32,27 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.example.gd.oticket.myrequest.MyRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -73,8 +89,10 @@ public class MainActivity extends AppCompatActivity
     Dialog confirmDialog, issueTicketDialog, postponeDialog, cancelTicketDialog;
     Dialog reminderDialog, timeChangeDialog;
     ActionBarDrawerToggle toggle;
-    String ip;
     MyRequest request;
+    boolean callback;
+    ProgressBar spinner;
+    Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +114,8 @@ public class MainActivity extends AppCompatActivity
         searchView = toolbar.findViewById(R.id.search_view);
 
         request = new MyRequest(this);
+        callback = false;
+        spinner = findViewById(R.id.progress_bar);
 
         setSupportActionBar(toolbar);
 
@@ -120,9 +140,8 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         showBackButton(true);
-
-//        setData();
-        getData();
+        showSpinner(false);
+        setData();
 
         //Set default fragment display
         Fragment defaultFragment = new TicketFrag();
@@ -199,6 +218,15 @@ public class MainActivity extends AppCompatActivity
     /*
      * Functions for layout control
      */
+    public void showSpinner(boolean show){
+        if(show) {
+            setContentText("");
+            spinner.setVisibility(View.VISIBLE);
+        }
+        else
+            spinner.setVisibility(View.GONE);
+    }
+
     public void testDialog(){
         new CountDownTimer(3000, 1000) {
 
@@ -327,18 +355,18 @@ public class MainActivity extends AppCompatActivity
         return toolbar;
     }
 
-    public void showIssueTicketDialog(Queue queue){
+    public void showIssueTicketDialog(BranchService branchService, String serviceName, int waitTime, int pplInQueue){
         issueTicketDialog = new Dialog(this);
         issueTicketDialog.setContentView(R.layout.dialog_issue_ticket);
         issueTicketDialog.setCancelable(false);
 
         TextView serviceTV = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_service);
         TextView waitTimeTV = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_wait_time);
+        TextView pplInQueueTV = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_ppl_in_queue);
 
-        String branchServiceId = queue.getBranchServiceId();
-        Service queueService = getServiceByBranchServiceId(branchServiceId);
-        serviceTV.setText(queueService.getName());
-        waitTimeTV.setText(intTimeToString(getWaitTimeByQueue(queue)));
+        serviceTV.setText(serviceName);
+        waitTimeTV.setText(intTimeToString(waitTime));
+        pplInQueueTV.setText(Integer.toString(pplInQueue));
 
         Button cancelBtn = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_cancel_btn);
         cancelBtn.setOnClickListener(new View.OnClickListener(){
@@ -477,8 +505,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int arg1) {
                 dialog.dismiss();
-                if(action.equals("issueTicket"))
+                if(action.equals("issueTicket")) {
+                    //issue Ticket
                     displayFragment(new TicketFrag(), "tickets");
+                }
                 if(issueTicketDialog != null)
                     issueTicketDialog.dismiss();
                 if(postponeDialog != null)
@@ -586,12 +616,130 @@ public class MainActivity extends AppCompatActivity
         view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
-    public void getData(){
-        request = new MyRequest(this);
-//        branches = request.getBranches();
-//        services = request.getServices();
-//        branchServices = request.getBranchServices();
+    public void setData(){
+        setServices();
+//        setBranches();
     }
+
+    public boolean getCallback(){
+        return callback;
+    }
+
+    public ArrayList<Branch> getBranches(){
+        return branches;
+    }
+
+    public ArrayList<Service> getServices(){
+        return services;
+    }
+
+    public ArrayList<BranchService> getBranchServices(){
+        return branchServices;
+    }
+
+    public ArrayList<Queue> getQueues(){
+        return queues;
+    }
+
+//    public void setBranches(){
+//        request.getBranches(new MyRequest.VolleyCallback() {
+//            @Override
+//            public void onSuccess(String result) {
+//                JSONArray jsonArray = null;
+//                try {
+//                    jsonArray = new JSONArray(result);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                if(jsonArray != null){
+//                    branches.clear();
+//                    for(int i = 0; i < jsonArray.length(); i++){
+//                        try {
+//                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                            Branch branch = new Branch(
+//                                    jsonObject.get("id").toString(),
+//                                    jsonObject.get("code").toString(),
+//                                    jsonObject.get("name").toString(),
+//                                    jsonObject.get("desc").toString()
+//                            );
+//                            branches.add(branch);
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//    }
+
+    public void setServices(){
+        request.getServices(new MyRequest.VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if(jsonArray != null){
+                    services.clear();
+                    for(int i = 0; i < jsonArray.length(); i++){
+                        try {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            Service service = new Service(
+                                    jsonObject.get("id").toString(),
+                                    jsonObject.get("code").toString(),
+                                    jsonObject.get("name").toString()
+                            );
+                            services.add(service);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+//    public void setQueuesByBranchId(String id){
+//        request.getQueuesByBranchId(id, new MyRequest.VolleyCallback(){
+//
+//            @Override
+//            public void onSuccess(String result) {
+//                JSONArray jsonArray = null;
+//                try {
+//                    jsonArray = new JSONArray(result);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                if(jsonArray != null) {
+//                    queues.clear();
+//                    for (int i = 0; i < jsonArray.length(); i++) {
+//                        try {
+//                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                            Queue queue = new Queue(
+//                                    (long)jsonObject.get("id"),
+//                                    jsonObject.get("branchServiceId").toString(),
+//                                    (long)jsonObject.get("ticketIdServingNow"),
+//                                    (Integer) jsonObject.get("waitTime"),
+//                                    (Integer) jsonObject.get("pendingTicket")
+//                            );
+//                            queues.add(queue);
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//    }
 
 //    public void setData(){
 //        //hardcode service data
@@ -717,13 +865,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public String getIp(){
-        if(ip != null)
-            return ip;
-        else
-            return "";
-    }
-
     public String intTimeToString(int waitTime){
         String waitTimeString;
 
@@ -753,6 +894,15 @@ public class MainActivity extends AppCompatActivity
     /*
      * Functions to get objects
      */
+    public Service searchServiceById(ArrayList<Service> services, String id){
+        service = null;
+        for(int i = 0; i <services.size(); i++){
+            if(services.get(i).getId().equals(id))
+                service = services.get(i);
+        }
+        return service;
+    }
+
     public Branch getBranchById(String id){
         branch = null;
 

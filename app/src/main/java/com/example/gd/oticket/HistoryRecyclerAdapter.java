@@ -55,7 +55,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         holder.branchTV.setText(branch.getName());
         holder.serviceTV.setText(service.getName());
         holder.waitTimeTV.setText(mainActivity.intTimeToString(waitTime));
-        holder.dateTimeTV.setText(mainActivity.getDateTimeStringByUnix(ticket.getIssueTime()));
+//        holder.dateTimeTV.setText(mainActivity.getDateTimeStringByUnix(ticket.getIssueTime()));
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
