@@ -4,6 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <FrameLayout
+        android:id="@+id/register_progressBarHolder"
+        android:animateLayoutChanges="true"
+        android:alpha="0.4"
+        android:background="#000000"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/register_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
+    </FrameLayout>
+
 
     <ScrollView
         android:id="@+id/register_form_scroll_view"
@@ -68,14 +87,6 @@
                 android:text="Register"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="25sp" />
-
-            <ProgressBar
-                android:id="@+id/register_progress"
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/register_form"

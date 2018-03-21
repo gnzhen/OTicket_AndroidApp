@@ -8,8 +8,8 @@ import java.util.ArrayList;
  */
 
 public class Change implements Serializable{
-    private long id;
-    private int change;
+    private String id;
+    private String change;
     private int time;
     private ArrayList<Integer> ticketIds = new ArrayList<>();
 
@@ -17,24 +17,24 @@ public class Change implements Serializable{
 
     }
 
-    public Change(long id, int change, int time){
+    public Change(String id, String change, int time){
         this.setId(id);
         this.setChange(change);
         this.setTime(time);
     }
 
-    public Change(long id, int change, int time, ArrayList<Integer> ticketIds){
+    public Change(String id, String change, int time, ArrayList<Integer> ticketIds){
         this.setId(id);
         this.setChange(change);
         this.setTime(time);
         this.setTicketIds(ticketIds);
     }
 
-    public long getId(){
+    public String getId(){
         return this.id;
     }
 
-    public int getChange(){
+    public String getChange(){
         return this.change;
     }
 
@@ -46,11 +46,11 @@ public class Change implements Serializable{
         return this.ticketIds;
     }
 
-    public void setId(long id){
+    public void setId(String id){
         this.id = id;
     }
 
-    public void setChange(int change){
+    public void setChange(String change){
         this.change = change;
     }
 
@@ -67,12 +67,7 @@ public class Change implements Serializable{
     }
 
     public String getChangeName(){
-        if(this.change == 0)
-            return "reduced";
-        else if(this.change == 1)
-            return "increased";
-        else
-            return "";
+        return this.change;
     }
 
 }

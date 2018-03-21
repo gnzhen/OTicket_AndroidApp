@@ -3,6 +3,7 @@ package com.example.gd.oticket;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.gd.oticket.myrequest.MyRequest;
 
@@ -95,6 +97,7 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
         branchServices = new ArrayList<>();
         queues = new ArrayList<>();
         services = new ArrayList<>();
+        recyclerView.setAdapter(new EmptyAdapter());
 
         //get bundle
         Bundle bundle = getArguments();
@@ -173,7 +176,7 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                     }
                 }
 
-                    /* Get Queue */
+                /* Get Queue */
                 request.getQueuesByBranchId(branch.getId(), new MyRequest.VolleyCallback(){
 
                     @Override
@@ -194,7 +197,7 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
 
                                     if(jsonObject.get("ticket_serving_now").toString() != "null"){
                                         queue = new Queue(
-                                                new Long((Integer)jsonObject.get("id")),
+                                                jsonObject.get("id").toString(),
                                                 jsonObject.get("branch_service_id").toString(),
                                                 new Long((Integer)jsonObject.get("ticket_serving_now")),
                                                 (Integer) jsonObject.get("wait_time"),
@@ -203,7 +206,7 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                                     }
                                     else {
                                         queue = new Queue(
-                                                new Long((Integer)jsonObject.get("id")),
+                                                jsonObject.get("id").toString(),
                                                 jsonObject.get("branch_service_id").toString(),
                                                 (Integer) jsonObject.get("wait_time"),
                                                 (Integer) jsonObject.get("pending_ticket")
@@ -216,7 +219,7 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                                 }
                             }
                         }
-                            /* Get service */
+                        /* Get service */
                         request.getServices(new MyRequest.VolleyCallback() {
                             @Override
                             public void onSuccess(String result) {
@@ -243,23 +246,44 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                                         }
                                     }
                                 }
+                                mainActivity.showSpinner(false);
+                                swipeLayout.setRefreshing(false);
+
                                 if(branchServices.size() > 0) {
-                                    mainActivity.showSpinner(false);
                                     branchName.setText(branch.getName());
                                     ewtLabel.setText("Estimated - Estimated Wait Time");
                                     adapter = new ServiceRecyclerAdapter(branchServices, getContext(), queues, services);
                                     recyclerView.setAdapter(adapter);
                                 }
                                 else{
-                                    recyclerView.setAdapter(new EmptyAdapter());
-                                    mainActivity.showSpinner(false);
                                     mainActivity.setContentText("-  No service to display  -");
                                 }
                             }
+                            @Override
+                            public void onFailure(String error) {
+                                Log.d("onFailure", error);
+                                recyclerView.setAdapter(new EmptyAdapter());
+                                mainActivity.showSpinner(false);
+                                mainActivity.showToast(error);
+                            }
                         });
+                    }
+                    @Override
+                    public void onFailure(String error) {
+                        Log.d("onFailure", error);
+                        recyclerView.setAdapter(new EmptyAdapter());
+                        mainActivity.showSpinner(false);
+                        mainActivity.showToast(error);
                     }
                 });
 
+            }
+            @Override
+            public void onFailure(String error) {
+                Log.d("onFailure", error);
+                recyclerView.setAdapter(new EmptyAdapter());
+                mainActivity.showSpinner(false);
+                mainActivity.showToast(error);
             }
         });
     }
@@ -279,6 +303,15 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
     @Override
     public void onRefresh() {
         loadView();
-        swipeLayout.setRefreshing(false);
+        new CountDownTimer(5000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                //
+            }
+
+            public void onFinish() {
+                swipeLayout.setRefreshing(false);
+                mainActivity.showSpinner(false);
+            }
+        }.start();
     }
 }

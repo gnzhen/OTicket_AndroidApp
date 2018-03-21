@@ -32,6 +32,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
     // UI references.
     @Email
     private EditText loginEmail;
-    @Password(min = 8, message = "Password minimum 8 characters")
+    @Password
     private EditText loginPassword;
     private View progressBar;
     private View loginForm;
@@ -75,6 +77,8 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
     private Toast toast;
+    private FrameLayout progressBarHolder;
+    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +100,11 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
         registerBtn = findViewById(R.id.login_register_button);
         loginForm = findViewById(R.id.login_form_scroll_view);
         progressBar = findViewById(R.id.login_progress);
+        progressBarHolder = findViewById(R.id.progressBarHolder);
+        spinner = findViewById(R.id.login_progress);
 
         request = new MyRequest(this);
+        showSpinner(false);
 
         signInBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -127,8 +134,31 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
         final String email = loginEmail.getText().toString().trim();
         final String password = loginPassword.getText().toString().trim();
 
+        login(email, password);
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+
+            // Display error messages ;)
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void login(String email, String password){
+
+        showSpinner(true);
+
         /* Login */
         request.login(email, password, new MyRequest.VolleyCallback(){
+
             @Override
             public void onSuccess(String result) {
                 JSONObject jResponse = null;
@@ -164,28 +194,19 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
                             e.printStackTrace();
                         }
                     }
+                    showSpinner(false);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
+            @Override
+            public void onFailure(String error) {
+                Log.d("onFailure", error);
+                showToast(error);
+                showSpinner(false);
+            }
         });
     }
-
-    @Override
-    public void onValidationFailed(List<ValidationError> errors) {
-        for (ValidationError error : errors) {
-            View view = error.getView();
-            String message = error.getCollatedErrorMessage(this);
-
-            // Display error messages ;)
-            if (view instanceof EditText) {
-                ((EditText) view).setError(message);
-            } else {
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
 
     public void saveCredentials(String id, String name, String email){
 
@@ -209,6 +230,19 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
         toast = Toast.makeText(getApplicationContext() ,text, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 150);
         toast.show();
+    }
+
+    public void showSpinner(boolean show){
+        if(show) {
+            Log.d("spinner", "true");
+            spinner.setVisibility(View.VISIBLE);
+            progressBarHolder.setVisibility(View.VISIBLE);
+        }
+        else {
+            Log.d("spinner", "false");
+            spinner.setVisibility(View.GONE);
+            progressBarHolder.setVisibility(View.GONE);
+        }
     }
 }
 

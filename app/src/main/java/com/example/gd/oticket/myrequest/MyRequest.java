@@ -72,7 +72,7 @@ public class MyRequest {
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                        Log.d("register response", response);
+                        Log.d("Volley response register", response);
                     try {
                         callback.onSuccess(response);
                     } catch (JSONException e) {
@@ -113,7 +113,7 @@ public class MyRequest {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            Log.d("login response", response);
+                            Log.d("Volley response login", response);
                             try {
                                 callback.onSuccess(response);
                             } catch (JSONException e) {
@@ -123,7 +123,7 @@ public class MyRequest {
                             JSONObject jResponse =  new JSONObject(response);
 
                             if(jResponse.has("success")){
-                                showToast(jResponse.get("success").toString());
+//                                showToast(jResponse.get("success").toString());
 
                             } else {
                                 //Show first validation error from server
@@ -159,6 +159,44 @@ public class MyRequest {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+    public void issueTicket(final String userId, final String branchServiceId, final VolleyCallback callback){
+        String url = ip + "issueTicket";
+
+        // Formulate the request and handle the response.
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        Log.d("Volley response issueTicket", response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Volley Error", error.toString());
+                        showVolleyError(error);
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> map = new HashMap<>();
+                map.put("mobileUserId", userId);
+                map.put("branchServiceId", branchServiceId);
+
+                return map;
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
     public void getUserCurrentTickets(final String id, final VolleyCallback callback){
         String url = ip + "userCurrentTickets";
 
@@ -168,7 +206,81 @@ public class MyRequest {
                     @Override
                     public void onResponse(String response) {
 
-                        Log.d("My App volley response", response);
+                        Log.d("Volley response userCurrentTickets", response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Volley Error", error.toString());
+                        showVolleyError(error);
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> map = new HashMap<>();
+                map.put("id", id);
+
+                return map;
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public void getTicketDetails(final String id, final VolleyCallback callback){
+        String url = ip + "ticketDetails";
+
+        // Formulate the request and handle the response.
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        Log.d("volley response ticketDetails", response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Volley Error", error.toString());
+                        showVolleyError(error);
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> map = new HashMap<>();
+                map.put("id", id);
+
+                return map;
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public void getHistories(final String id, final VolleyCallback callback){
+        String url = ip + "histories";
+
+        // Formulate the request and handle the response.
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        Log.d("Volley response histories", response);
                         try {
                             callback.onSuccess(response);
                         } catch (JSONException e) {
@@ -205,7 +317,7 @@ public class MyRequest {
                     @Override
                     public void onResponse(String response) {
 
-                        Log.d("My App volley response", response);
+                        Log.d("Volley response branches", response);
                         try {
                             callback.onSuccess(response);
                         } catch (JSONException e) {
@@ -238,7 +350,7 @@ public class MyRequest {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("My App volley response", response);
+                        Log.d("volley response services", response);
                         try {
                             callback.onSuccess(response);
                         } catch (JSONException e) {
@@ -252,40 +364,6 @@ public class MyRequest {
                         Log.d("Volley Error", error.toString());
                         showVolleyError(error);
 
-                    }
-                }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return null;
-            }
-        };
-
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
-    }
-
-    public void getBranchServices(final VolleyCallback callback){
-        String url = ip + "branchServices";
-
-        // Formulate the request and handle the response.
-        StringRequest request = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        Log.d("My App volley response", response);
-                        try {
-                            callback.onSuccess(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Volley Error", error.toString());
-                        showVolleyError(error);
                     }
                 }){
             @Override
@@ -307,7 +385,7 @@ public class MyRequest {
                 @Override
                 public void onResponse(String response) {
 
-                    Log.d("My App volley response", response);
+                    Log.d("Volley response branchServicesByBranchId", response);
                     try {
                         callback.onSuccess(response);
                     } catch (JSONException e) {
@@ -344,7 +422,7 @@ public class MyRequest {
                     @Override
                     public void onResponse(String response) {
 
-                        Log.d("My App volley response", response);
+                        Log.d("Volley response queuesByBranchId", response);
                         try {
                             callback.onSuccess(response);
                         } catch (JSONException e) {
@@ -394,5 +472,6 @@ public class MyRequest {
 
     public interface VolleyCallback{
         void onSuccess(String result) throws JSONException;
+        void onFailure(String error);
     }
 }

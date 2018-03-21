@@ -45,15 +45,10 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
 
         mainActivity.setLayerType(dot);
 
-        Queue ticketQueue = mainActivity.getQueueByTicketId(ticket.getId());
-        BranchService ticketBranchService = mainActivity.getBranchServiceById(ticketQueue.getBranchServiceId());
-        Branch ticketBranch = mainActivity.getBranchById(ticketBranchService.getBranchId());
-        Service ticketService = mainActivity.getServiceById(ticketBranchService.getServiceId());
-
-        holder.queueNoTV.setText(ticket.getTicketNo());
+        holder.ticketNoTV.setText(ticket.getTicketNo());
         holder.waitTimeTV.setText(mainActivity.intTimeToString(ticket.getWaitTime()));
-        holder.branchTV.setText(ticketBranch.getName());
-        holder.serviceTV.setText(ticketService.getName());
+        holder.branchTV.setText(ticket.getBranchName());
+        holder.serviceTV.setText(ticket.getServiceName());
         holder.rowLL.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -63,9 +58,8 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("ticketDetails", ticket);
-                ticketDetailsFrag.setArguments(bundle);
 
-                mainActivity.displayFragment(ticketDetailsFrag, null);
+                mainActivity.displayFragment(ticketDetailsFrag, bundle, "TICKET_DETAILS");
             }
         });
     }
@@ -77,13 +71,13 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView queueNoTV, waitTimeTV, branchTV, serviceTV;
+        TextView ticketNoTV, waitTimeTV, branchTV, serviceTV;
         LinearLayout rowLL;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            queueNoTV = itemView.findViewById(R.id.ticket_card_view_ticket_number);
+            ticketNoTV = itemView.findViewById(R.id.ticket_card_view_ticket_number);
             waitTimeTV = itemView.findViewById(R.id.ticket_card_view_wait_time);
             branchTV = itemView.findViewById(R.id.ticket_card_view_branch);
             serviceTV = itemView.findViewById(R.id.ticket_card_view_service);

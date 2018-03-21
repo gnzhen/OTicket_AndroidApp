@@ -1,6 +1,7 @@
 package com.example.gd.oticket;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.gd.oticket.myrequest.MyRequest;
 
@@ -41,7 +43,6 @@ public class BranchFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
     private SearchView searchView;
     private Toolbar toolbar;
     private MyRequest request;
-    private boolean callback;
     private SwipeRefreshLayout swipeLayout;
 
     @Nullable
@@ -79,6 +80,7 @@ public class BranchFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
 
         request = new MyRequest(view.getContext());
         branches = new ArrayList<>();
+        recyclerView.setAdapter(new EmptyAdapter());
 
         loadView();
 
@@ -138,16 +140,23 @@ public class BranchFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
                         }
                     }
                 }
+                mainActivity.showSpinner(false);
+                swipeLayout.setRefreshing(false);
+
                 if(branches.size() > 0) {
                     adapter = new BranchRecyclerAdapter(branches, getContext());
                     recyclerView.setAdapter(adapter);
-                    mainActivity.showSpinner(false);
                 }
                 else{
-                    recyclerView.setAdapter(new EmptyAdapter());
-                    mainActivity.showSpinner(false);
                     mainActivity.setContentText("-  No branch to display  -");
                 }
+            }
+            @Override
+            public void onFailure(String error) {
+                Log.d("onFailure", error);
+                recyclerView.setAdapter(new EmptyAdapter());
+                mainActivity.showSpinner(false);
+                mainActivity.showToast(error);
             }
         });
     }
@@ -167,6 +176,15 @@ public class BranchFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
     @Override
     public void onRefresh() {
         loadView();
-        swipeLayout.setRefreshing(false);
+        new CountDownTimer(5000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                //
+            }
+
+            public void onFinish() {
+                swipeLayout.setRefreshing(false);
+                mainActivity.showSpinner(false);
+            }
+        }.start();
     }
 }

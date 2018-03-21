@@ -9,13 +9,13 @@ import java.util.ArrayList;
  */
 
 public class Serving implements Serializable{
-    private int id;
+    private String id;
     private String staffId;
-    private int ticketId;
+    private String ticketId;
     private long serveTime;
     private String counterId;
 
-    public Serving(int id, String staffId, int ticketId, long serveTime, String counterId){
+    public Serving(String id, String staffId, String ticketId, long serveTime, String counterId){
         this.setId(id);
         this.setStaffId(staffId);
         this.setTicketId(ticketId);
@@ -23,7 +23,7 @@ public class Serving implements Serializable{
         this.setCounterId(counterId);
     }
 
-    public int getId(){
+    public String getId(){
         return this.id;
     }
 
@@ -31,7 +31,7 @@ public class Serving implements Serializable{
         return this.staffId;
     }
 
-    public int getTicketId() {
+    public String getTicketId() {
         return this.ticketId;
     }
 
@@ -43,7 +43,7 @@ public class Serving implements Serializable{
         return this.serveTime;
     }
 
-    public void setId(int id){
+    public void setId(String id){
         this.id = id;
     }
 
@@ -51,7 +51,7 @@ public class Serving implements Serializable{
         this.staffId = staffId;
     }
 
-    public void setTicketId(int ticketId){
+    public void setTicketId(String ticketId){
         this.ticketId = ticketId;
     }
 

@@ -47,19 +47,16 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
         mainActivity.setLayerType(dot1);
         mainActivity.setLayerType(dot2);
 
-        Ticket ticket = mainActivity.getTicketById(history.getTicketId());
-        Branch branch = mainActivity.getBranchByTicketId(history.getTicketId());
-        Service service = mainActivity.getServiceByTicketId(history.getTicketId());
-        int waitTime = mainActivity.calWaitTimeInt(history.getServeTime(), history.getDoneTime());
 
-        holder.branchTV.setText(branch.getName());
-        holder.serviceTV.setText(service.getName());
-        holder.waitTimeTV.setText(mainActivity.intTimeToString(waitTime));
-//        holder.dateTimeTV.setText(mainActivity.getDateTimeStringByUnix(ticket.getIssueTime()));
+        holder.branchTV.setText(history.getBranchName());
+        holder.serviceTV.setText(history.getServiceName());
+        holder.waitTimeTV.setText(history.getWaitTime());
+        holder.dateTimeTV.setText(history.getIssueTime());
+        holder.statusTV.setText(history.getStatus());
         holder.rowLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //implement later
+                //
             }
         });
     }
@@ -71,7 +68,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView waitTimeTV, branchTV, serviceTV, dateTimeTV;
+        TextView waitTimeTV, branchTV, serviceTV, dateTimeTV, statusTV;
         LinearLayout rowLL;
 
         public ViewHolder(View itemView) {
@@ -81,6 +78,7 @@ public class HistoryRecyclerAdapter extends RecyclerView.Adapter<HistoryRecycler
             branchTV = itemView.findViewById(R.id.history_row_branch);
             serviceTV = itemView.findViewById(R.id.history_row_service);
             waitTimeTV = itemView.findViewById(R.id.history_row_wait_time);
+            statusTV = itemView.findViewById(R.id.history_row_status);
             rowLL = itemView.findViewById(R.id.recycler_row_linear_layout);
         }
     }

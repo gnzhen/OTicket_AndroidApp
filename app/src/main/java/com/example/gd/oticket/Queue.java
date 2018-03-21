@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class Queue implements Serializable{
-    private long id;
+    private String id;
     private String branchServiceId;
     private long ticketIdServingNow;
     private int waitTime;
@@ -24,7 +24,7 @@ public class Queue implements Serializable{
     private ArrayList<Integer> ticketIds = new ArrayList<>();
     private ArrayList<String> counterIds = new ArrayList<>();
 
-    public Queue(long id, String branchServiceId, long ticketIdServingNow, int waitTime, int pendingTicket){
+    public Queue(String id, String branchServiceId, long ticketIdServingNow, int waitTime, int pendingTicket){
         this.setId(id);
         this.setBranchServiceId(branchServiceId);
         this.setTicketIdServingNow(ticketIdServingNow);
@@ -32,14 +32,14 @@ public class Queue implements Serializable{
         this.setPendingTicket(pendingTicket);
     }
 
-    public Queue(long id, String branchServiceId, int waitTime, int pendingTicket){
+    public Queue(String id, String branchServiceId, int waitTime, int pendingTicket){
         this.setId(id);
         this.setBranchServiceId(branchServiceId);
         this.setWaitTime(waitTime);
         this.setPendingTicket(pendingTicket);
     }
 
-    public long getId(){
+    public String getId(){
         return this.id;
     }
 
@@ -75,7 +75,7 @@ public class Queue implements Serializable{
         return this.ticketIds.get(ticketIds.size() - 1);
     }
 
-    public void setId(long id){
+    public void setId(String id){
         this.id = id;
     }
 

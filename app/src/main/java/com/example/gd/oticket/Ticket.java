@@ -11,18 +11,23 @@ import java.util.Date;
  */
 
 public class Ticket implements Serializable, Comparable<Ticket>{
-    private int id;
+    private String id;
     private String ticketNo;
-    private Date issueTime;
-    private long queueId;
+    private String issueTime;
+    private String queueId;
     private int waitTime;
     private int pplAhead;
     private String mobileUserId;
     private int postponed;
     private String status;
-    private Date disposedTime;
+    private String disposedTime;
+    private String branchName;
+    private String serviceName;
+    private String serveTime;
+    private String ticketServingNow;
 
-    public Ticket(int id, String ticketNo, Date issueTime, long queueId, int waitTime, int pplAhead, String mobileUserId, int postponed, String status, Date disposedTime){
+    public Ticket(String id, String ticketNo, String issueTime, String queueId, int waitTime, int pplAhead, String mobileUserId, int postponed,
+                  String status, String disposedTime, String branchName, String serviceName, String serveTime, String ticketServingNow){
         this.setId(id);
         this.setTicketNo(ticketNo);
         this.setIssueTime(issueTime);
@@ -33,9 +38,13 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         this.setPostponed(postponed);
         this.setStatus(status);
         this.setDisposedTime(disposedTime);
+        this.setBranchName(branchName);
+        this.setServiceName(serviceName);
+        this.setServeTime(serveTime);
+        this.setTicketServingNow(ticketServingNow);
     }
 
-    public int getId(){
+    public String getId(){
         return this.id;
     }
 
@@ -43,11 +52,11 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         return this.ticketNo;
     }
 
-    public Date getIssueTime() {
+    public String getIssueTime() {
         return this.issueTime;
     }
 
-    public long getQueueId(){
+    public String getQueueId(){
         return this.queueId;
     }
 
@@ -67,11 +76,27 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         return this.status;
     }
 
-    public Date getDisposedTime(){
+    public String getDisposedTime(){
         return this.disposedTime;
     }
 
-    public void setId(int id){
+    public String getBranchName(){
+        return this.branchName;
+    }
+
+    public String getServiceName(){
+        return this.serviceName;
+    }
+
+    public String getServeTime(){
+        return this.serveTime;
+    }
+
+    public String getTicketServingNow(){
+        return this.ticketServingNow;
+    }
+
+    public void setId(String id){
         this.id = id;
     }
 
@@ -79,11 +104,11 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         this.ticketNo = ticketNo;
     }
 
-    public void setIssueTime(Date issueTime) {
+    public void setIssueTime(String issueTime) {
         this.issueTime = issueTime;
     }
 
-    public void setQueueId(long queueId){
+    public void setQueueId(String queueId){
         this.queueId = queueId;
     }
 
@@ -107,8 +132,24 @@ public class Ticket implements Serializable, Comparable<Ticket>{
         this.status = status;
     }
 
-    public void setDisposedTime(Date disposedTime){
+    public void setDisposedTime(String disposedTime){
         this.disposedTime = disposedTime;
+    }
+
+    public void setBranchName(String branchName){
+        this.branchName = branchName;
+    }
+
+    public void setServiceName(String serviceName){
+        this.serviceName = serviceName;
+    }
+
+    public void setServeTime(String serveTime){
+        this.serveTime = serveTime;
+    }
+
+    public void setTicketServingNow(String ticketServingNow){
+        this.ticketServingNow = ticketServingNow;
     }
 
     @Override

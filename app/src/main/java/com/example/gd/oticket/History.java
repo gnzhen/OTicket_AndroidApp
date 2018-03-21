@@ -8,75 +8,77 @@ import java.text.SimpleDateFormat;
  */
 
 public class History implements Serializable{
-    private int id;
-    private long ticketId;
-    private String staffId;
-    private String counterId;
-    private long serveTime;
-    private long doneTime;
+    private String id;
+    private String ticketNo;
+    private String issueTime;
+    private String waitTime;
+    private String branchName;
+    private String serviceName;
+    private String status;
 
-    public History(int id, long ticketId, String staffId, String counterId, long serveTime){
+    public History(String id, String ticketNo, String issueTime, String waitTime, String branchName, String serviceName, String status){
         this.setId(id);
-        this.setTicketId(ticketId);
-        this.setCounterId(counterId);
-        this.setStaffId(staffId);
-        this.setServeTime(serveTime);
+        this.setTicketNo(ticketNo);
+        this.setIssueTime(issueTime);
+        this.setWaitTime(waitTime);
+        this.setBranchName(branchName);
+        this.setServiceName(serviceName);
+        this.setStatus(status);
     }
 
-    public History(int id, long ticketId, String staffId, String counterId, long serveTime, long doneTime){
-        this.setId(id);
-        this.setTicketId(ticketId);
-        this.setCounterId(counterId);
-        this.setStaffId(staffId);
-        this.setServeTime(serveTime);
-        this.setDoneTime(doneTime);
-    }
-
-    public int getId(){
+    public String getId(){
         return this.id;
     }
 
-    public long getTicketId(){
-        return this.ticketId;
+    public String getTicketNo(){
+        return this.ticketNo;
     }
 
-    public String getStaffId(){
-        return this.staffId;
+    public String getIssueTime(){
+        return this.issueTime;
     }
 
-    public String getCounterId(){
-        return this.counterId;
+    public String getWaitTime(){
+        return this.waitTime;
     }
 
-    public long getServeTime(){
-        return this.serveTime;
+    public String getBranchName(){
+        return this.branchName;
     }
 
-    public long getDoneTime(){
-        return this.doneTime;
+    public String getServiceName(){
+        return this.serviceName;
     }
 
-    public void setId(int id){
+    public String getStatus(){
+        return this.status;
+    }
+
+    public void setId(String id){
         this.id = id;
     }
 
-    public void setTicketId(long ticketId){
-        this.ticketId = ticketId;
+    public void setTicketNo(String ticketNo){
+        this.ticketNo = ticketNo;
     }
 
-    public void setStaffId(String staffId){
-        this.staffId = staffId;
+    public void setIssueTime(String issueTime){
+        this.issueTime = issueTime;
     }
 
-    public void setCounterId(String counterId){
-        this.counterId = counterId;
+    public void setWaitTime(String waitTime){
+        this.waitTime = waitTime;
     }
 
-    public void setServeTime(long serveTime){
-        this.serveTime = serveTime;
+    public void setBranchName(String branchName){
+        this.branchName = branchName;
     }
 
-    public void setDoneTime(long doneTime){
-        this.doneTime = doneTime;
+    public void setServiceName(String serviceName){
+        this.serviceName = serviceName;
+    }
+
+    public void setStatus(String status){
+        this.status = status;
     }
 }

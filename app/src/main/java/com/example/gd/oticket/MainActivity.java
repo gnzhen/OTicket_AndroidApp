@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -60,7 +61,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.function.LongToIntFunction;
 
@@ -92,7 +95,8 @@ public class MainActivity extends AppCompatActivity
     ActionBarDrawerToggle toggle;
     TextView name, email;
     MyRequest request;
-    ProgressBar spinner;
+    FrameLayout progressBarHolder;
+    ProgressBar spinner, mainSpinner;
     Toast toast;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
@@ -121,10 +125,12 @@ public class MainActivity extends AppCompatActivity
         searchView = toolbar.findViewById(R.id.search_view);
         name = navigationView.getHeaderView(0).findViewById(R.id.header_name);
         email = navigationView.getHeaderView(0).findViewById(R.id.header_email);
+        progressBarHolder = findViewById(R.id.main_progressBarHolder);
+        mainSpinner = findViewById(R.id.main_progress);
+        spinner = findViewById(R.id.progress_bar);
+        progressBarHolder.bringToFront();
 
         request = new MyRequest(this);
-        spinner = findViewById(R.id.progress_bar);
-
         setSupportActionBar(toolbar);
 
         actionBar = getSupportActionBar();
@@ -137,7 +143,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayFragment(new BranchFrag(), "branches");
+                displayFragment(new BranchFrag(), null, "BRANCH");
                 setNavActiveItem(R.id.nav_take_a_ticket);
             }
         });
@@ -210,17 +216,19 @@ public class MainActivity extends AppCompatActivity
         switch (id){
             case R.id.nav_my_ticket:
                 fragment = new TicketFrag();
-                data = "tickets";
+                data = "TICKET";
                 break;
             case R.id.nav_take_a_ticket:
                 fragment = new BranchFrag();
-                data = "branches";
+                data = "BRANCH";
                 break;
             case R.id.nav_history:
                 fragment = new HistoryFrag();
-                data = "histories";
+                data = "HISTORY";
                 break;
             case R.id.nav_acc_setting:
+                fragment = new HistoryFrag();
+                data = "ACCOUNT";
                 break;
             case R.id.nav_logout:
                 editor.clear().commit();
@@ -228,7 +236,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        displayFragment(fragment, data);
+        displayFragment(fragment, null, "data");
 
         return true;
     }
@@ -241,8 +249,27 @@ public class MainActivity extends AppCompatActivity
             setContentText("");
             spinner.setVisibility(View.VISIBLE);
         }
-        else
+        else{
             spinner.setVisibility(View.GONE);
+        }
+    }
+
+    public void showSpinnerWithOverlay(boolean show){
+        if(show) {
+            setContentText("");
+            mainSpinner.setVisibility(View.VISIBLE);
+            progressBarHolder.setVisibility(View.VISIBLE);
+        }
+        else{
+            mainSpinner.setVisibility(View.GONE);
+            progressBarHolder.setVisibility(View.GONE);
+        }
+    }
+
+    public void showToast(String text){
+        toast = Toast.makeText(this ,text, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 150);
+        toast.show();
     }
 
     public void testDialog(){
@@ -263,13 +290,13 @@ public class MainActivity extends AppCompatActivity
         }.start();
     }
 
-    public void displayFragment(Fragment fragment, String bundleData){
+    public void displayFragment(Fragment fragment, Bundle bundle, String tag){
 
         if (fragment != null){
-            if(bundleData != null)
-                setBundle(fragment, bundleData);
+            if(bundle != null)
+                fragment.setArguments(bundle);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_layout, fragment);
+            ft.replace(R.id.fragment_layout, fragment, tag);
             ft.addToBackStack("fragment");
             ft.commit();
         }
@@ -277,6 +304,20 @@ public class MainActivity extends AppCompatActivity
         clearSearchView();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    public void refreshFragment(String tag, Bundle bundle) {
+        Fragment currentFrag = getSupportFragmentManager()
+                .findFragmentByTag(tag);
+        if (currentFrag != null && currentFrag.isVisible()) {
+            if (bundle != null) {
+                currentFrag.setArguments(bundle);
+            }
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.detach(currentFrag);
+            ft.attach(currentFrag);
+            ft.commit();
+        }
     }
 
     public void displayActivity(Context fromActivity, Class<?> toActivity){
@@ -373,7 +414,7 @@ public class MainActivity extends AppCompatActivity
         return toolbar;
     }
 
-    public void showIssueTicketDialog(BranchService branchService, String serviceName, int waitTime, int pplInQueue){
+    public void showIssueTicketDialog(final String branchServiceId, String serviceName, int waitTime, int pplInQueue){
         issueTicketDialog = new Dialog(this);
         issueTicketDialog.setContentView(R.layout.dialog_issue_ticket);
         issueTicketDialog.setCancelable(false);
@@ -398,7 +439,7 @@ public class MainActivity extends AppCompatActivity
         issueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showConfirmationDialog("issueTicket");
+                showConfirmationDialog("issueTicket", branchServiceId);
             }
         });
 
@@ -424,12 +465,12 @@ public class MainActivity extends AppCompatActivity
         setLayerType(dot3);
 
         ticketTV.setText(ticket.getTicketNo());
-        serviceTV.setText(getServiceByTicketId(ticket.getId()).getName());
+//        serviceTV.setText(getServiceByTicketId(ticket.getId()).getName());
 
         ticketLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayFragment(new TicketDetailsFrag(), "ticketDetails");
+                displayFragment(new TicketDetailsFrag(), null, "TICKET_DETAILS");
                 reminderDialog.dismiss();
             }
         });
@@ -451,7 +492,7 @@ public class MainActivity extends AppCompatActivity
         cancelTicketBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showConfirmationDialog("cancelTicket");
+                showConfirmationDialog("cancelTicket", null);
             }
         });
 
@@ -478,15 +519,15 @@ public class MainActivity extends AppCompatActivity
 
         actionTV.setText(change.getChangeName());
         timeTV.setText(intTimeToString(change.getTime()));
-        ticket = getTicketById(change.getTicketIds().get(1));
+//        ticket = getTicketById(change.getTicketIds().get(1));
         ticketNoTV.setText(ticket.getTicketNo());
-        serviceTV.setText(getServiceByTicketId(ticket.getId()).getName());
+//        serviceTV.setText(getServiceByTicketId(ticket.getId()).getName());
 
         ticketLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 timeChangeDialog.dismiss();
-                displayFragment(new TicketDetailsFrag(), "ticketDetails");
+                displayFragment(new TicketDetailsFrag(), null, "TICKET_DETAILS");
             }
         });
 
@@ -500,7 +541,7 @@ public class MainActivity extends AppCompatActivity
         timeChangeDialog.show();
     }
 
-    public void showConfirmationDialog(final String action){
+    public void showConfirmationDialog(final String action, final String data){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
         String message = "Are you sure?";
@@ -524,9 +565,9 @@ public class MainActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int arg1) {
                 dialog.dismiss();
                 if(action.equals("issueTicket")) {
-                    //issue Ticket
-                    displayFragment(new TicketFrag(), "tickets");
+                    issueTicket(data);
                 }
+
                 if(issueTicketDialog != null)
                     issueTicketDialog.dismiss();
                 if(postponeDialog != null)
@@ -598,7 +639,7 @@ public class MainActivity extends AppCompatActivity
         postponeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showConfirmationDialog("postponeTicket");
+                showConfirmationDialog("postponeTicket", null);
             }
         });
 
@@ -629,8 +670,50 @@ public class MainActivity extends AppCompatActivity
     /*
      * Functions for action control
      */
-    public boolean issueTicket(){
-        return true;
+    public void issueTicket(String branchServiceId){
+        showSpinnerWithOverlay(true);
+
+        String userId = pref.getString("id", null);
+        if(userId == null)
+            checkAuth();
+        else {
+            /* Issue Ticket */
+            request.issueTicket(userId, branchServiceId, new MyRequest.VolleyCallback() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+
+                        if(jsonObject.has("success")) {
+                            showToast(jsonObject.get("success").toString());
+
+                        } else if(jsonObject.has("fail")){
+                            showToast(jsonObject.get("fail").toString());
+                        } else {
+                            //Show first validation error from server
+                            Iterator<String> keys = jsonObject.keys();
+                            String str_Name = keys.next();
+                            JSONArray value;
+                            try {
+                                value = jsonObject.getJSONArray(str_Name);
+                                showToast(value.get(0).toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    showSpinnerWithOverlay(false);
+                    displayFragment(new TicketFrag(), null, "TICKET");
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Log.d("onFailure", error);
+                }
+            });
+        }
     }
 
     public boolean postponeTicket(Ticket ticket){
@@ -644,6 +727,10 @@ public class MainActivity extends AppCompatActivity
     /*
      * Other functions
      */
+    public String getUserId(){
+        return pref.getString("id", null);
+    }
+
     public void checkAuth(){
         if(pref.getString("id", null) == null){
             Log.d("check Auth", "user haven't login");
@@ -659,8 +746,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setData(){
-        setServices();
-//        setBranches();
+        //
     }
 
     public ArrayList<Branch> getBranches(){
@@ -678,207 +764,6 @@ public class MainActivity extends AppCompatActivity
     public ArrayList<Queue> getQueues(){
         return queues;
     }
-
-//    public void setBranches(){
-//        request.getBranches(new MyRequest.VolleyCallback() {
-//            @Override
-//            public void onSuccess(String result) {
-//                JSONArray jsonArray = null;
-//                try {
-//                    jsonArray = new JSONArray(result);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                if(jsonArray != null){
-//                    branches.clear();
-//                    for(int i = 0; i < jsonArray.length(); i++){
-//                        try {
-//                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                            Branch branch = new Branch(
-//                                    jsonObject.get("id").toString(),
-//                                    jsonObject.get("code").toString(),
-//                                    jsonObject.get("name").toString(),
-//                                    jsonObject.get("desc").toString()
-//                            );
-//                            branches.add(branch);
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//            }
-//        });
-//    }
-
-    public void setServices(){
-        request.getServices(new MyRequest.VolleyCallback() {
-            @Override
-            public void onSuccess(String result) {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(result);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                if(jsonArray != null){
-                    services.clear();
-                    for(int i = 0; i < jsonArray.length(); i++){
-                        try {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            Service service = new Service(
-                                    jsonObject.get("id").toString(),
-                                    jsonObject.get("code").toString(),
-                                    jsonObject.get("name").toString()
-                            );
-                            services.add(service);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-
-//    public void setQueuesByBranchId(String id){
-//        request.getQueuesByBranchId(id, new MyRequest.VolleyCallback(){
-//
-//            @Override
-//            public void onSuccess(String result) {
-//                JSONArray jsonArray = null;
-//                try {
-//                    jsonArray = new JSONArray(result);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                if(jsonArray != null) {
-//                    queues.clear();
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        try {
-//                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                            Queue queue = new Queue(
-//                                    (long)jsonObject.get("id"),
-//                                    jsonObject.get("branchServiceId").toString(),
-//                                    (long)jsonObject.get("ticketIdServingNow"),
-//                                    (Integer) jsonObject.get("waitTime"),
-//                                    (Integer) jsonObject.get("pendingTicket")
-//                            );
-//                            queues.add(queue);
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//            }
-//        });
-//    }
-
-//    public void setData(){
-//        //hardcode service data
-//        for(int j = 0; j < 5; j++) {
-//            String serviceId = "service " + Integer.toString(j);
-//            String[] serviceName = {"Customer Service", "Order", "Cashier", "Pick Up", "Other Services"};
-//            Service service = new Service(serviceId, serviceName[j]);
-//            services.add(service);
-//        }
-//
-//        //hardcode branch data
-//        for(int i = 0; i < 5; i++){
-//            String id = "branch " + Integer.toString(i+1);
-//            String[] name = {"Kepong", "KL", "PJ", "Rawang", "Cheras"};
-//            String desc = "1, jalan kepong, Kepong.";
-//
-//            Branch branch = new Branch(id, name[i], desc, services);
-//            branches.add(branch);
-//        }
-//
-//        //hardcode branchservice data
-//        for(int i = 0; i < 5; i++){
-//            for(int j = 0; j < 5; j++){
-//                String id = branches.get(i).getId() + "_" + services.get(j).getId();
-//                String branchId = branches.get(i).getId();
-//                String serviceId = services.get(j).getId();
-//                int avgWaitTime = 700;
-//
-//                BranchService branchService = new BranchService(id, branchId, serviceId, avgWaitTime);
-//                branchServices.add(branchService);
-//            }
-//        }
-//
-//        //hardcode queue data
-//        int a = 0;
-//        for(BranchService bs: branchServices){
-//            long id = a;
-//            ArrayList<String> counterIds = new ArrayList<>();
-//            int ticketServingNow = 1;
-//            String counterId = "counter" + a;
-//            counterIds.add(counterId);
-//
-//            queue = new Queue(id, bs.getId(), counterIds, ticketServingNow);
-//            queues.add(queue);
-//            a++;
-//            queue.addTicketIdToQueue(0);
-//            queue.addTicketIdToQueue(1);
-//            queue.addTicketIdToQueue(2);
-//            queue.addTicketIdToQueue(3);
-//            queue.addTicketIdToQueue(4);
-//        }
-//
-//        //hardcode ticket data
-//        for(int i = 0; i < 5; i++){
-//            int id = i;
-//            String ticketNo = String.format("%04d", id);
-//            int queueId = i;
-//            int waitTime = (i + 1) * 2000;
-//            int pplAhead = 5;
-//
-//            ticket = new Ticket(id, ticketNo, queueId, waitTime, pplAhead);
-//            tickets.add(ticket);
-//        }
-//
-//        //hardcode change data
-//        for(int i = 0; i < 1; i++){
-//            int id = 0;
-//            int action = 1;
-//            int time = 65;
-//            ArrayList<Integer> affectedIds = new ArrayList<>();
-//            affectedIds.add(0);
-//            affectedIds.add(1);
-//
-//            change = new Change(id, action, time, affectedIds);
-//        }
-//
-//        //hardcode history data
-//        for(int i = 0; i < 5; i++){
-//            int id = i;
-//            int ticketId = i;
-//            String staffId = "Staff 1";
-//            String counterId = "Counter 1";
-//            long serveTime = 1372339860;
-//            long doneTime = 1372340000;
-//
-//            history = new History(id, ticketId, staffId, counterId, serveTime, doneTime);
-//            histories.add(history);
-//        }
-//
-//        for(int i = 0; i < 5; i++){
-//            int id = i;
-//            int ticketId = i;
-//            String staffId = "Staff 1";
-//            String counterId = "Counter 1";
-//            long serveTime = 1372339860;
-//            long doneTime = 1372340000;
-//
-//            history = new History(id, ticketId, staffId, counterId, serveTime, doneTime);
-//            histories.add(history);
-//        }
-//    }
 
     public void setBundle(Fragment fragment, String bundleData){
         if(bundleData != null){
@@ -971,17 +856,17 @@ public class MainActivity extends AppCompatActivity
         return branchService;
     }
 
-    public Queue getQueueById(long id){
+    public Queue getQueueById(String id){
         queue = null;
 
         for(Queue q: queues){
-            if(q.getId() == id)
+            if(q.getId().equals(id))
                 queue = q;
         }
         return queue;
     }
 
-    public Ticket getTicketById(long id){
+    public Ticket getTicketById(String id){
         ticket = null;
 
         for(Ticket t: tickets){
@@ -991,40 +876,11 @@ public class MainActivity extends AppCompatActivity
         return ticket;
     }
 
-    public ArrayList<BranchService> getBranchServicesByBranchId(String id){
-        ArrayList<BranchService> serviceOfBranch = new ArrayList<BranchService>();
-
-        for(BranchService branchService: branchServices){
-            if(branchService.getBranchId().equals(id))
-                serviceOfBranch.add(branchService);
-        }
-        return serviceOfBranch;
-    }
-
-    public Service getServiceByBranchServiceId(String id){
-        service = null;
-
-        branchService = getBranchServiceById(id);
-        service = getServiceById(branchService.getServiceId());
-
-        return service;
-    }
-
-    public Queue getQueueByBranchServiceId(String id){
-        for(Queue q: queues){
-            if(q.getBranchServiceId().equals(id)){
-                queue = q;
-            }
-        }
-
-        return queue;
-    }
-
-    public Queue getQueueByTicketId(long id){
+    public Queue getQueueByTicketId(String id){
         return getQueueById(getTicketById(id).getQueueId());
     }
 
-    public Branch getBranchByTicketId(long id){
+    public Branch getBranchByTicketId(String id){
         branch = null;
         queue = getQueueByTicketId(id);
         BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
@@ -1038,7 +894,7 @@ public class MainActivity extends AppCompatActivity
         return branch;
     }
 
-    public Service getServiceByTicketId(long id){
+    public Service getServiceByTicketId(String id){
         service = null;
         Queue queue = getQueueByTicketId(id);
         BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
@@ -1050,33 +906,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         return service;
-    }
-
-    public int getWaitTimeByQueue(Queue queue){
-        branchService = getBranchServiceById(queue.getBranchServiceId());
-        int avgWaitTime = branchService.getAvgWaitTime();
-        int numberOfTicketInQueue = queue.getNumberOfTicket();
-        int waitTime = numberOfTicketInQueue * avgWaitTime;
-
-        return waitTime;
-    }
-
-    public String getServeTimeStringByTicketId(long id){
-        int waitTime = getTicketById(id).getWaitTime();
-
-        Calendar now = Calendar.getInstance();
-        now.add(Calendar.SECOND,waitTime);
-
-        DateFormat dateFormat = new SimpleDateFormat("h:mm a");
-
-        return dateFormat.format(now.getTime());
-    }
-
-    public String getTicketNoServingNowByTicket(Ticket ticket){
-        queue = getQueueById(ticket.getQueueId());
-        Ticket ticketServingNow = getTicketById(queue.getTicketIdServingNow());
-
-        return ticketServingNow.getTicketNo();
     }
 
     public ArrayList<Integer> getTicketsBehindByTicket(Ticket ticket){
@@ -1104,20 +933,6 @@ public class MainActivity extends AppCompatActivity
         branchService = getBranchServiceById(queue.getBranchServiceId());
 
         return branchService.getAvgWaitTime();
-    }
-
-    public String getDateTimeStringByUnix(long unix){
-        // convert seconds to milliseconds
-        Date date = new Date(unix * 1000L);
-
-        // the format of your date
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm a");
-
-        // give a timezone reference for formatting
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        String formattedDate = sdf.format(date);
-
-        return formattedDate;
     }
 
     public int calWaitTimeInt(long serveTime, long doneTime){

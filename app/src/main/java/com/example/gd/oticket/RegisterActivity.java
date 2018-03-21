@@ -31,6 +31,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,6 +91,8 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
     private Toast toast;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private FrameLayout progressBarHolder;
+    private ProgressBar spinner;
 
 
     @Override
@@ -114,10 +118,11 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
         loginForm = findViewById(R.id.register_form_scroll_view);
         progressBar = findViewById(R.id.register_progress);
         backLoginBtn = findViewById(R.id.register_back_button);
+        progressBarHolder = findViewById(R.id.register_progressBarHolder);
+        spinner = findViewById(R.id.register_progress);
 
-        // Get a RequestQueue
-//        queue = VolleySingleton.getInstance(this).getRequestQueue();
         request = new MyRequest(this);
+        showSpinner(false);
 
         createBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -171,6 +176,9 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
     }
 
     public void register(String name, String email, String phone, String password, String passwordConfirm){
+
+        showSpinner(true);
+
         /* Register */
         request.register(name, email, phone, password, passwordConfirm, new MyRequest.VolleyCallback(){
 
@@ -212,6 +220,14 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                showSpinner(false);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.d("onFailure", error);
+                showToast(error);
+                showSpinner(false);
             }
         });
     }
@@ -239,6 +255,19 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
         toast = Toast.makeText(getApplicationContext() ,text, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 150);
         toast.show();
+    }
+
+    public void showSpinner(boolean show){
+        if(show) {
+            Log.d("spinner", "true");
+            spinner.setVisibility(View.VISIBLE);
+            progressBarHolder.setVisibility(View.VISIBLE);
+        }
+        else {
+            Log.d("spinner", "false");
+            spinner.setVisibility(View.GONE);
+            progressBarHolder.setVisibility(View.GONE);
+        }
     }
 }
 

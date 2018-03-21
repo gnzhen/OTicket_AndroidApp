@@ -78,7 +78,7 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
 
             @Override
             public void onClick(View view) {
-                mainActivity.showIssueTicketDialog(branchService, queueServiceName, queueWaitTime, queuePplInQueue);
+                mainActivity.showIssueTicketDialog(branchService.getId(), queueServiceName, queueWaitTime, queuePplInQueue);
             }
         });
 
