@@ -31,12 +31,10 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
     private int waitTime;
     private int pplInQueue;
 
-    public ServiceRecyclerAdapter(ArrayList<BranchService> branchServiceAL, Context context, ArrayList<Queue> queues,  ArrayList<Service> services){
+    public ServiceRecyclerAdapter(ArrayList<BranchService> branchServiceAL, Context context){
         this.branchServiceAL = branchServiceAL;
         this.context = context;
         this.mainActivity = (MainActivity)context;
-        this.queues = queues;
-        this.services = services;
     }
 
     @Override
@@ -50,35 +48,14 @@ public class ServiceRecyclerAdapter extends RecyclerView.Adapter<ServiceRecycler
     public void onBindViewHolder(ViewHolder holder, int position) {
         mainActivity = (MainActivity)context;
         final BranchService branchService = branchServiceAL.get(position);
-        waitTime = 0;
-        serviceName = "Service name not found." +
-                "";
-        pplInQueue = 0;
 
-        if(services.size() > 0){
-            service = mainActivity.searchServiceById(services, branchService.getServiceId());
-            serviceName = service.getName();
-        }
-
-        for(int i = 0; i < queues.size(); i++){
-            if(queues.get(i).getBranchServiceId().equals(branchService.getId())){
-                queue = queues.get(i);
-                waitTime = queue.getWaitTime();
-                pplInQueue = queue.getPendingTicket();
-            }
-        }
-
-        final int queueWaitTime = waitTime;
-        final String queueServiceName = serviceName;
-        final int queuePplInQueue = pplInQueue;
-
-        holder.headTV.setText(serviceName);
-        holder.bodyTV.setText("Estimated: " + mainActivity.intTimeToString(waitTime));
+        holder.headTV.setText(branchService.getServiceName());
+        holder.bodyTV.setText("Estimated: " + mainActivity.intTimeToString(branchService.getWaitTime()));
         holder.rowLL.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-                mainActivity.showIssueTicketDialog(branchService.getId(), queueServiceName, queueWaitTime, queuePplInQueue);
+                mainActivity.showIssueTicketDialog(branchService);
             }
         });
 

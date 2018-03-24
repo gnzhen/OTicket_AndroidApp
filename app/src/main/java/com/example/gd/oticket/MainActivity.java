@@ -30,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -61,6 +62,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -155,7 +157,6 @@ public class MainActivity extends AppCompatActivity
 
         showBackButton(true);
         showSpinner(false);
-        setData();
 
         //Set default fragment display
         Fragment defaultFragment = new TicketFrag();
@@ -213,7 +214,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         String data = "";
 
-        switch (id){
+        switch (id) {
             case R.id.nav_my_ticket:
                 fragment = new TicketFrag();
                 data = "TICKET";
@@ -244,56 +245,54 @@ public class MainActivity extends AppCompatActivity
     /*
      * Functions for layout control
      */
-    public void showSpinner(boolean show){
-        if(show) {
+    public void showSpinner(boolean show) {
+        if (show) {
             setContentText("");
             spinner.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             spinner.setVisibility(View.GONE);
         }
     }
 
-    public void showSpinnerWithOverlay(boolean show){
-        if(show) {
+    public void showSpinnerWithOverlay(boolean show) {
+        if (show) {
             setContentText("");
             mainSpinner.setVisibility(View.VISIBLE);
             progressBarHolder.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             mainSpinner.setVisibility(View.GONE);
             progressBarHolder.setVisibility(View.GONE);
         }
     }
 
-    public void showToast(String text){
-        toast = Toast.makeText(this ,text, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP| Gravity.CENTER_HORIZONTAL, 0, 150);
+    public void showToast(String text) {
+        toast = Toast.makeText(this, text, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 150);
         toast.show();
     }
 
-    public void testDialog(){
+    public void testDialog() {
         new CountDownTimer(3000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                if(timeChangeDialog != null){
-                    if(!timeChangeDialog.isShowing()){
-                        showReminderDialog();
+                if (timeChangeDialog != null) {
+                    if (!timeChangeDialog.isShowing()) {
+//                        showReminderDialog();
                     }
                 }
             }
 
             public void onFinish() {
-                showReminderDialog();
+//                showReminderDialog();
             }
 
         }.start();
     }
 
-    public void displayFragment(Fragment fragment, Bundle bundle, String tag){
+    public void displayFragment(Fragment fragment, Bundle bundle, String tag) {
 
-        if (fragment != null){
-            if(bundle != null)
+        if (fragment != null) {
+            if (bundle != null)
                 fragment.setArguments(bundle);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_layout, fragment, tag);
@@ -320,13 +319,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void displayActivity(Context fromActivity, Class<?> toActivity){
+    public void displayActivity(Context fromActivity, Class<?> toActivity) {
         Intent intent = new Intent(fromActivity, toActivity);
         startActivity(intent);
     }
 
-    public void showBackButton(boolean show){
-        if(show){
+    public void showBackButton(boolean show) {
+        if (show) {
             // Remove hamburger
             toggle.setDrawerIndicatorEnabled(false);
             // Show back button
@@ -338,8 +337,7 @@ public class MainActivity extends AppCompatActivity
                     onBackPressed();
                 }
             });
-        }
-        else{
+        } else {
             // Remove back button
             actionBar.setDisplayHomeAsUpEnabled(false);
             // Show hamburger
@@ -349,60 +347,59 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void clearSearchView(){
-        if(searchView != null){
+    public void clearSearchView() {
+        if (searchView != null) {
             searchView.setQuery("", false);
             searchView.setIconified(true);
         }
     }
 
-    public void setTitle(String title){
-        if(getSupportActionBar() != null){
+    public void setTitle(String title) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
         }
     }
 
-    public void setNavActiveItem(int item){
-        if (navigationView != null){
+    public void setNavActiveItem(int item) {
+        if (navigationView != null) {
             navigationView.setCheckedItem(item);
             navigationView.setNavigationItemSelectedListener(this);
         }
     }
 
-    public void displayFab(boolean display){
-        if(display)
+    public void displayFab(boolean display) {
+        if (display)
             fab.show();
         else
             fab.hide();
     }
 
-    public void setSearchLabelText(String text){
+    public void setSearchLabelText(String text) {
         TextView searchLabel = toolbar.findViewById(R.id.search_view_label);
         searchLabel.setText(text);
     }
 
-    public void showSearchBar(boolean show){
-        if(show){
-            if(actionBar != null)
+    public void showSearchBar(boolean show) {
+        if (show) {
+            if (actionBar != null)
                 actionBar.setDisplayShowTitleEnabled(false);
 
             searchBar.setVisibility(View.VISIBLE);
-            searchBar.setOnClickListener(new View.OnClickListener(){
+            searchBar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     searchView.setIconified(false);
                 }
             });
-        }
-        else{
-            if(actionBar != null)
+        } else {
+            if (actionBar != null)
                 actionBar.setDisplayShowTitleEnabled(true);
             searchBar.setVisibility(View.GONE);
         }
 
     }
 
-    private void setMargins (View view, int left, int top, int right, int bottom) {
+    private void setMargins(View view, int left, int top, int right, int bottom) {
         if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
             p.setMargins(left, top, right, bottom);
@@ -410,11 +407,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public Toolbar getToolbar(){
+    public Toolbar getToolbar() {
         return toolbar;
     }
 
-    public void showIssueTicketDialog(final String branchServiceId, String serviceName, int waitTime, int pplInQueue){
+    public void showIssueTicketDialog(final BranchService branchService) {
         issueTicketDialog = new Dialog(this);
         issueTicketDialog.setContentView(R.layout.dialog_issue_ticket);
         issueTicketDialog.setCancelable(false);
@@ -423,14 +420,14 @@ public class MainActivity extends AppCompatActivity
         TextView waitTimeTV = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_wait_time);
         TextView pplInQueueTV = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_ppl_in_queue);
 
-        serviceTV.setText(serviceName);
-        waitTimeTV.setText(intTimeToString(waitTime));
-        pplInQueueTV.setText(Integer.toString(pplInQueue));
+        serviceTV.setText(branchService.getServiceName());
+        waitTimeTV.setText(intTimeToString(branchService.getWaitTime()));
+        pplInQueueTV.setText(Integer.toString(branchService.getTotalTicket()));
 
         Button cancelBtn = issueTicketDialog.findViewById(R.id.issue_ticket_dialog_cancel_btn);
-        cancelBtn.setOnClickListener(new View.OnClickListener(){
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 issueTicketDialog.dismiss();
             }
         });
@@ -439,21 +436,21 @@ public class MainActivity extends AppCompatActivity
         issueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showConfirmationDialog("issueTicket", branchServiceId);
+                showConfirmationDialog("issueTicket", branchService.getId());
             }
         });
 
         issueTicketDialog.show();
     }
 
-    public void showReminderDialog(){
+    public void showReminderDialog(final Ticket ticket) {
         reminderDialog = new Dialog(this);
         reminderDialog.setContentView(R.layout.dialog_reminder_noti);
         reminderDialog.setCancelable(false);
 
         LinearLayout ticketLayout = reminderDialog.findViewById(R.id.reminder_ticket);
         Button dismissBtn = reminderDialog.findViewById(R.id.reminder_dismiss_btn);
-        Button postponeBtn = reminderDialog.findViewById(R.id.reminder_postpone_btn);
+//        Button postponeBtn = reminderDialog.findViewById(R.id.reminder_postpone_btn);
         Button cancelTicketBtn = reminderDialog.findViewById(R.id.reminder_cancel_ticket_btn);
         TextView ticketTV = reminderDialog.findViewById(R.id.reminder_ticket_number);
         TextView serviceTV = reminderDialog.findViewById(R.id.reminder_service);
@@ -471,7 +468,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 displayFragment(new TicketDetailsFrag(), null, "TICKET_DETAILS");
-                reminderDialog.dismiss();
             }
         });
 
@@ -482,24 +478,24 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        postponeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPostponeDialog(tickets.get(0));
-            }
-        });
+//        postponeBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showPostponeDialog(tickets.get(0));
+//            }
+//        });
 
         cancelTicketBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showConfirmationDialog("cancelTicket", null);
+                showConfirmationDialog("cancelTicket", ticket.getId());
             }
         });
 
         reminderDialog.show();
     }
 
-    public void showTimeChangeDialog(Change change){
+    public void showTimeChangeDialog(Change change) {
         timeChangeDialog = new Dialog(this);
         timeChangeDialog.setContentView(R.layout.dialog_time_change_noti);
         final LinearLayout timeChangeLayout = timeChangeDialog.findViewById(R.id.time_change_layout);
@@ -541,12 +537,12 @@ public class MainActivity extends AppCompatActivity
         timeChangeDialog.show();
     }
 
-    public void showConfirmationDialog(final String action, final String data){
+    public void showConfirmationDialog(final String action, final String data) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
         String message = "Are you sure?";
 
-        switch (action){
+        switch (action) {
             case "issueTicket":
                 message = "Confirm issue ticket?";
                 break;
@@ -564,22 +560,28 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int arg1) {
                 dialog.dismiss();
-                if(action.equals("issueTicket")) {
+                if (action.equals("issueTicket")) {
                     issueTicket(data);
+                } else if (action.equals("cancelTicket")) {
+                    cancelTicket(data);
+                } else if (action.equals("postponeTicket")) {
+
                 }
 
-                if(issueTicketDialog != null)
+                if (issueTicketDialog != null)
                     issueTicketDialog.dismiss();
-                if(postponeDialog != null)
+                if (postponeDialog != null)
                     postponeDialog.dismiss();
+                if (reminderDialog != null)
+                    reminderDialog.dismiss();
             }
         });
 
-        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                if(issueTicketDialog != null)
+                if (issueTicketDialog != null)
                     issueTicketDialog.dismiss();
             }
         });
@@ -601,36 +603,79 @@ public class MainActivity extends AppCompatActivity
         setMargins(positiveButton, 30, 0, 30, 0);
     }
 
-    public void showPostponeDialog(Ticket ticket){
+    public void showConfirmPostponeDialog(final Ticket ticket, final int time) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        String message = "Confirm postpone ticket " + ticket.getTicketNo() + " for " + intTimeToString(time) + "?";
+
+        alertDialogBuilder.setMessage(message).setCancelable(false);
+
+        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int arg1) {
+                dialog.dismiss();
+                postponeTicket(ticket, time);
+
+                if (postponeDialog != null)
+                    postponeDialog.dismiss();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                if (issueTicketDialog != null)
+                    issueTicketDialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+        // Get the alert dialog buttons reference
+        Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+        // Change the alert dialog buttons layout
+        positiveButton.setTextColor(getResources().getColor(R.color.colorAccentLight));
+        positiveButton.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+        negativeButton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        negativeButton.setBackgroundColor(getResources().getColor(R.color.colorAccentLight));
+
+        setMargins(positiveButton, 30, 0, 30, 0);
+    }
+
+    public void showPostponeDialog(final Ticket ticket, final ArrayList<Integer> postponeTime) {
         postponeDialog = new Dialog(this);
         postponeDialog.setContentView(R.layout.dialog_postpone);
         postponeDialog.setCancelable(false);
-        LinearLayout postponeLayout = postponeDialog.findViewById(R.id.postpone_layout);
+//        LinearLayout postponeLayout = postponeDialog.findViewById(R.id.postpone_layout);
         View dot1 = postponeDialog.findViewById(R.id.postpone_dialog_dot1);
-        View dot2= postponeDialog.findViewById(R.id.postpone_dialog_dot2);
+        View dot2 = postponeDialog.findViewById(R.id.postpone_dialog_dot2);
         setLayerType(dot1);
         setLayerType(dot2);
+        String[] postponeTimeStr = new String[postponeTime.size()];
+        final HashMap<String,Integer> postponeTimeMap = new HashMap<>();
+        postponeTimeMap.clear();
 
-        List<String> postponeTime = new ArrayList<>();
-
-        int noOfTicketBehind = getNumberOfTicketBehindByTicket(ticket);
-        int avgWaitTime = getAvgWaitTimeByTicket(ticket);
-
-        for(int i = 1; i <= noOfTicketBehind; i++){
-            int postponeTimeInt = i * avgWaitTime;
-            postponeTime.add(intTimeToString(postponeTimeInt));
+        //create key-value pair for spinner
+        for(int i = 0; i < postponeTime.size(); i++){
+            postponeTimeStr[i] = intTimeToString(postponeTime.get(i));
+            postponeTimeMap.put(postponeTimeStr[i], postponeTime.get(i));
         }
 
-        Spinner postponeSpinner = postponeDialog.findViewById(R.id.postpone_dialog_postpone_time_spinner);
+        final Spinner postponeSpinner = postponeDialog.findViewById(R.id.postpone_dialog_postpone_time_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, postponeTime);
+                this, android.R.layout.simple_spinner_item, postponeTimeStr);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         postponeSpinner.setAdapter(adapter);
 
         Button cancelBtn = postponeDialog.findViewById(R.id.postpone_dialog_cancel_btn);
-        cancelBtn.setOnClickListener(new View.OnClickListener(){
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 postponeDialog.dismiss();
             }
         });
@@ -639,42 +684,48 @@ public class MainActivity extends AppCompatActivity
         postponeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showConfirmationDialog("postponeTicket", null);
+                if(postponeSpinner != null && postponeSpinner.getSelectedItem() != null){
+                    String text = postponeSpinner.getSelectedItem().toString();
+                    int time = postponeTimeMap.get(text);
+                    showConfirmPostponeDialog(ticket, time);
+                }
+                else {
+                    showToast("Opps! We got some trouble.");
+                }
             }
         });
 
         postponeDialog.show();
     }
 
-    public void setContentText(String text){
+    public void setContentText(String text) {
         Log.d("setContentText", text);
         TextView content = findViewById(R.id.content_text_view);
         content.setText(text);
     }
 
-    public void setUserDetails(){
+    public void setUserDetails() {
 
         String prefName = pref.getString("name", null);
         String prefEmail = pref.getString("email", null);
 
-        if(prefName != null && prefEmail != null) {
+        if (prefName != null && prefEmail != null) {
             name.setText(prefName);
             email.setText(prefEmail);
-        }
-        else{
+        } else {
             editor.clear().commit();
             checkAuth();
         }
     }
 
     /*
-     * Functions for action control
+     * Request functions
      */
-    public void issueTicket(String branchServiceId){
+    public void issueTicket(String branchServiceId) {
         showSpinnerWithOverlay(true);
 
         String userId = pref.getString("id", null);
-        if(userId == null)
+        if (userId == null)
             checkAuth();
         else {
             /* Issue Ticket */
@@ -684,10 +735,10 @@ public class MainActivity extends AppCompatActivity
                     try {
                         JSONObject jsonObject = new JSONObject(result);
 
-                        if(jsonObject.has("success")) {
+                        if (jsonObject.has("success")) {
                             showToast(jsonObject.get("success").toString());
 
-                        } else if(jsonObject.has("fail")){
+                        } else if (jsonObject.has("fail")) {
                             showToast(jsonObject.get("fail").toString());
                         } else {
                             //Show first validation error from server
@@ -716,82 +767,148 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public boolean postponeTicket(Ticket ticket){
-        return true;
+    public void postponeTicket(final Ticket ticket, int time) {
+        showSpinnerWithOverlay(true);
+
+        /* Issue Ticket */
+        request.postponeTicket(ticket.getId(), time, new MyRequest.VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+
+                    if (jsonObject.has("success")) {
+                        showToast(jsonObject.get("success").toString());
+
+                    } else if (jsonObject.has("fail")) {
+                        showToast(jsonObject.get("fail").toString());
+                    } else {
+                        //Show first validation error from server
+                        Iterator<String> keys = jsonObject.keys();
+                        String str_Name = keys.next();
+                        JSONArray value;
+                        try {
+                            value = jsonObject.getJSONArray(str_Name);
+                            showToast(value.get(0).toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                showSpinnerWithOverlay(false);
+
+                //Refresh fragment component
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("ticketDetails", ticket);
+
+                refreshFragment("TICKET_DETAILS", bundle);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.d("onFailure", error);
+            }
+        });
     }
 
-    public boolean cancelTicket(Ticket ticket){
-        return true;
+    public void cancelTicket(String ticketId) {
+        showSpinnerWithOverlay(true);
+
+        /* Issue Ticket */
+        request.cancelTicket(ticketId, new MyRequest.VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+
+                    if (jsonObject.has("success")) {
+                        showToast(jsonObject.get("success").toString());
+
+                    } else if (jsonObject.has("fail")) {
+                        showToast(jsonObject.get("fail").toString());
+                    } else {
+                        //Show first validation error from server
+                        Iterator<String> keys = jsonObject.keys();
+                        String str_Name = keys.next();
+                        JSONArray value;
+                        try {
+                            value = jsonObject.getJSONArray(str_Name);
+                            showToast(value.get(0).toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                showSpinnerWithOverlay(false);
+                displayFragment(new TicketFrag(), null, "TICKET");
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.d("onFailure", error);
+            }
+        });
     }
 
     /*
      * Other functions
      */
-    public String getUserId(){
+    public String getUserId() {
         return pref.getString("id", null);
     }
 
-    public void checkAuth(){
-        if(pref.getString("id", null) == null){
+    public void checkAuth() {
+        if (pref.getString("id", null) == null) {
             Log.d("check Auth", "user haven't login");
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
-        }else{
+        } else {
             Log.d("check Auth Main", "user already login");
         }
     }
 
-    public void setLayerType(View view){
+    public void setLayerType(View view) {
         view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
-    public void setData(){
+    public void setData() {
         //
     }
 
-    public ArrayList<Branch> getBranches(){
-        return branches;
-    }
-
-    public ArrayList<Service> getServices(){
-        return services;
-    }
-
-    public ArrayList<BranchService> getBranchServices(){
-        return branchServices;
-    }
-
-    public ArrayList<Queue> getQueues(){
-        return queues;
-    }
-
-    public void setBundle(Fragment fragment, String bundleData){
-        if(bundleData != null){
+    public void setBundle(Fragment fragment, String bundleData) {
+        if (bundleData != null) {
             Bundle bundle = new Bundle();
 
-            if(bundleData == "branches")
+            if (bundleData == "branches")
                 bundle.putSerializable(bundleData, branches);
-            else if(bundleData == "services")
+            else if (bundleData == "services")
                 bundle.putSerializable(bundleData, services);
-            else if(bundleData == "branchServices")
+            else if (bundleData == "branchServices")
                 bundle.putSerializable(bundleData, branchServices);
-            else if(bundleData == "queues")
+            else if (bundleData == "queues")
                 bundle.putSerializable(bundleData, queues);
-            else if(bundleData == "tickets")
+            else if (bundleData == "tickets")
                 bundle.putSerializable(bundleData, tickets);
-            else if(bundleData == "ticketDetails")
+            else if (bundleData == "ticketDetails")
                 bundle.putSerializable(bundleData, ticket);
-            else if(bundleData == "histories")
+            else if (bundleData == "histories")
                 bundle.putSerializable(bundleData, histories);
 
             fragment.setArguments(bundle);
         }
     }
 
-    public String intTimeToString(int waitTime){
+    public String intTimeToString(int waitTime) {
         String waitTimeString;
 
-        if(waitTime < 60){
+        if(waitTime < 1){
+            waitTimeString = "now";
+        }
+        else if (waitTime < 60) {
             waitTimeString = Integer.toString(waitTime) + "sec";
         }
         else if (waitTime < 3600) {
@@ -812,142 +929,5 @@ public class MainActivity extends AppCompatActivity
                 waitTimeString += " " + Integer.toString(m) + "min";
         }
         return waitTimeString;
-    }
-
-    /*
-     * Functions to get objects
-     */
-    public Service searchServiceById(ArrayList<Service> services, String id){
-        service = null;
-        for(int i = 0; i <services.size(); i++){
-            if(services.get(i).getId().equals(id))
-                service = services.get(i);
-        }
-        return service;
-    }
-
-    public Branch getBranchById(String id){
-        branch = null;
-
-        for(Branch b: branches){
-            if(b.getId().equals(id))
-                branch = b;
-        }
-        return branch;
-    }
-
-    public Service getServiceById(String id){
-        service = null;
-
-        for(Service s: services){
-            if(s.getId().equals(id))
-                service = s;
-        }
-        return service;
-    }
-
-    public BranchService getBranchServiceById(String id){
-        branchService = null;
-
-        for(BranchService bs: branchServices){
-            if(bs.getId().equals(id))
-                branchService = bs;
-        }
-        return branchService;
-    }
-
-    public Queue getQueueById(String id){
-        queue = null;
-
-        for(Queue q: queues){
-            if(q.getId().equals(id))
-                queue = q;
-        }
-        return queue;
-    }
-
-    public Ticket getTicketById(String id){
-        ticket = null;
-
-        for(Ticket t: tickets){
-            if(t.getId() == id)
-                ticket = t;
-        }
-        return ticket;
-    }
-
-    public Queue getQueueByTicketId(String id){
-        return getQueueById(getTicketById(id).getQueueId());
-    }
-
-    public Branch getBranchByTicketId(String id){
-        branch = null;
-        queue = getQueueByTicketId(id);
-        BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
-        String branchId = branchService.getBranchId();
-
-        for(Branch b: branches){
-            if(b.getId().equals(branchId))
-                branch = b;
-        }
-
-        return branch;
-    }
-
-    public Service getServiceByTicketId(String id){
-        service = null;
-        Queue queue = getQueueByTicketId(id);
-        BranchService branchService = getBranchServiceById(queue.getBranchServiceId());
-        String serviceId = branchService.getServiceId();
-
-        for(Service s: services){
-            if(s.getId().equals(serviceId))
-                service = s;
-        }
-
-        return service;
-    }
-
-    public ArrayList<Integer> getTicketsBehindByTicket(Ticket ticket){
-        queue = getQueueByTicketId(ticket.getId());
-        ArrayList<Integer> ticketsInQueue = queue.getTicketIds();
-        ArrayList<Integer> ticketsBehind = new ArrayList<>();
-
-        int ticketPos = ticketsInQueue.indexOf(ticket.getId());
-        int lastPos = ticketsInQueue.size() - 1;
-
-        for(int i = ticketPos + 1; i <= lastPos; i++){
-            ticketsBehind.add(ticketsInQueue.get(i));
-        }
-
-        return ticketsBehind;
-    }
-
-    public int getNumberOfTicketBehindByTicket(Ticket ticket){
-        return getTicketsBehindByTicket(ticket).size();
-    }
-
-    public int getAvgWaitTimeByTicket(Ticket ticket){
-
-        queue = getQueueByTicketId(ticket.getId());
-        branchService = getBranchServiceById(queue.getBranchServiceId());
-
-        return branchService.getAvgWaitTime();
-    }
-
-    public int calWaitTimeInt(long serveTime, long doneTime){
-        long diff = doneTime - serveTime;
-        int waitTime;
-
-        if ( diff > (long)Integer.MAX_VALUE ) {
-            // diff is too big to convert, throw an exception
-            waitTime = -((int)diff);
-
-        }
-        else {
-            waitTime = (int)diff;
-        }
-
-        return waitTime;
     }
 }

@@ -146,22 +146,22 @@
         android:paddingHorizontal="3dp"
         android:paddingVertical="15dp">
 
-        <Button
-            android:id="@+id/reminder_postpone_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_toLeftOf="@id/ticket_details_cancel_btn"
-            android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
-            android:foreground="?selectableItemBackground"
-            android:text="Postpone"
-            android:textColor="@android:color/white"
-            android:layout_marginRight="10dp"/>
+        <!--<Button-->
+            <!--android:id="@+id/reminder_postpone_btn"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_toLeftOf="@id/ticket_details_cancel_btn"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@color/colorPrimaryDark"-->
+            <!--android:foreground="?selectableItemBackground"-->
+            <!--android:text="Postpone"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:layout_marginRight="10dp"/>-->
 
         <Button
             android:id="@+id/reminder_cancel_ticket_btn"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="45dp"
             android:layout_weight="1"
             android:background="@color/colorPrimaryDark"
             android:foreground="?selectableItemBackground"

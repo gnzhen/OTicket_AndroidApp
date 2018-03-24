@@ -121,8 +121,7 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
 
                 if(branchServices != null) {
                     for (BranchService bs : branchServices) {
-                        Service service = mainActivity.getServiceById(bs.getServiceId());
-                        String name = service.getName().toUpperCase();
+                        String name = bs.getServiceName().toUpperCase();
 
                         if (name.contains(searchText.toUpperCase())) {
                             filteredList.add(bs);
@@ -138,7 +137,7 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
 
     public void loadView() {
         /* Get branch services */
-        request.getBranchServicesByBranchId(branch.getId(), new MyRequest.VolleyCallback() {
+        request.getBranchServicesDetailsByBranchId(branch.getId(), new MyRequest.VolleyCallback() {
 
             @Override
             public void onSuccess(String result) {
@@ -155,18 +154,12 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                         try {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             if (jsonObject != null) {
-                                int avgWaitTime;
-                                if(jsonObject.get("system_wait_time").toString() != "null") {
-                                    avgWaitTime = (Integer) jsonObject.get("system_wait_time");
-                                }
-                                else
-                                    avgWaitTime = (Integer) jsonObject.get("default_wait_time");
 
                                 BranchService branchService = new BranchService(
                                         jsonObject.get("id").toString(),
-                                        jsonObject.get("branch_id").toString(),
-                                        jsonObject.get("service_id").toString(),
-                                        avgWaitTime
+                                        jsonObject.get("service_name").toString(),
+                                        (Integer)jsonObject.get("wait_time"),
+                                        (Integer)jsonObject.get("pending_ticket")
                                 );
                                 branchServices.add(branchService);
                             }
@@ -175,107 +168,18 @@ public class ServiceFrag extends Fragment implements SwipeRefreshLayout.OnRefres
                         }
                     }
                 }
+                mainActivity.showSpinner(false);
+                swipeLayout.setRefreshing(false);
 
-                /* Get Queue */
-                request.getQueuesByBranchId(branch.getId(), new MyRequest.VolleyCallback(){
-
-                    @Override
-                    public void onSuccess(String result) {
-                        JSONArray jsonArray = null;
-                        try {
-                            jsonArray = new JSONArray(result);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if(jsonArray != null) {
-                            queues.clear();
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                try {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    Queue queue;
-
-                                    if(jsonObject.get("ticket_serving_now").toString() != "null"){
-                                        queue = new Queue(
-                                                jsonObject.get("id").toString(),
-                                                jsonObject.get("branch_service_id").toString(),
-                                                new Long((Integer)jsonObject.get("ticket_serving_now")),
-                                                (Integer) jsonObject.get("wait_time"),
-                                                (Integer) jsonObject.get("pending_ticket")
-                                        );
-                                    }
-                                    else {
-                                        queue = new Queue(
-                                                jsonObject.get("id").toString(),
-                                                jsonObject.get("branch_service_id").toString(),
-                                                (Integer) jsonObject.get("wait_time"),
-                                                (Integer) jsonObject.get("pending_ticket")
-                                        );
-                                    }
-                                    queues.add(queue);
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                        /* Get service */
-                        request.getServices(new MyRequest.VolleyCallback() {
-                            @Override
-                            public void onSuccess(String result) {
-                                JSONArray jsonArray = null;
-                                try {
-                                    jsonArray = new JSONArray(result);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                if(jsonArray != null){
-                                    services.clear();
-                                    for(int i = 0; i < jsonArray.length(); i++){
-                                        try {
-                                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                            Service service = new Service(
-                                                    jsonObject.get("id").toString(),
-                                                    jsonObject.get("code").toString(),
-                                                    jsonObject.get("name").toString()
-                                            );
-                                            services.add(service);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                                mainActivity.showSpinner(false);
-                                swipeLayout.setRefreshing(false);
-
-                                if(branchServices.size() > 0) {
-                                    branchName.setText(branch.getName());
-                                    ewtLabel.setText("Estimated - Estimated Wait Time");
-                                    adapter = new ServiceRecyclerAdapter(branchServices, getContext(), queues, services);
-                                    recyclerView.setAdapter(adapter);
-                                }
-                                else{
-                                    mainActivity.setContentText("-  No service to display  -");
-                                }
-                            }
-                            @Override
-                            public void onFailure(String error) {
-                                Log.d("onFailure", error);
-                                recyclerView.setAdapter(new EmptyAdapter());
-                                mainActivity.showSpinner(false);
-                                mainActivity.showToast(error);
-                            }
-                        });
-                    }
-                    @Override
-                    public void onFailure(String error) {
-                        Log.d("onFailure", error);
-                        recyclerView.setAdapter(new EmptyAdapter());
-                        mainActivity.showSpinner(false);
-                        mainActivity.showToast(error);
-                    }
-                });
+                if(branchServices.size() > 0) {
+                    branchName.setText(branch.getName());
+                    ewtLabel.setText("Estimated - Estimated Wait Time");
+                    adapter = new ServiceRecyclerAdapter(branchServices, getContext());
+                    recyclerView.setAdapter(adapter);
+                }
+                else{
+                    mainActivity.setContentText("-  No service to display  -");
+                }
 
             }
             @Override

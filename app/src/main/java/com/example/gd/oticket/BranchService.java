@@ -8,52 +8,46 @@ import java.io.Serializable;
 
 public class BranchService implements Serializable{
     private String id;
-    private String branchId;
-    private String serviceId;
-    private int avgWaitTime;
+    private String serviceName;
+    private int waitTime;
+    private int totalTicket;
 
-    public BranchService(String id, String branchId, String serviceId){
+    public BranchService(String id, String serviceName, int waitTime, int totalTicket){
         this.setId(id);
-        this.setBranchId(branchId);
-        this.setServiceId(serviceId);
+        this.setServiceName(serviceName);
+        this.setWaitTime(waitTime);
+        this.setTotalTicket(totalTicket);
     }
-
-    public BranchService(String id, String branchId, String serviceId, int avgWaitTime){
-        this.setId(id);
-        this.setBranchId(branchId);
-        this.setServiceId(serviceId);
-        this.setAvgWaitTime(avgWaitTime);
-    }
-
     public String getId(){
         return this.id;
     }
 
-    public String getBranchId() {
-        return this.branchId;
+    public String getServiceName() {
+        return this.serviceName;
     }
 
-    public String getServiceId() {
-        return this.serviceId;
+    public int getWaitTime() {
+        return this.waitTime;
     }
 
-    public int getAvgWaitTime() {
-        return this.avgWaitTime;
+    public int getTotalTicket() {
+        return this.totalTicket;
     }
 
     public void setId(String id){
         this.id = id;
     }
 
-    public void setBranchId(String branchId){
-        this.branchId = branchId;
+    public void setServiceName(String serviceName){
+        this.serviceName = serviceName;
     }
 
-    public void setServiceId(String servicId){
-        this.serviceId = servicId;
+    public void setWaitTime(int waitTime){
+        this.waitTime = waitTime;
     }
 
-    public void setAvgWaitTime(int avgWaitTime){
-        this.avgWaitTime = avgWaitTime;
+    public void setTotalTicket(int totalTicket){
+        this.totalTicket = totalTicket;
     }
+
 }

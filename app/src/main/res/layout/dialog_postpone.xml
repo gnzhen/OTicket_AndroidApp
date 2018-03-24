@@ -52,14 +52,14 @@
         android:backgroundTint="@color/colorAccent"
         android:background="@drawable/horizontal_dashed_line" />
 
-    <TextView
-        android:paddingHorizontal="10dp"
-        android:id="@+id/postpone_dialog_note"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="5dp"
-        android:text="Note: You can only postpone each ticket for maximum 2 times."
-        android:textColor="@color/colorPrimary" />
+    <!--<TextView-->
+        <!--android:paddingHorizontal="10dp"-->
+        <!--android:id="@+id/postpone_dialog_note"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginVertical="5dp"-->
+        <!--android:text="Note: You can only postpone each ticket for maximum 2 times."-->
+        <!--android:textColor="@color/colorPrimary" />-->
 
     <RelativeLayout
         android:layout_width="match_parent"

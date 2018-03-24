@@ -21,6 +21,8 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
@@ -39,6 +41,7 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
     private SwipeRefreshLayout swipeLayout;
     private MyRequest request;
     private String id;
+    private ArrayList<Integer> postponeTimes;
 
     @Nullable
     @Override
@@ -76,13 +79,12 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
         mainActivity.setLayerType(dot2);
         swipeLayout.setOnRefreshListener(this);
         request = new MyRequest(view.getContext());
+        postponeTimes = new ArrayList<>();
 
         //get bundle
         Bundle bundle = getArguments();
         ticket = (Ticket) bundle.getSerializable("ticketDetails");
         id = ticket.getId();
-
-        Log.d("ticket bundle", Integer.toString(ticket.getPplAhead()));
 
         //Set Layout Text
         ticketNumber.setText(ticket.getTicketNo());
@@ -96,17 +98,60 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
         postpone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mainActivity.showPostponeDialog(ticket);
+
+                mainActivity.showSpinnerWithOverlay(true);
+                postpone(ticket.getId());
             }
         });
 
         cancelTicket.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                mainActivity.showConfirmationDialog("cancelTicket", null);
+                mainActivity.showConfirmationDialog("cancelTicket", ticket.getId());
             }
         });
 
+    }
+
+    public void postpone(String ticketId){
+
+        request.getPostponeDetails(ticketId, new MyRequest.VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                try {
+
+                    JSONObject jsonObject = new JSONObject(result);
+
+                    if (jsonObject.has("fail")) {
+
+                        mainActivity.showToast(jsonObject.get("fail").toString());
+                    } else {
+
+                        JSONArray jsonArray = jsonObject.getJSONArray("postpone_times");
+
+                        for(int i = 0; i < jsonArray.length(); i++) {
+                            postponeTimes.add((Integer)jsonArray.get(i));
+                        }
+
+                        mainActivity.showPostponeDialog(ticket, postponeTimes);
+                    }
+
+                    swipeLayout.setRefreshing(false);
+                    mainActivity.showSpinnerWithOverlay(false);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    swipeLayout.setRefreshing(false);
+                    mainActivity.showSpinnerWithOverlay(false);
+                }
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.d("onFailure", error);
+                swipeLayout.setRefreshing(false);
+                mainActivity.showToast(error);
+            }
+        });
     }
 
     public void loadView() {
@@ -117,47 +162,52 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
             public void onSuccess(String result) {
                 try {
                     JSONObject jsonObject = new JSONObject(result);
-                    SimpleDateFormat format = new SimpleDateFormat("d/MM/yyyy h:mm a", Locale.ENGLISH);
 
-                    String ticketServingNow = "-";
-                    String disposedTime = "-";
+                    if (jsonObject.has("fail")) {
+                        mainActivity.onBackPressed();
+                        mainActivity.showToast(jsonObject.get("fail").toString());
+                    } else {
+                        String ticketServingNow = "-";
+                        String disposedTime = "-";
 
-                    if(!jsonObject.get("ticket_serving_now").toString().equals("null")) {
-                        ticketServingNow = jsonObject.get("ticket_serving_now").toString();
+                        if (!jsonObject.get("ticket_serving_now").toString().equals("null")) {
+                            ticketServingNow = jsonObject.get("ticket_serving_now").toString();
+                        }
+                        if (!jsonObject.get("disposed_time").toString().equals("null")) {
+                            disposedTime = jsonObject.get("disposed_time").toString();
+                        }
+                        ticket = new Ticket(
+                                jsonObject.get("id").toString(),
+                                jsonObject.get("ticket_no").toString(),
+                                jsonObject.get("issue_time").toString(),
+                                jsonObject.get("queue_id").toString(),
+                                (Integer) jsonObject.get("wait_time"),
+                                (Integer) jsonObject.get("ppl_ahead"),
+                                jsonObject.get("mobile_user_id").toString(),
+                                (Integer) jsonObject.get("postponed"),
+                                jsonObject.get("status").toString(),
+                                disposedTime,
+                                jsonObject.get("branch_name").toString(),
+                                jsonObject.get("service_name").toString(),
+                                jsonObject.get("serve_time").toString(),
+                                ticketServingNow
+                        );
+                        swipeLayout.setRefreshing(false);
+                        mainActivity.showSpinnerWithOverlay(false);
+                        //Refresh fragment component
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("ticketDetails", ticket);
+
+                        mainActivity.refreshFragment("TICKET_DETAILS", bundle);
                     }
-                    if(!jsonObject.get("disposed_time").toString().equals("null")) {
-                        disposedTime = jsonObject.get("disposed_time").toString();
-                    }
-                    ticket = new Ticket(
-                            jsonObject.get("id").toString(),
-                            jsonObject.get("ticket_no").toString(),
-                            jsonObject.get("issue_time").toString(),
-                            jsonObject.get("queue_id").toString(),
-                            (Integer) jsonObject.get("wait_time"),
-                            (Integer) jsonObject.get("ppl_ahead"),
-                            jsonObject.get("mobile_user_id").toString(),
-                            (Integer) jsonObject.get("postponed"),
-                            jsonObject.get("status").toString(),
-                            disposedTime,
-                            jsonObject.get("branch_name").toString(),
-                            jsonObject.get("service_name").toString(),
-                            jsonObject.get("serve_time").toString(),
-                            ticketServingNow
-                    );
-                    swipeLayout.setRefreshing(false);
-                } catch (JSONException e) {
+
+                } catch(JSONException e){
                     e.printStackTrace();
                     swipeLayout.setRefreshing(false);
                 }
-
-                //Refresh fragment component
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("ticketDetails", ticket);
-
-                mainActivity.refreshFragment("TICKET_DETAILS", bundle);
             }
 
-            @Override
+                @Override
             public void onFailure(String error) {
                 Log.d("onFailure", error);
                 swipeLayout.setRefreshing(false);
