@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+    <group android:id="@+id/qrcode_group" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_qrcode"
+            android:icon="@drawable/ic_qr_code_black_24dp"
+            android:title="@string/scan_qr_code" />
+    </group>
+
     <group android:id="@+id/main_group" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_my_ticket"
@@ -19,9 +26,10 @@
     </group>
 
     <group android:id="@+id/logout_group" android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_acc_setting"
-            android:title="Account Settings" />
+        <!--<item-->
+            <!--android:id="@+id/nav_acc_setting"-->
+            <!--android:title="Account Settings"-->
+            <!--/>-->
         <item
             android:id="@+id/nav_logout"
             android:title="@string/log_out" />

@@ -54,8 +54,8 @@ public class MyRequest {
     private Toast toast;
 
     public MyRequest(Context context) {
-//        this.ip = "http://192.168.0.120/OTicket/public/api/";
-        this.ip = "http://192.168.43.115/OTicket/public/api/";
+        this.ip = "http://192.168.0.120/OTicket/public/api/";
+//        this.ip = "http://192.168.43.115/OTicket/public/api/";
         this.context = context;
         this.branches = new ArrayList<>();
         this.services = new ArrayList<>();

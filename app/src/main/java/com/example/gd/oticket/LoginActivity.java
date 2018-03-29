@@ -194,10 +194,10 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
                             e.printStackTrace();
                         }
                     }
-                    showSpinner(false);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                showSpinner(false);
             }
             @Override
             public void onFailure(String error) {

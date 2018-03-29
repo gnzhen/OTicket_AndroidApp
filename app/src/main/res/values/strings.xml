@@ -27,4 +27,5 @@
     </string>
     <string name="title_activity_register">Sign in</string>
     <string name="register">Register</string>
+    <string name="scan_qr_code">Scan QR Code</string>
 </resources>

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -50,6 +51,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.example.gd.oticket.myrequest.MyRequest;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity
     Toast toast;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
+    MyFirebaseInstanceIdService myFirebaseInstanceIdService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +121,9 @@ public class MainActivity extends AppCompatActivity
         queues = new ArrayList<>();
         tickets = new ArrayList<>();
         histories = new ArrayList<>();
+        myFirebaseInstanceIdService = new MyFirebaseInstanceIdService();
+
+        System.out.print("mainActivity onCreate:" + FirebaseInstanceId.getInstance().getToken());
 
         fab = findViewById(R.id.fab);
         toolbar = findViewById(R.id.toolbar);
@@ -212,25 +218,24 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         Fragment fragment = null;
-        String data = "";
 
         switch (id) {
+            case R.id.nav_qrcode:
+                Intent intent = new Intent(MainActivity.this, QRCodeActivity.class);
+                startActivity(intent);
+                break;
             case R.id.nav_my_ticket:
                 fragment = new TicketFrag();
-                data = "TICKET";
                 break;
             case R.id.nav_take_a_ticket:
                 fragment = new BranchFrag();
-                data = "BRANCH";
                 break;
             case R.id.nav_history:
                 fragment = new HistoryFrag();
-                data = "HISTORY";
                 break;
-            case R.id.nav_acc_setting:
-                fragment = new HistoryFrag();
-                data = "ACCOUNT";
-                break;
+//            case R.id.nav_acc_setting:
+//                fragment = new HistoryFrag();
+//                break;
             case R.id.nav_logout:
                 editor.clear().commit();
                 checkAuth();
@@ -241,6 +246,8 @@ public class MainActivity extends AppCompatActivity
 
         return true;
     }
+
+
 
     /*
      * Functions for layout control
@@ -271,23 +278,23 @@ public class MainActivity extends AppCompatActivity
         toast.show();
     }
 
-    public void testDialog() {
-        new CountDownTimer(3000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                if (timeChangeDialog != null) {
-                    if (!timeChangeDialog.isShowing()) {
+//    public void testDialog() {
+//        new CountDownTimer(3000, 1000) {
+//
+//            public void onTick(long millisUntilFinished) {
+//                if (timeChangeDialog != null) {
+//                    if (!timeChangeDialog.isShowing()) {
 //                        showReminderDialog();
-                    }
-                }
-            }
-
-            public void onFinish() {
+//                    }
+//                }
+//            }
+//
+//            public void onFinish() {
 //                showReminderDialog();
-            }
-
-        }.start();
-    }
+//            }
+//
+//        }.start();
+//    }
 
     public void displayFragment(Fragment fragment, Bundle bundle, String tag) {
 

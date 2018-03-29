@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/change_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_edge"
+    android:minWidth="300dp"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+    <TextView
+        android:id="@+id/change_title_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        android:text="The queue go faster than expected!"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="25sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/change_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15 min"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="50sp" />
+
+        <TextView
+            android:id="@+id/change_label_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/reminder_time"
+            android:text=" earlier! "
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="35sp"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/change_dot1"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/horizontal_dashed_line"
+        android:backgroundTint="@color/colorAccent" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/change_ticket_label"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:paddingHorizontal="10dp"-->
+        <!--android:text="Ticket :"-->
+        <!--android:textColor="@color/colorPrimary"-->
+        <!--android:textSize="18sp" />-->
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/change_ticket_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardElevation="9dp"
+        card_view:cardUseCompatPadding="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ticket_background" />
+
+        <LinearLayout
+            android:id="@+id/change_ticket"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?selectableItemBackground"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp">
+
+            <View
+                android:id="@+id/change_dot3"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/vertical_dashed_line" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/change_ticket_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="0315"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="55dp" />
+
+                    <TextView
+                        android:id="@+id/change_wait_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:paddingLeft="10dp"
+                        android:text="30min"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="30dp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp">
+
+                    <TextView
+                        android:id="@+id/change_branch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentLeft="true"
+                        android:layout_weight="1"
+                        android:text="Kepong"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/change_service"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:textColor="@color/colorPrimary"
+                        android:text="Customer Service" />
+
+                </TableRow>
+            </TableLayout>
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical">-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/reminder_ticket_number"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="0001"-->
+                    <!--android:textColor="@color/colorPrimaryDark"-->
+                    <!--android:textSize="55dp" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/reminder_service"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:gravity="right"-->
+                    <!--android:text="Service"-->
+                    <!--android:textColor="@color/colorPrimary" />-->
+            <!--</LinearLayout>-->
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+    <View
+        android:id="@+id/reminder_dot2"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/horizontal_dashed_line"
+        android:backgroundTint="@color/colorAccent" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginHorizontal="3dp"
+        android:layout_marginTop="15dp">
+
+        <Button
+            android:id="@+id/reminder_dismiss_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_background"
+            android:foreground="?selectableItemBackground"
+            android:text="Dismiss"
+            android:textColor="@color/colorPrimaryDark" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="3dp"
+        android:paddingVertical="15dp">
+
+        <Button
+            android:id="@+id/reminder_postpone_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@id/ticket_details_cancel_btn"
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark"
+            android:foreground="?selectableItemBackground"
+            android:text="Postpone"
+            android:textColor="@android:color/white"
+            android:layout_marginRight="10dp"/>
+
+        <Button
+            android:id="@+id/reminder_cancel_ticket_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark"
+            android:foreground="?selectableItemBackground"
+            android:text="Cancel Ticket"
+            android:textColor="@android:color/white"  />
+
+    </LinearLayout>
+</LinearLayout>
