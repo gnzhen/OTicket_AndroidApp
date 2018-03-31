@@ -1,11 +1,19 @@
 package com.example.gd.oticket;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.example.gd.oticket.myrequest.MyRequest;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
 
 /**
  * Created by GD on 3/27/2018.
@@ -22,6 +30,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
         //now we will have the token
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         saveTokenToPrefs(refreshedToken);
+        sendTokenToServer(getApplicationContext().getSharedPreferences("auth", MODE_PRIVATE).getString("id", null), refreshedToken);
 
         //for now we are displaying the token in the log
         //copy it as this method is called only when the new token is generated
@@ -32,8 +41,43 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
     /**
      * @param token The new token.
      */
-    private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
+    public void sendTokenToServer(String userId, final String token) {
+        MyRequest request = new MyRequest(this);
+
+        /* Send token to server */
+        request.sendTokenToServer(userId, token, new MyRequest.VolleyCallback() {
+            @Override
+            public void onSuccess(String result) {
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+
+                    if (jsonObject.has("success")) {
+
+                        Log.d("Token To Server", jsonObject.get("fail").toString());
+                    } else if (jsonObject.has("fail")) {
+                        Log.d("Token To Server", jsonObject.get("fail").toString());
+                    } else {
+                        //Show first validation error from server
+                        Iterator<String> keys = jsonObject.keys();
+                        String str_Name = keys.next();
+                        JSONArray value;
+                        try {
+                            value = jsonObject.getJSONArray(str_Name);
+                            Log.e("Token to server", value.get(0).toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.d("onFailure", error);
+            }
+        });
     }
 
     public void saveTokenToPrefs(String _token)

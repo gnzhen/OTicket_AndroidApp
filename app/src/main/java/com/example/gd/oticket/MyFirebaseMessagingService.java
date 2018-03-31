@@ -10,8 +10,10 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -29,7 +31,6 @@ import java.util.Random;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String TAG = "StartingAndroid";
     private static final String ADMIN_CHANNEL_ID = "0";
 
     private NotificationManager notificationManager;
@@ -49,6 +50,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         object.get("title").toString(),
                         object.get("body").toString()
                 );
+
+                broadcastDialog(object.get("type").toString(), object.getJSONObject("data"));
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -82,6 +85,68 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(notificationId, notificationBuilder.build());
+    }
+
+    private void broadcastDialog(String type, JSONObject data){
+
+        Log.d("broadcast type", "type");
+
+        String titleLg, titleSm, ticketId, ticketNo, branchName, serviceName, waitTime;
+
+        try {
+            titleLg = "";
+            titleSm = "";
+            ticketId = data.get("ticket_id").toString();
+            ticketNo = data.get("ticket_no").toString();
+            waitTime = data.get("ticket_wait_time").toString();
+            branchName = data.get("branch_name").toString();
+            serviceName = data.get("service_name").toString();
+
+            if(type.equals("call")){
+                titleLg = "Calling";
+                titleSm = "at " + data.get("counter_name").toString();
+            }
+            else if(type.equals("recall")){
+                titleLg = "Recalling";
+                titleSm = "at " + data.get("counter_name").toString();
+            }
+            else if(type.equals("skip")){
+                titleLg = "You're skipped";
+                titleSm = "Opps! It takes too long.";
+            }
+            else if(type.equals("next")){
+                titleLg = "You are next!";
+                titleSm = "Prepare for you turn.";
+            }
+            else if(type.equals("near")){
+                titleLg = "Almost there";
+                titleSm = "in " + waitTime;
+            }
+            else if(type.equals("change")){
+                String status = data.get("change_type").toString();
+                titleLg =  status + " " + data.get("change_time").toString();
+
+                if(status.equals("delay")){
+                    titleSm = "The queue goes slower than expected.";
+                }
+                else{
+                    titleSm = "The queue goes faster than expected.";
+                }
+            }
+
+            NotiMsg notiMsg = new NotiMsg(titleLg, titleSm, ticketId, ticketNo, waitTime, branchName, serviceName);
+
+            Intent intent = new Intent("show-noti-dialog");
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("notiMsg", notiMsg);
+
+            intent.putExtras(bundle);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

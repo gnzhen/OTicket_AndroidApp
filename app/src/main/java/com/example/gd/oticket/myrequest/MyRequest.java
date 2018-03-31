@@ -54,14 +54,54 @@ public class MyRequest {
     private Toast toast;
 
     public MyRequest(Context context) {
-        this.ip = "http://192.168.0.120/OTicket/public/api/";
+//        this.ip = "http://192.168.0.120/OTicket/public/api/";
 //        this.ip = "http://192.168.43.115/OTicket/public/api/";
+        this.ip = "http://192.168.1.5/OTicket/public/api/";
         this.context = context;
         this.branches = new ArrayList<>();
         this.services = new ArrayList<>();
         this.branchServices = new ArrayList<>();
         this.count = 10;
     }
+
+    public void sendTokenToServer (final String userId, final String token, final VolleyCallback callback){
+        String url = ip + "tokenToServer";
+
+        // Formulate the request and handle the response.
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        Log.d("Volley response tokenToServer", response);
+                        try {
+                            callback.onSuccess(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Volley Error", error.toString());
+                        showVolleyError(error);
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> map = new HashMap<>();
+                map.put("mobileUserId", userId);
+                map.put("token", token);
+
+                return map;
+            }
+        };
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
 
     public void register(final String name, final String email, final String phone, final String password,
                          final String passwordConfirm, final VolleyCallback callback) {

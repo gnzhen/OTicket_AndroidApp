@@ -3,9 +3,11 @@ package com.example.gd.oticket;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -15,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -95,7 +98,7 @@ public class MainActivity extends AppCompatActivity
     Change change;
     History history;
     Dialog confirmDialog, issueTicketDialog, postponeDialog, cancelTicketDialog;
-    Dialog reminderDialog, timeChangeDialog;
+    Dialog notiDialog;
     ActionBarDrawerToggle toggle;
     TextView name, email;
     MyRequest request;
@@ -110,6 +113,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver,
+                new IntentFilter("show-noti-dialog"));
 
         pref = getApplicationContext().getSharedPreferences("auth", MODE_PRIVATE);
         editor = pref.edit();
@@ -178,10 +184,33 @@ public class MainActivity extends AppCompatActivity
 //        testDialog();
     }
 
+    // Our handler for received Intents. This will be called whenever an Intent
+    // with an action named "custom-event-name" is broadcasted.
+    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+
+            NotiMsg notiMsg = (NotiMsg) bundle.getSerializable("notiMsg");
+
+            if(notiMsg != null){
+
+                showNotiDialog(notiMsg);
+            }
+        }
+    };
+
     public void onResume() {
         super.onResume();
 
         checkAuth();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+        super.onDestroy();
     }
 
     @Override
@@ -246,8 +275,6 @@ public class MainActivity extends AppCompatActivity
 
         return true;
     }
-
-
 
     /*
      * Functions for layout control
@@ -450,98 +477,56 @@ public class MainActivity extends AppCompatActivity
         issueTicketDialog.show();
     }
 
-    public void showReminderDialog(final Ticket ticket) {
-        reminderDialog = new Dialog(this);
-        reminderDialog.setContentView(R.layout.dialog_reminder_noti);
-        reminderDialog.setCancelable(false);
+    public void showNotiDialog(final NotiMsg notiMsg) {
+        notiDialog = new Dialog(this);
+        notiDialog.setContentView(R.layout.dialog_noti);
+        notiDialog.setCancelable(false);
 
-        LinearLayout ticketLayout = reminderDialog.findViewById(R.id.reminder_ticket);
-        Button dismissBtn = reminderDialog.findViewById(R.id.reminder_dismiss_btn);
-//        Button postponeBtn = reminderDialog.findViewById(R.id.reminder_postpone_btn);
-        Button cancelTicketBtn = reminderDialog.findViewById(R.id.reminder_cancel_ticket_btn);
-        TextView ticketTV = reminderDialog.findViewById(R.id.reminder_ticket_number);
-        TextView serviceTV = reminderDialog.findViewById(R.id.reminder_service);
-        View dot1 = reminderDialog.findViewById(R.id.reminder_dot1);
-        View dot2 = reminderDialog.findViewById(R.id.reminder_dot2);
-        View dot3 = reminderDialog.findViewById(R.id.reminder_dot3);
+        View dot1 = notiDialog.findViewById(R.id.change_dot1);
+        View dot2 = notiDialog.findViewById(R.id.change_dot2);
+        View dot3 = notiDialog.findViewById(R.id.change_dot3);
         setLayerType(dot1);
         setLayerType(dot2);
         setLayerType(dot3);
 
-        ticketTV.setText(ticket.getTicketNo());
-//        serviceTV.setText(getServiceByTicketId(ticket.getId()).getName());
+        LinearLayout ticketLayout = notiDialog.findViewById(R.id.change_ticket);
+        TextView titleLgTV = notiDialog.findViewById(R.id.change_title_lg);
+        TextView titleSmTV = notiDialog.findViewById(R.id.change_title_sm);
+        TextView ticketNoTV = notiDialog.findViewById(R.id.change_ticket_number);
+        TextView waitTimeTV = notiDialog.findViewById(R.id.change_wait_time);
+        TextView branchTV = notiDialog.findViewById(R.id.change_branch);
+        TextView serviceTV = notiDialog.findViewById(R.id.change_service);
+        Button dismissBtn = notiDialog.findViewById(R.id.change_dismiss_btn);
+
+        titleLgTV.setText(notiMsg.getTitleLg());
+        titleSmTV.setText(notiMsg.getTitleSm());
+        ticketNoTV.setText(notiMsg.getTicketNo());
+        waitTimeTV.setText(notiMsg.getWaitTime());
+        branchTV.setText(notiMsg.getBranchName());
+        serviceTV.setText(notiMsg.getServiceName());
 
         ticketLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayFragment(new TicketDetailsFrag(), null, "TICKET_DETAILS");
+                notiDialog.dismiss();
+
+                Fragment ticketDetailsFrag = new TicketDetailsFrag();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("ticketDetails", notiMsg.getTicketId());
+
+                displayFragment(ticketDetailsFrag, bundle, "TICKET_DETAILS");
             }
         });
 
         dismissBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                reminderDialog.dismiss();
+                notiDialog.dismiss();
             }
         });
 
-//        postponeBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showPostponeDialog(tickets.get(0));
-//            }
-//        });
-
-        cancelTicketBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showConfirmationDialog("cancelTicket", ticket.getId());
-            }
-        });
-
-        reminderDialog.show();
-    }
-
-    public void showTimeChangeDialog(Change change) {
-        timeChangeDialog = new Dialog(this);
-        timeChangeDialog.setContentView(R.layout.dialog_time_change_noti);
-        final LinearLayout timeChangeLayout = timeChangeDialog.findViewById(R.id.time_change_layout);
-        timeChangeDialog.setCancelable(false);
-
-        View dot1 = timeChangeDialog.findViewById(R.id.time_change_dot1);
-        View dot2 = timeChangeDialog.findViewById(R.id.time_change_dot2);
-        setLayerType(dot1);
-        setLayerType(dot2);
-
-        LinearLayout ticketLayout = timeChangeDialog.findViewById(R.id.time_change_ticket);
-        Button dismissBtn = timeChangeDialog.findViewById(R.id.time_change_dismiss_btn);
-        TextView actionTV = timeChangeDialog.findViewById(R.id.time_change_action);
-        TextView timeTV = timeChangeDialog.findViewById(R.id.time_change_time);
-        TextView ticketNoTV = timeChangeDialog.findViewById(R.id.time_change_ticket_number);
-        TextView serviceTV = timeChangeDialog.findViewById(R.id.time_change_service);
-
-        actionTV.setText(change.getChangeName());
-        timeTV.setText(intTimeToString(change.getTime()));
-//        ticket = getTicketById(change.getTicketIds().get(1));
-        ticketNoTV.setText(ticket.getTicketNo());
-//        serviceTV.setText(getServiceByTicketId(ticket.getId()).getName());
-
-        ticketLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                timeChangeDialog.dismiss();
-                displayFragment(new TicketDetailsFrag(), null, "TICKET_DETAILS");
-            }
-        });
-
-        dismissBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                timeChangeDialog.dismiss();
-            }
-        });
-
-        timeChangeDialog.show();
+        notiDialog.show();
     }
 
     public void showConfirmationDialog(final String action, final String data) {
@@ -579,8 +564,8 @@ public class MainActivity extends AppCompatActivity
                     issueTicketDialog.dismiss();
                 if (postponeDialog != null)
                     postponeDialog.dismiss();
-                if (reminderDialog != null)
-                    reminderDialog.dismiss();
+                if (notiDialog != null)
+                    notiDialog.dismiss();
             }
         });
 
@@ -621,10 +606,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int arg1) {
                 dialog.dismiss();
-                postponeTicket(ticket, time);
 
                 if (postponeDialog != null)
                     postponeDialog.dismiss();
+
+                postponeTicket(ticket, time);
             }
         });
 
@@ -632,8 +618,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                if (issueTicketDialog != null)
-                    issueTicketDialog.dismiss();
             }
         });
 
@@ -808,7 +792,7 @@ public class MainActivity extends AppCompatActivity
 
                 //Refresh fragment component
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("ticketDetails", ticket);
+                bundle.putSerializable("ticketDetails", ticket.getId());
 
                 refreshFragment("TICKET_DETAILS", bundle);
             }
@@ -869,7 +853,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void checkAuth() {
-        if (pref.getString("id", null) == null) {
+        if (getUserId() == null) {
             Log.d("check Auth", "user haven't login");
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);

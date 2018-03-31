@@ -44,6 +44,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.gd.oticket.myrequest.MyRequest;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Email;
@@ -79,6 +80,7 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
     private Toast toast;
     private FrameLayout progressBarHolder;
     private ProgressBar spinner;
+    private MyFirebaseInstanceIdService myFirebaseInstanceIdService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
         spinner = findViewById(R.id.login_progress);
 
         request = new MyRequest(this);
+        myFirebaseInstanceIdService = new MyFirebaseInstanceIdService();
         showSpinner(false);
 
         signInBtn.setOnClickListener(new OnClickListener() {
@@ -219,6 +222,7 @@ public class LoginActivity extends AppCompatActivity implements Validator.Valida
     public void checkAuth(){
         if(pref.getString("id", null) != null){
             Log.d("check Auth login", "user alredy login");
+            myFirebaseInstanceIdService.sendTokenToServer(pref.getString("id", null), FirebaseInstanceId.getInstance().getToken());
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         }else{

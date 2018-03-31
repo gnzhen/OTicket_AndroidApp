@@ -83,6 +83,7 @@ public class TicketFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
         mainActivity.showBackButton(false);
         mainActivity.setTitle("OTicket");
         mainActivity.showSpinner(true);
+        mainActivity.showSpinnerWithOverlay(false);
 
         //set up ticket list
         recyclerView.setHasFixedSize(true);
@@ -190,6 +191,7 @@ public class TicketFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
             public void onFinish() {
                 swipeLayout.setRefreshing(false);
                 mainActivity.showSpinner(false);
+                mainActivity.showSpinnerWithOverlay(false);
             }
         }.start();
     }

@@ -103,7 +103,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="10hr 50min"
+                                android:text="-"
                                 android:textColor="@color/colorPrimaryDark"
                                 android:textSize="25dp" />
 
@@ -115,7 +115,7 @@
                                 android:fontFamily="sans-serif"
                                 android:gravity="center"
                                 android:paddingHorizontal="20dp"
-                                android:text="12:59 AM"
+                                android:text="-"
                                 android:textColor="@color/colorPrimaryDark"
                                 android:textSize="25dp" />
 

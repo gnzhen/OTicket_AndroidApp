@@ -43,6 +43,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.gd.oticket.myrequest.MyRequest;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
@@ -93,6 +94,7 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
     private SharedPreferences.Editor editor;
     private FrameLayout progressBarHolder;
     private ProgressBar spinner;
+    private MyFirebaseInstanceIdService myFirebaseInstanceIdService;
 
 
     @Override
@@ -122,6 +124,7 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
         spinner = findViewById(R.id.register_progress);
 
         request = new MyRequest(this);
+        myFirebaseInstanceIdService = new MyFirebaseInstanceIdService();
         showSpinner(false);
 
         createBtn.setOnClickListener(new OnClickListener() {
@@ -244,6 +247,7 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
     public void checkAuth(){
         if(pref.getString("id", null) != null){
             Log.d("check Auth Register", "user already login");
+            myFirebaseInstanceIdService.sendTokenToServer(pref.getString("id", null), FirebaseInstanceId.getInstance().getToken());
             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
             startActivity(intent);
         } else{

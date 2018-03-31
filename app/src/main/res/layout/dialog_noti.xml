@@ -10,14 +10,15 @@
     android:padding="15dp">
 
     <TextView
-        android:id="@+id/change_title_label"
+        android:id="@+id/change_title_lg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingHorizontal="10dp"
-        android:text="The queue go faster than expected!"
+        android:text="-"
+        android:layout_gravity="center"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="25sp" />
+        android:textSize="35sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,21 +26,22 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/change_time"
+            android:id="@+id/change_title_sm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="15 min"
+            android:gravity="center"
+            android:text="-"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="50sp" />
+            android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/change_label_in"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/reminder_time"
-            android:text=" earlier! "
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="35sp"/>
+        <!--<TextView-->
+            <!--android:id="@+id/change_label_in"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_toLeftOf="@id/reminder_time"-->
+            <!--android:text=" earlier! "-->
+            <!--android:textColor="@color/colorPrimaryDark"-->
+            <!--android:textSize="35sp"/>-->
     </LinearLayout>
 
     <View
@@ -104,9 +106,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="0315"
+                        android:text="-"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textSize="55dp" />
+                        android:textSize="40dp" />
 
                     <TextView
                         android:id="@+id/change_wait_time"
@@ -116,9 +118,9 @@
                         android:layout_weight="1"
                         android:gravity="right"
                         android:paddingLeft="10dp"
-                        android:text="30min"
+                        android:text="-"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textSize="30dp" />
+                        android:textSize="20dp" />
 
                 </TableRow>
 
@@ -133,7 +135,7 @@
                         android:layout_height="match_parent"
                         android:layout_alignParentLeft="true"
                         android:layout_weight="1"
-                        android:text="Kepong"
+                        android:text="-"
                         android:textColor="@color/colorPrimary" />
 
                     <TextView
@@ -144,38 +146,15 @@
                         android:layout_weight="1"
                         android:gravity="right"
                         android:textColor="@color/colorPrimary"
-                        android:text="Customer Service" />
+                        android:text="-" />
 
                 </TableRow>
             </TableLayout>
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="vertical">-->
-
-                <!--<TextView-->
-                    <!--android:id="@+id/reminder_ticket_number"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="0001"-->
-                    <!--android:textColor="@color/colorPrimaryDark"-->
-                    <!--android:textSize="55dp" />-->
-
-                <!--<TextView-->
-                    <!--android:id="@+id/reminder_service"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:gravity="right"-->
-                    <!--android:text="Service"-->
-                    <!--android:textColor="@color/colorPrimary" />-->
-            <!--</LinearLayout>-->
-
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <View
-        android:id="@+id/reminder_dot2"
+        android:id="@+id/change_dot2"
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:layout_gravity="center_vertical"
@@ -189,43 +168,12 @@
         android:layout_marginTop="15dp">
 
         <Button
-            android:id="@+id/reminder_dismiss_btn"
+            android:id="@+id/change_dismiss_btn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/button_background"
+            android:background="@color/colorPrimaryDark"
             android:foreground="?selectableItemBackground"
             android:text="Dismiss"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@android:color/white" />
     </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="3dp"
-        android:paddingVertical="15dp">
-
-        <Button
-            android:id="@+id/reminder_postpone_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_toLeftOf="@id/ticket_details_cancel_btn"
-            android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
-            android:foreground="?selectableItemBackground"
-            android:text="Postpone"
-            android:textColor="@android:color/white"
-            android:layout_marginRight="10dp"/>
-
-        <Button
-            android:id="@+id/reminder_cancel_ticket_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
-            android:foreground="?selectableItemBackground"
-            android:text="Cancel Ticket"
-            android:textColor="@android:color/white"  />
-
-    </LinearLayout>
 </LinearLayout>

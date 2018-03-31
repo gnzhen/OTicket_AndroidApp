@@ -57,7 +57,7 @@ public class TicketRecyclerAdapter extends RecyclerView.Adapter<TicketRecyclerAd
                 Fragment ticketDetailsFrag = new TicketDetailsFrag();
 
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("ticketDetails", ticket);
+                bundle.putSerializable("ticketDetails", ticket.getId());
 
                 mainActivity.displayFragment(ticketDetailsFrag, bundle, "TICKET_DETAILS");
             }
