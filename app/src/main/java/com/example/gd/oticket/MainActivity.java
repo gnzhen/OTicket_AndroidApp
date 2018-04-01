@@ -3,6 +3,7 @@ package com.example.gd.oticket;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -189,13 +190,16 @@ public class MainActivity extends AppCompatActivity
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
 
-            NotiMsg notiMsg = (NotiMsg) bundle.getSerializable("notiMsg");
+            if(intent != null){
+                Bundle bundle = intent.getExtras();
 
-            if(notiMsg != null){
+                NotiMsg notiMsg = (NotiMsg) bundle.getSerializable("notiMsg");
 
-                showNotiDialog(notiMsg);
+                if(notiMsg != null){
+
+                    showNotiDialog(notiMsg);
+                }
             }
         }
     };
@@ -478,7 +482,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showNotiDialog(final NotiMsg notiMsg) {
-        notiDialog = new Dialog(this);
+
+        final Dialog notiDialog = new Dialog(this);
         notiDialog.setContentView(R.layout.dialog_noti);
         notiDialog.setCancelable(false);
 
@@ -508,7 +513,7 @@ public class MainActivity extends AppCompatActivity
         ticketLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notiDialog.dismiss();
+                notiDialog.cancel();
 
                 Fragment ticketDetailsFrag = new TicketDetailsFrag();
 
@@ -522,11 +527,12 @@ public class MainActivity extends AppCompatActivity
         dismissBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notiDialog.dismiss();
+                notiDialog.cancel();
             }
         });
 
         notiDialog.show();
+
     }
 
     public void showConfirmationDialog(final String action, final String data) {

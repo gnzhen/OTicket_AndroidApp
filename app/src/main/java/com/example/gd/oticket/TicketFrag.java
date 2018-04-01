@@ -3,6 +3,8 @@ package com.example.gd.oticket;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -100,6 +102,20 @@ public class TicketFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
         loadView();
     }
 
+    // Create the Handler object (on the main thread by default)
+    Handler handler = new Handler(Looper.getMainLooper());
+    // Define the code block to be executed
+    final Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+
+            loadView(); // Volley Request
+
+            // Repeat this the same runnable code block again another 2 seconds
+            handler.postDelayed(runnableCode, 1000);
+        }
+    };
+
     public void loadView() {
 
         /* Get Tickets */
@@ -178,6 +194,20 @@ public class TicketFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
                 mainActivity.showToast(error);
             }
         });
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        // Start the initial runnable task by posting through the handler
+        handler.post(runnableCode);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        handler.removeCallbacks(runnableCode);
     }
 
     @Override
