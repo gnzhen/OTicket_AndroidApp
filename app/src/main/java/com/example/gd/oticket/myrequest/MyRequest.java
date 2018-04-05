@@ -54,9 +54,10 @@ public class MyRequest {
     private Toast toast;
 
     public MyRequest(Context context) {
-//        this.ip = "http://192.168.0.120/OTicket/public/api/";
+        this.ip = "http://192.168.0.120/OTicket/public/api/";
 //        this.ip = "http://192.168.43.115/OTicket/public/api/";
-        this.ip = "http://192.168.1.5/OTicket/public/api/";
+//        this.ip = "http://192.168.0.202/OTicket/public/api/";
+
         this.context = context;
         this.branches = new ArrayList<>();
         this.services = new ArrayList<>();
@@ -334,7 +335,12 @@ public class MyRequest {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("Volley Error", error.toString());
-                        showVolleyError(error);
+
+                        if (error instanceof ServerError) {
+                            showToast("Cannot connect to the server.");
+                        }
+                        else
+                            showVolleyError(error);
                     }
                 }){
             @Override
@@ -408,7 +414,11 @@ public class MyRequest {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("Volley Error", error.toString());
-                        showVolleyError(error);
+                        if (error instanceof ServerError) {
+                            showToast("Cannot connect to the server.");
+                        }
+                        else
+                            showVolleyError(error);
                     }
                 }){
             @Override
@@ -538,7 +548,7 @@ public class MyRequest {
         } else if (error instanceof AuthFailureError) {
             showToast("Authentication problem");
         } else if (error instanceof ServerError) {
-            showToast("Server error");
+            showToast("Opps! Please try again.");
         } else if (error instanceof NetworkError) {
             showToast("Network error");
         } else if (error instanceof ParseError) {

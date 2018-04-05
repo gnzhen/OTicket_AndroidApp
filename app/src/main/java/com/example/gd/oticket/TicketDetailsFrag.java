@@ -43,7 +43,6 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
     private SwipeRefreshLayout swipeLayout;
     private MyRequest request;
     private String id;
-    private ArrayList<Integer> postponeTimes;
 
     @Nullable
     @Override
@@ -81,7 +80,6 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
         mainActivity.setLayerType(dot2);
         swipeLayout.setOnRefreshListener(this);
         request = new MyRequest(view.getContext());
-        postponeTimes = new ArrayList<>();
 
         mainActivity.showSpinnerWithOverlay(true);
 
@@ -109,7 +107,7 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
     }
 
     // Create the Handler object (on the main thread by default)
-    Handler handler = new Handler(Looper.getMainLooper());
+    Handler handler = new Handler();
     // Define the code block to be executed
     final Runnable runnableCode = new Runnable() {
         @Override
@@ -127,6 +125,9 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
         request.getPostponeDetails(ticketId, new MyRequest.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
+
+                ArrayList<Integer> postponeTimes = new ArrayList<>();
+
                 try {
 
                     JSONObject jsonObject = new JSONObject(result);
@@ -147,7 +148,7 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
                     }
 
                     swipeLayout.setRefreshing(false);
-                    mainActivity.showSpinnerWithOverlay(false);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     swipeLayout.setRefreshing(false);
@@ -175,7 +176,7 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
 
                     if (jsonObject.has("fail")) {
                         mainActivity.showSpinnerWithOverlay(false);
-                        mainActivity.onBackPressed();
+                        mainActivity.displayFragment(new TicketFrag(), null, "TICKET");
                         mainActivity.showToast(jsonObject.get("fail").toString());
                     } else {
                         String ticketServingNow = "-";
@@ -258,7 +259,8 @@ public class TicketDetailsFrag extends Fragment implements SwipeRefreshLayout.On
     public void onResume(){
         super.onResume();
         // Start the initial runnable task by posting through the handler
-        handler.post(runnableCode);
+//        handler.post(runnableCode);
+        runnableCode.run();
     }
 
     @Override

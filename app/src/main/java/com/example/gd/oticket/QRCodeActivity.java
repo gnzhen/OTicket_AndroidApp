@@ -90,7 +90,14 @@ public class QRCodeActivity extends AppCompatActivity implements ZBarScannerView
         Log.v("qr rawresult", rawResult.getContents()); // Prints scan results
         Log.v("qr barcodeformat", rawResult.getBarcodeFormat().getName()); // Prints the scan format (qrcode, pdf417 etc.)
 
-        issueTicket(rawResult.getContents());
+        if(rawResult.getContents().matches("[0-9]+")) {
+            issueTicket(rawResult.getContents());
+        }
+        else{
+            showToast("Unrecognized Code");
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
         // If you would like to resume scanning, call this method below:
 //        mScannerView.resumeCameraPreview(this);
     }

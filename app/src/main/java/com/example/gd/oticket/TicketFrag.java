@@ -120,7 +120,6 @@ public class TicketFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
 
         /* Get Tickets */
         request.getUserCurrentTickets(id, new MyRequest.VolleyCallback() {
-            private String error;
 
             @Override
             public void onSuccess(String result) {
@@ -136,8 +135,6 @@ public class TicketFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            SimpleDateFormat format = new SimpleDateFormat("d/MM/yyyy h:mm a", Locale.ENGLISH);
-                            Date issueTime = null;
                             String ticketServingNow = "-";
                             String disposedTime = "-";
 
@@ -200,6 +197,7 @@ public class TicketFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
     public void onResume(){
         super.onResume();
         // Start the initial runnable task by posting through the handler
+
         handler.post(runnableCode);
     }
 

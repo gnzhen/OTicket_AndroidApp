@@ -127,10 +127,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 titleLg = data.get("change_time").toString() + " " + status;
 
                 if(status.equals("delay")){
-                    titleSm = "The queue goes slower than expected.";
+                    titleSm = "";
                 }
                 else{
-                    titleSm = "The queue goes faster than expected.";
+                    titleSm = "";
                 }
             }
 

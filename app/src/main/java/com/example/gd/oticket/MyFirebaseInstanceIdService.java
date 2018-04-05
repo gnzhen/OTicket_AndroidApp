@@ -53,7 +53,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
                     if (jsonObject.has("success")) {
 
-                        Log.d("Token To Server", jsonObject.get("fail").toString());
+                        Log.d("Token To Server", jsonObject.get("success").toString());
                     } else if (jsonObject.has("fail")) {
                         Log.d("Token To Server", jsonObject.get("fail").toString());
                     } else {

@@ -66,6 +66,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -143,7 +144,6 @@ public class MainActivity extends AppCompatActivity
         progressBarHolder = findViewById(R.id.main_progressBarHolder);
         mainSpinner = findViewById(R.id.main_progress);
         spinner = findViewById(R.id.progress_bar);
-        progressBarHolder.bringToFront();
 
         request = new MyRequest(this);
         setSupportActionBar(toolbar);
@@ -288,6 +288,7 @@ public class MainActivity extends AppCompatActivity
             setContentText("");
             spinner.setVisibility(View.VISIBLE);
         } else {
+            setContentText("");
             spinner.setVisibility(View.GONE);
         }
     }
@@ -296,10 +297,14 @@ public class MainActivity extends AppCompatActivity
         if (show) {
             setContentText("");
             mainSpinner.setVisibility(View.VISIBLE);
+            progressBarHolder.bringToFront();
             progressBarHolder.setVisibility(View.VISIBLE);
+
         } else {
+            setContentText("");
             mainSpinner.setVisibility(View.GONE);
             progressBarHolder.setVisibility(View.GONE);
+            drawer.bringChildToFront(findViewById(R.id.nav_view));
         }
     }
 
@@ -341,6 +346,7 @@ public class MainActivity extends AppCompatActivity
         clearSearchView();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        setContentText("");
     }
 
     public void refreshFragment(String tag, Bundle bundle) {
@@ -558,6 +564,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int arg1) {
                 dialog.dismiss();
+
+                if (issueTicketDialog != null)
+                    issueTicketDialog.cancel();
+                if (postponeDialog != null)
+                    postponeDialog.cancel();
+                if (notiDialog != null)
+                    notiDialog.cancel();
+
                 if (action.equals("issueTicket")) {
                     issueTicket(data);
                 } else if (action.equals("cancelTicket")) {
@@ -565,13 +579,6 @@ public class MainActivity extends AppCompatActivity
                 } else if (action.equals("postponeTicket")) {
 
                 }
-
-                if (issueTicketDialog != null)
-                    issueTicketDialog.dismiss();
-                if (postponeDialog != null)
-                    postponeDialog.dismiss();
-                if (notiDialog != null)
-                    notiDialog.dismiss();
             }
         });
 
@@ -645,7 +652,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showPostponeDialog(final Ticket ticket, final ArrayList<Integer> postponeTime) {
-        postponeDialog = new Dialog(this);
+        showSpinnerWithOverlay(false);
+
+        final Dialog postponeDialog = new Dialog(this);
         postponeDialog.setContentView(R.layout.dialog_postpone);
         postponeDialog.setCancelable(false);
 //        LinearLayout postponeLayout = postponeDialog.findViewById(R.id.postpone_layout);
@@ -653,7 +662,7 @@ public class MainActivity extends AppCompatActivity
         View dot2 = postponeDialog.findViewById(R.id.postpone_dialog_dot2);
         setLayerType(dot1);
         setLayerType(dot2);
-        String[] postponeTimeStr = new String[postponeTime.size()];
+        final String[] postponeTimeStr = new String[postponeTime.size()];
         final HashMap<String,Integer> postponeTimeMap = new HashMap<>();
         postponeTimeMap.clear();
 
@@ -673,7 +682,8 @@ public class MainActivity extends AppCompatActivity
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postponeDialog.dismiss();
+                if(postponeDialog != null)
+                    postponeDialog.cancel();
             }
         });
 
@@ -684,6 +694,10 @@ public class MainActivity extends AppCompatActivity
                 if(postponeSpinner != null && postponeSpinner.getSelectedItem() != null){
                     String text = postponeSpinner.getSelectedItem().toString();
                     int time = postponeTimeMap.get(text);
+
+                    if(postponeDialog != null)
+                        postponeDialog.cancel();
+
                     showConfirmPostponeDialog(ticket, time);
                 }
                 else {
@@ -759,6 +773,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onFailure(String error) {
                     Log.d("onFailure", error);
+                    showSpinnerWithOverlay(false);
                 }
             });
         }
@@ -817,6 +832,7 @@ public class MainActivity extends AppCompatActivity
         request.cancelTicket(ticketId, new MyRequest.VolleyCallback() {
             @Override
             public void onSuccess(String result) {
+
                 try {
                     JSONObject jsonObject = new JSONObject(result);
 
@@ -840,8 +856,8 @@ public class MainActivity extends AppCompatActivity
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                showSpinnerWithOverlay(false);
                 displayFragment(new TicketFrag(), null, "TICKET");
+                showSpinnerWithOverlay(false);
             }
 
             @Override

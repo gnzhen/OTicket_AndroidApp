@@ -102,7 +102,7 @@
                 android:layout_marginBottom="5dp"
                 android:backgroundTint="@color/colorPrimaryDark"
                 android:foreground="?selectableItemBackground"
-                android:text="Issue Ticket"
+                android:text="Take Ticket"
                 android:textColor="@android:color/white" />
 
             <Button

@@ -72,6 +72,7 @@ public class BranchFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
         mainActivity.showSearchBar(true);
         mainActivity.showBackButton(false);
         mainActivity.showSpinner(true);
+        mainActivity.setContentText("");
 
         //set up branch list
         recyclerView.setHasFixedSize(true);
@@ -111,6 +112,8 @@ public class BranchFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
     }
 
     public void loadView() {
+
+        mainActivity.showSpinner(true);
         /* Get branches */
         request.getBranches(new MyRequest.VolleyCallback() {
             @Override
@@ -140,14 +143,15 @@ public class BranchFrag extends Fragment implements SwipeRefreshLayout.OnRefresh
                         }
                     }
                 }
-                mainActivity.showSpinner(false);
                 swipeLayout.setRefreshing(false);
 
                 if(branches.size() > 0) {
                     adapter = new BranchRecyclerAdapter(branches, getContext());
+                    mainActivity.showSpinner(false);
                     recyclerView.setAdapter(adapter);
                 }
                 else{
+                    mainActivity.showSpinner(false);
                     mainActivity.setContentText("-  No branch to display  -");
                 }
             }

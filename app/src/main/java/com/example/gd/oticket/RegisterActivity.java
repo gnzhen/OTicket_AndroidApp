@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -266,6 +267,16 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
             Log.d("spinner", "true");
             spinner.setVisibility(View.VISIBLE);
             progressBarHolder.setVisibility(View.VISIBLE);
+
+            new CountDownTimer(10000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    //
+                }
+
+                public void onFinish() {
+                    showSpinner(false);
+                }
+            }.start();
         }
         else {
             Log.d("spinner", "false");
